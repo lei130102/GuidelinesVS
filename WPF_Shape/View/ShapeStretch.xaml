@@ -1,0 +1,30 @@
+﻿<Window x:Class="WPF_Shape.View.ShapeStretch"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Shape.View"
+        mc:Ignorable="d"
+        Title="ShapeStretch" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <!--形状拉伸其宽度和高度，从而可以正好适应其容器(如果设置了明确的高度和宽度，该设置就不起作用)-->
+        <Ellipse Grid.Column="0" Stroke="Blue" Fill="Yellow" Stretch="Fill"/><!--默认-->
+        <!--按比例改变形状的宽度和高度，直至形状到达容器边缘。如果为椭圆使用该值，最终将得到适应窗口的最大的圆。如果为矩形使用该值，将得到尽可能大的正方形
+        (如果设置了明确的高度和宽度，形状就会在这些边界内改变尺寸。例如，如果将矩形的Width属性设置为10并将Height属性设置为10，将只得到10*10大小的正方形)-->
+        <Ellipse Grid.Column="1" Stroke="Blue" Fill="Yellow" Stretch="Uniform"/>
+        <!--按比例改变形状的宽度和高度，直到形状填满了整个可用空间的高度和宽度。例如，如果在100*200单位大小的窗口中放置使用此尺寸设置的矩形，将得到200*200
+        单位大小的矩形，并且矩形的一部分会被裁剪掉
+        (如果设置了明确的高度和宽度，就会在这些边界中改变形状的尺寸。例如，如果将矩形的Width属性设置为10，并将Height属性设置为100，将得到100*100单位大小
+        的矩形，并且会裁剪该矩形以适应不可见的10*100大小的方框)-->
+        <Ellipse Grid.Column="2" Stroke="Blue" Fill="Yellow" Stretch="UniformToFill"/>
+        <!--形状不被拉伸。除非使用Height和Width属性(或者使用MinHeight和MinWidth属性)将形状的宽度和高度设置为非0值，否则不会显示形状-->
+        <Ellipse Grid.Column="3" Stroke="Blue" Fill="Yellow" Stretch="None"/><!--放大可以看到边框-->
+    </Grid>
+</Window>
+<!--通常不会同时设置 Stretch属性 和 Height和Width属性-->

@@ -1,0 +1,30 @@
+﻿<Window x:Class="WPF_Shape.View.StrokeDashArray"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Shape.View"
+        mc:Ignorable="d"
+        Title="StrokeDashArray" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <!--StrokeDashArray中的值是相对于直线宽度(StrokeThickness)的，比如StrokeThickness为10，StrokeDashArray中的1就是10个单位-->
+        <!--StrokeDashArray="1 2" 实现长度为1*10，空白长度为2*10，然后重复该模式-->
+        <Polyline Grid.Row="0" Stroke="Blue" StrokeThickness="10" Points="50,50 100,20 150,60 200,30 600,30" StrokeDashArray="1 2"/>
+        <!--StrokeDashArray="5 0.2 3 0.2" 实线长度为5*10，空白长度为0.2*10，实线长度为3*10，空白长度为0.2*10，然后重复该模式-->
+        <Polyline Grid.Row="1" Stroke="Blue" StrokeThickness="10" Points="50,50 100,20 150,60 200,30 600,30" StrokeDashArray="5 0.2 3 0.2"/>
+        <!--StrokeDashArray="3 0.5 2" 实线长度为3*10，空白长度为0.5*10，实线长度为2*10，空白长度为3*10，实线长度为0.5*10，空白长度为2*10     也就是说，必须是线段与空白之间交替-->
+        <Polyline Grid.Row="2" Stroke="Blue" StrokeThickness="10" Points="50,50 100,20 150,60 200,30 600,30" StrokeDashArray="3 0.5 2"/>
+        <!--StrokeDashOffset是一个从0开始的索引，该索引指向StrokeDashArray中的某个值，这样可以从中间开始绘制-->
+        <Polyline Grid.Row="3" Stroke="Blue" StrokeThickness="10" Points="50,50 100,20 150,60 200,30 600,30" StrokeDashArray="1 2" StrokeDashOffset="1"/>
+        <!--StrokeDashCap可控制如何为直线的断开边缘添加线帽，注意，所有这些设置都会在点划线的端点增加直线宽度的一半长距离，如果没有考虑这一额外的距离，最终可能会使点划线相互重叠，解决办法是增加额外的空白以进行补偿-->
+        <!--当为直线(不是形状)使用StrokeDashCap属性时，通常最好将StartLineCap和EndLineCap属性设置为相同的值，这可以使直线看起来是一致的-->
+        <Polyline Grid.Row="4" Stroke="Blue" StrokeThickness="10" Points="50,50 100,20 150,60 200,30 600,30" StrokeDashArray="1 2" StrokeDashCap="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+    </Grid>
+</Window>

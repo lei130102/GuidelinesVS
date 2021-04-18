@@ -1,0 +1,30 @@
+﻿<Window x:Class="WPF_Shape.View.Shape"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Shape.View"
+        mc:Ignorable="d"
+        Title="Shape" Height="800" Width="800">
+    <StackPanel>
+        <!--注意，如果没有设置Stroke或者Fill属性，那么就根本不会显示-->
+        <!--椭圆-->
+        <Ellipse Fill="Yellow" Stroke="Blue" Height="50" Width="100" Margin="5"/>
+        <!--矩形-->
+        <Rectangle Fill="Yellow" Stroke="Blue" Height="50" Width="100" Margin="5"/>
+        <!--直线-->
+        <!--对于直线，Fill不起作用，但必须设置Stroke-->
+        <!--在直线中使用的坐标是相对于放置直线的矩形区域左上角的坐标-->
+        <!--在直线中使用负坐标值是合理的。可为直线使用能超出为直线保留的空间的坐标，从而在窗口的其他任意部分绘制直线-->
+        <!--不能使用Line和Polyline形状创建曲线，需要使用Path-->
+        <Line Stroke="Blue" X1="0" Y1="0" X2="10" Y2="100"/>
+        <!--折线-->
+        <!--Points需要使用PointCollection对象，但在XAML中使用基于简单字符串的语法填充该集合，只需要提供点的列表，并在每个坐标之间添加空格或者逗号-->
+        <!--如果只是希望构建固定的图形内容，就根本不需要形状的具体坐标。相反，可使用另一个工具，如Express Design，绘制恰当的图形，然后导出到XAML-->
+        <Polyline Stroke="Blue" Points="5,100 15,200 100,220"/>
+        <!--或者 Points="5 100 15 200"-->
+        <!--多边形-->
+        <!--Polygon与Polyline的唯一区别是：Polygon形状添加最后一条线段，将最后一个点连接到开始点(如果最后一个点就是第一个点，Polygon和Polyline就没有区别了)-->
+        <Polygon Stroke="Blue" Fill="Yellow" Points="5,100 15,200 100,220"/>
+    </StackPanel>
+</Window>

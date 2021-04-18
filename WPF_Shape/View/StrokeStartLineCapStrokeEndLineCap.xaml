@@ -1,0 +1,27 @@
+﻿<Window x:Class="WPF_Shape.View.StrokeStartLineCapStrokeEndLineCap"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Shape.View"
+        mc:Ignorable="d"
+        Title="StrokeStartLineCapStrokeEndLineCap" Height="450" Width="800">
+        <!--当绘制Line和Polyline形状时，可使用StrokeStartLineCap和StrokeEndLineCap选择如何绘制直线的开始端和结束端(这些属性不影响其他形状，因为其他形状都是闭合的)-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <!--Flat：直线在他的最后坐标处立即终止-->
+        <Line Grid.Row="0" Stroke="Blue" StrokeThickness="14" StrokeStartLineCap="Flat" X1="10" Y1="10" X2="100" Y2="10"/>
+        <!--Round：平滑地绘制拐角-->
+        <Line Grid.Row="1" Stroke="Blue" StrokeThickness="14" StrokeStartLineCap="Round" X1="10" Y1="10" X2="100" Y2="10"/>
+        <!--Triangle：绘制直线的两条侧边最后交于一点-->
+        <Line Grid.Row="3" Stroke="Blue" StrokeThickness="14" StrokeStartLineCap="Triangle" X1="10" Y1="10" X2="100" Y2="10"/>
+        <!--Square：使直线端点具有尖锐边缘。(与Flat唯一区别：扩展了一定距离，在其他所有方面，边缘看起来是相同的)-->
+        <Line Grid.Row="2" Stroke="Blue" StrokeThickness="14" StrokeStartLineCap="Square" X1="10" Y1="10" X2="100" Y2="10"/>
+        <!--Round、Triangle和Square都会增加直线的长度-->
+    </Grid>
+</Window>

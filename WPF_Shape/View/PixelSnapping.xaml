@@ -1,0 +1,19 @@
+﻿<Window x:Class="WPF_Shape.View.PixelSnapping"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Shape.View"
+        mc:Ignorable="d"
+        Title="PixelSnapping" Height="450" Width="800">
+    <Viewbox>
+        <Canvas Width="100" Height="100">
+            <Line Canvas.Left="-10" Canvas.Top="0" Stroke="Blue" StrokeThickness="11" X1="0" Y1="0" X2="100" Y2="100" SnapsToDevicePixels="False"/>
+            <Line Canvas.Left="10" Canvas.Top="0" Stroke="Blue" StrokeThickness="11" X1="0" Y1="0" X2="100" Y2="100" SnapsToDevicePixels="True"/>
+        </Canvas>
+        <!--实际Canvas.Left="0" Canvas.Top="0"可以合并到X1="0" Y1="0" X2="100" Y2="100"-->
+        <!--StrokeThickness：用设备无关单位设置边框的宽度。当绘制直线时，WPF在两边分割宽度。因此，10个单位宽的直线，会在绘制1个单位宽的直线所在位置的两侧占用5个单位的空间。如果直线的宽度
+        为奇数，直线在两侧的宽度值就会是小数。例如，一条宽度为11个单位的直线，两侧会有5.5单位的空间。对于这种情况，直线肯定不会和监视器上的显示像素对齐，即使使用96dpi的分辨率也同样如此，从而
+        最后直线的边缘会具有模糊的反锯齿效果。如果不喜欢，可使用SnapsToDevicePixels属性去掉该效果-->
+    </Viewbox>
+</Window>

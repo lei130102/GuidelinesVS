@@ -1,0 +1,28 @@
+﻿<Window x:Class="WPF_Shape.View.StrokeLineJoin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Shape.View"
+        mc:Ignorable="d"
+        Title="StrokeLineJoin" Height="450" Width="800">
+        <!--除Line形状外，所有形状都允许使用StrokeLineJoin扭曲他们的拐角-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <!--Miter：(默认值)尖锐的边缘-->
+        <Polyline Grid.Row="0" Stroke="Blue" StrokeThickness="10" Points="20,50 50,10 100,55 200,20" StrokeLineJoin="Miter"/>
+        <!--当为较宽并且角度非常小的直线拐角使用尖锐的边缘时，尖锐的拐角会不切实际地延伸很长一段距离。对于这种情况，可使用Bevel或者Round设置修剪拐角，也可以使用StrokeMiterLimit，当达到特定的最大长度时，该属性自动地剪切边缘-->
+        <!--Bevel：切掉点边缘-->
+        <Polyline Grid.Row="1" Stroke="Blue" StrokeThickness="10" Points="20,50 50,10 100,55 200,20" StrokeLineJoin="Bevel"/>
+        <!--Round：平滑地过渡边缘-->
+        <Polyline Grid.Row="2" Stroke="Blue" StrokeThickness="10" Points="20,50 50,10 100,55 200,20" StrokeLineJoin="Round"/>
+        <!--Miter + StrokeMiterLimit：StrokeMiterLimit是一个系数，该系数是用于锐化拐角地长度和直线宽度地一半的比值。如果该属性设置为1(默认值)，就允许拐角延长直线宽度的一半距离。如果设置为3，就允许拐角延长直线宽度的1.5倍距离-->
+        <Polyline Grid.Row="3" Stroke="Blue" StrokeThickness="10" Points="20,50 50,10 100,55 200,20" StrokeLineJoin="Miter" StrokeMiterLimit="3"/>
+    </Grid>
+</Window>

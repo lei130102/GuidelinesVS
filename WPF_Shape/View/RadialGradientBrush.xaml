@@ -1,0 +1,50 @@
+﻿<Window x:Class="WPF_Shape.View.RadialGradientBrush"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Shape.View"
+        mc:Ignorable="d"
+        Title="RadialGradientBrush" Height="450" Width="800">
+    <!--与LinearGradientBrush一样，RadialGradientBrush也使用比例坐标系统，该坐标系统将(0,0)作为矩形填充区域的左上角坐标，将(1,1)作为右下角坐标。这意味着可使用(0,0)到(1,1)之间的任何坐标作为渐变的开始点
+    实际上，如果希望在填充区域之外定位开始点，甚至可超出这一范围-->
+    <StackPanel>
+        <Ellipse Width="100" Height="100">
+            <Ellipse.Fill>
+                <RadialGradientBrush>
+                    <!--相当于 Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5"-->
+                    <!--Center设置将限定圆的中心放在填充区域的中央，并且该点同时也是渐变开始点-->
+                    <!--RadiusX和RadiusY设置限定圆的尺寸-->
+                    <GradientStop Color="White" Offset="0"/>
+                    <GradientStop Color="Blue" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+        <Ellipse Width="100" Height="100">
+            <Ellipse.Fill>
+                <RadialGradientBrush Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                    <GradientStop Color="White" Offset="0"/>
+                    <GradientStop Color="Blue" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+        <Ellipse Width="100" Height="100">
+            <Ellipse.Fill>
+                <RadialGradientBrush Center="0.7,0.3" RadiusX="0.5" RadiusY="0.5">
+                    <!--修改Center没有什么意义-->
+                    <GradientStop Color="White" Offset="0"/>
+                    <GradientStop Color="Blue" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+        <Ellipse Width="100" Height="100">
+            <Ellipse.Fill>
+                <RadialGradientBrush GradientOrigin="0.7,0.3" RadiusX="0.5" RadiusY="0.5">
+                <!--GradientOrigin指定第一种颜色在渐变中的开始点，默认使0.5,0.5-->
+                    <GradientStop Color="White" Offset="0"/>
+                    <GradientStop Color="Blue" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+    </StackPanel>
+</Window>

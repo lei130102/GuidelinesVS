@@ -1,0 +1,88 @@
+﻿<Window x:Class="WPF_Shape.View.LinearGradientBrush"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Shape.View"
+        mc:Ignorable="d"
+        Title="LinearGradientBrush" Height="800" Width="800">
+    <ScrollViewer>
+        <StackPanel>
+            <Rectangle Width="150" Height="100">
+                <Rectangle.Fill>
+                    <LinearGradientBrush>
+                        <!--相当于 StartPoint="0,0" EndPoint="1,1"-->
+                        <GradientStop Color="Blue" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle Width="150" Height="100">
+                <Rectangle.Fill>
+                    <LinearGradientBrush>
+                        <!--相当于 StartPoint="0,0" EndPoint="1,1"-->
+                        <GradientStop Color="Blue" Offset="0"/>
+                        <GradientStop Color="White" Offset="0.5"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle Width="150" Height="100">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="Blue" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle Width="150" Height="100">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="Blue" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle Width="150" Height="100">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,0.5">
+                        <!--SpreadMethod="Pad"
+                        渐变之外的区域使用恰当的纯色填充-->
+                        <GradientStop Color="Blue" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle Width="150" Height="100">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,0.5" SpreadMethod="Reflect">
+                        <!--SpreadMethod="Reflect"
+                        翻转渐变，从第二种颜色反向渐变到第一种颜色-->
+                        <GradientStop Color="Blue" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle Width="150" Height="100">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,0.5" SpreadMethod="Repeat">
+                        <!--SpreadMethod="Repeat"
+                        复制相同的颜色变化过程-->
+                        <GradientStop Color="Blue" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle Width="150" Height="100">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="Yellow" Offset="0.0"/>
+                        <GradientStop Color="Red" Offset="0.25"/>
+                        <GradientStop Color="Blue" Offset="0.75"/>
+                        <GradientStop Color="LimeGreen" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </StackPanel>
+    </ScrollViewer>
+</Window>
+<!--渐变画刷并不限于绘制形状。可在使用SolidColorBrush画刷的任何时候替代LinearGradientBrush-->
