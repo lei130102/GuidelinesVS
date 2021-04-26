@@ -1,0 +1,16 @@
+﻿<Window x:Class="WPF_Image.LoadImage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Image"
+        mc:Ignorable="d"
+        Title="LoadImage" Height="300" Width="400">
+    <StackPanel>
+        <WrapPanel Margin="10" HorizontalAlignment="Center">
+            <Button Name="btnLoadFromFile" Margin="0,0,20,0" Click="btnLoadFromFile_Click">Load from File...</Button>
+            <Button Name="btnLoadFromResource" Click="btnLoadFromResource_Click">Load from Resource...</Button>
+        </WrapPanel>
+        <Image x:Name="imgDynamic" Margin="10"/>
+    </StackPanel>
+</Window>

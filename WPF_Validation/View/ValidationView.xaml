@@ -1,0 +1,214 @@
+﻿<Window x:Class="WPF_Validation.View.ValidationView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Validation.View"
+        xmlns:validationrule="clr-namespace:WPF_Validation.Rule.Validation"
+        mc:Ignorable="d"
+        Title="ValidationView" Height="450" Width="800">
+    <Grid>
+        <ScrollViewer>
+            <StackPanel MinWidth="200" Orientation="Vertical">
+                <StackPanel.Resources>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Orientation" Value="Horizontal"/>
+                        <Setter Property="Margin" Value="0,0,0,4"/>
+                    </Style>
+                    <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+                        <Setter Property="Width" Value="100"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+                    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                        <Setter Property="Padding" Value="0,3"/>
+                    </Style>
+                    <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
+                        <Setter Property="Padding" Value="0,3"/>
+                    </Style>
+                </StackPanel.Resources>
+
+                <!--当在文本框中输入非数字时，文本框显示红框，IDE提示系统提供的转换类的ConvertBack函数执行错误-->
+                <!--The actual message that is describing the error is stored in the ErrorContent property of a 
+                System.Windows.Controls.ValidationError object that is added to the Validation.Errors collection 
+                of the bound element by the binding engine at runtime. When the attached property Validation.Errors 
+                has ValidationError objects in it, another attached property named Validation.HasError returns true-->
+                <GroupBox Header="利用系统提供的转换类提供的验证" Margin="10 10 10 10" DataContext="{Binding Source={StaticResource Locator}, Path=ValidationViewModel}">
+                    <StackPanel Orientation="Vertical" Margin="0, 20, 0, 0">
+                        <StackPanel>
+                            <Label Content="年龄"/>
+                            <TextBox Width="150" Text="{Binding Age, UpdateSourceTrigger=PropertyChanged}"/><!--虽然Age是int类型，但会自动调用ToString函数，所以不需要转换类-->
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <!--为了能够在视图中看到错误消息，可以通过设置控件的Validation.ErrorTemplate附加属性-->
+                <GroupBox Header="自定义展示验证错误信息" Margin="10 10 10 10" DataContext="{Binding Source={StaticResource Locator}, Path=ValidationShowViewModel}">
+                    <StackPanel Orientation="Vertical" Margin="0, 20, 0, 0">
+                        <StackPanel>
+                            <Label Content="年龄"/>
+                            <TextBox Width="150" Text="{Binding Age, UpdateSourceTrigger=PropertyChanged}">
+                                <Validation.ErrorTemplate>
+                                    <ControlTemplate>
+                                        <StackPanel>
+                                            <!--Placeholder for the TextBox itself-->
+                                            <AdornedElementPlaceholder x:Name="ageTextBox"/>
+                                            <TextBlock Text="{Binding [0].ErrorContent}" Foreground="Red"/>
+                                        </StackPanel>
+                                    </ControlTemplate>
+                                </Validation.ErrorTemplate>
+                                <!--如何可视化显示验证错误信息的关键是设置Validation.ErrorTemplate，可以通过设置Style提供，见Assets中的TextBox.xaml-->
+                            </TextBox>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <!--自定义ValidationRule派生类 验证
+                如果希望自定义验证错误信息，那么就需要自己派生ValidationRule。然后自定义显示验证错误信息的方式跟上面一样
+                -->
+                
+                <!--
+                Validation process
+                If the Validate method of a ValidationRule object returns an invalid ValidationResult, the binding engine’s validation procedure listed below will halt. If the returned object’s IsValid property is set true, the validation process continues to the next step.
+
+                1.The Validate method of all custom ValidationRule objects that are associated with the binding and has the ValidationStep property set to RawProposedValue is executed until one of them returns an invalid ValidationResult or until all of them pass.
+                2.If the binding has a converter, its ConvertBack method gets called.
+                3.The binding engine tries to convert the value returned from the converter’s ConvertBack method, assuming there is a converter associated with binding, or the value of the dependency property to the type of the source property.
+                4.The setter of the source property is called.
+                5.The Validate method of the binding’s all ValidationRule objects with the ValidationStep property set to UpdatedValue are evaluated the same way as in the first step.
+                6.The same as the previous step for all ValidationRule objects with the ValidationStep property set to CommittedValue
+
+                Before the Validate method is executed for a ValidationRule object at any given step, any errors that were added to the Validation.Errors attached property of the bound element during that step in a previous validation procedure are removed. The Validation.Errors collection is also cleared when a valid value transfer occurs.
+                -->
+                <GroupBox Header="自定义ValidationRule派生类 验证" Margin="10 10 10 10" DataContext="{Binding Source={StaticResource Locator}, Path=CustomValidationRuleViewModel}">
+                    <StackPanel Orientation="Vertical" Margin="0, 20, 0, 0">
+                        <StackPanel>
+                            <Label Content="年龄"/>
+                            <TextBox Width="150">
+                                <TextBox.Text>
+                                    <Binding Path="Age" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <validationrule:StringToIntValidationRule ValidationStep="RawProposedValue"/>
+                                            <!--ValidationStep决定了绑定引擎何时执行StringToIntValidationRule类的Validate函数：
+                                            RawProposedValue:(默认)             验证->值转换
+                                            ConvertedProposedValue:                  值转换->验证->执行属性的set
+                                            UpdatedValue:                                         执行属性的set->验证
+                                            CommittedValue:                                                      值被提交到源->验证
+                                            -->
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <!--ExceptionValidationRule 验证
+                ExceptionValidationRule是WPF内建的ValidationRule派生类。debug模式下抛出异常，release模式下红框提示
+                -->
+                <GroupBox Header="ExceptionValidationRule 验证" Margin="10 10 10 10" DataContext="{Binding Source={StaticResource Locator}, Path=ExceptionValidationRuleViewModel}">
+                    <StackPanel Orientation="Vertical" Margin="0,20,0,0">
+                        <StackPanel>
+                            <Label Content="用户名" Target="{Binding ElementName=UserNameTextBox}"/>
+                            <TextBox x:Name="UserNameTextBox" Width="150">
+                                <TextBox.Text>
+                                    <Binding Path="UserName" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <ExceptionValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <!--<GroupBox Header="ExceptionValidationRule 验证的简单实现" Margin="10 10 10 10" DataContext="{Binding Source={StaticResource Locator}, Path=ExceptionValidationRuleViewModel}">
+                    <StackPanel Orientation="Vertical" Margin="0,20,0,0">
+                        <StackPanel>
+                            <Label Content="用户名" Target="{Binding ElementName=UserName}"/>
+                            <TextBox Width="150" Text="{Binding Path=UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>-->
+
+                <!--DataErrorValidationRule 验证
+                DataErrorValidationRule是WPF内建的ValidationRule派生类。不需要抛出异常，而是派生IDataErrorInfo接口，验证不通过会有红框
+                -->
+                <!--好处是它可用于轻松地处理交叉耦合属性。但也具有一个很大的弊端：
+                    索引器的实现通常会导致较大的 switch-case 语句（对象中的每个属性名称都对应于一种情况），
+                    必须基于字符串进行切换和匹配，并返回指示错误的字符串。而且，在对象上设置属性值之前，不会调用 IDataErrorInfo 的实现。-->
+                <GroupBox Header="DataErrorValidationRule 验证" Margin="10 10 10 10" DataContext="{Binding Source={StaticResource Locator}, Path=DataErrorValidationRuleViewModel}">
+                    <StackPanel Orientation="Vertical" Margin="0,20,0,0">
+                        <StackPanel>
+                            <Label Content="用户名"/>
+                            <TextBox Width="150">
+                                <TextBox.Text>
+                                    <Binding Path="UserName" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <DataErrorValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <!--<GroupBox Header="DataErrorValidationRule 验证的简单实现" Margin="10 10 10 10" DataContext="{Binding Source={StaticResource Locator}, Path=DataErrorValidationRuleViewModel}">
+                    <StackPanel Orientation="Vertical" Margin="0,20,0,0">
+                        <StackPanel>
+                            <Label Content="用户名" Target="{Binding ElementName=UserName}"/>
+                            <TextBox Width="150" Text="{Binding Path=UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>-->
+
+
+                    
+                
+                <!--DataErrorValidationRule + DataAnnotations 验证
+
+                Data annotations
+                In ASP.NET MVC the default model binder supports validation of properties using DataAnnotations attributes. DataAnnotations refers to a set of attributes in the System.ComponentModel.DataAnnotations namespace (defined in the System.ComponentModel.DataAnnotations.dll) that you can apply to a class or its members to specify validation rules, how data is displayed and relationships between classes. It basically enables you to move the validation logic from the controller to the model (or the model binder) which effectively makes it easier to write unit tests for the the controller actions.
+                In WPF you have to perform this kind of validation manually yourself and there is a System.ComponentModel.DataAnnotations.Validator static class that can be used for this. It exposes some overloaded methods that enable you to validate an entire object or a single property of an object.
+                -->
+                <GroupBox Header="DataErrorValidationRule + DataAnnotations 验证" Margin="10 10 10 10" DataContext="{Binding Source={StaticResource Locator}, Path=DataErrorValidationRuleDataAnnotationsViewModel}">
+                    <StackPanel Orientation="Vertical" Margin="0,20,0,0">
+                        <StackPanel>
+                            <Label Content="用户名"/>
+                            <TextBox Width="150" Text="{Binding UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Content="用户邮箱"/>
+                            <TextBox Width="150" Text="{Binding UserEmail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Content="用户电话"/>
+                            <TextBox Width="150" Text="{Binding UserPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
+
+                <!--上面的验证比较合理了，不过相对于开发人员还是太累赘了，开发人员关心的是Model的DataAnnotations的配置，而不是关心在这个ViewModel要如何做验证处理，所以我们进一步抽象。
+                编写一个ValidateModelBase，把需要处理的工作都放在里面。需要验证属性的Model去继承这个基类-->
+                <GroupBox Header="自定义基类ValidateModelBase(封装DataErrorValidationRule相关) + DataAnnotations 验证" Margin="10 10 10 10" DataContext="{Binding Source={StaticResource Locator}, Path=ValidateModelBaseDataAnnotationsViewModel}">
+                    <StackPanel Orientation="Vertical" Margin="0,20,0,0">
+                        <StackPanel>
+                            <Label Content="用户名"/>
+                            <TextBox Width="150" Text="{Binding UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Content="用户邮箱"/>
+                            <TextBox Width="150" Text="{Binding UserEmail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Content="用户电话"/>
+                            <TextBox Width="150" Text="{Binding UserPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

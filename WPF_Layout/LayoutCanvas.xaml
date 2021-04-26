@@ -1,0 +1,12 @@
+﻿<Window x:Class="WPF_Layout.LayoutCanvas"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="LayoutCanvas" Height="300" Width="300">
+    <Canvas>
+        <Button x:Name="button" Content="按钮" Canvas.Left="257" Canvas.Top="223" Width="75"/>
+    </Canvas>
+</Window>

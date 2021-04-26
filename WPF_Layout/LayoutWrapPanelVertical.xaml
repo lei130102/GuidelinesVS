@@ -1,0 +1,26 @@
+﻿<Window x:Class="WPF_Layout.LayoutWrapPanelVertical"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="LayoutWrapPanelVertical" Height="300" Width="300">
+    <WrapPanel Orientation="Vertical">
+        <Button x:Name="button" Content="按钮1"/>
+        <Button x:Name="button2" Content="按钮2" Width="75"/>
+        <Button x:Name="button3" Content="按钮3" Width="75"/>
+        <Button x:Name="button4" Content="按钮4" Width="75"/>
+        <Button x:Name="button5" Content="按钮5" Width="75"/>
+        <Button x:Name="button6" Content="按钮6" Width="75"/>
+        <Button x:Name="button7" Content="按钮7" Width="75"/>
+        <Button x:Name="button8" Content="按钮8" Width="75"/>
+        <Button x:Name="button9" Content="按钮9" Width="75"/>
+        <Button x:Name="button10" Content="按钮10" Width="75"/>
+        <Button x:Name="button11" Content="按钮11" Width="75"/>
+        <Button x:Name="button12" Content="按钮12" Width="75"/>
+        <Button x:Name="button13" Content="按钮13" Width="75"/>
+        <Button x:Name="button14" Content="按钮14" Width="75"/>
+        <Button x:Name="button15" Content="按钮15" Width="75"/>
+    </WrapPanel>
+</Window>

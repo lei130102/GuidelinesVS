@@ -1,0 +1,52 @@
+﻿<Window x:Class="WPF_Image.ImageSourceInXAML"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Image"
+        mc:Ignorable="d"
+        Title="ImageSourceInXAML" Height="800" Width="400">
+
+<!--
+    WPF引入了统一资源标识Uri(Unified Resource Identifier)来标识和访问资源。
+    其中较为常见的情况是用Uri加载图像。Uri表达式的一般形式为：协议+授权+资源的相对路径路径
+
+    协议：pack://
+    授权：有两种。一种用于访问编译时已经知道的文件，用application:///   另一种用于访问编译时不知道、运行时才知道的文件，用SiteOfOrigin:///         一般用逗号代替斜杠，也就是改写作application:,,,和pack:,,,
+    资源的路径：分为绝对路径和相对路径。一般使用相对路径，比如/Image/google.png
+
+    举例:
+                                                                      pack://application:////WPF_Image;component/Image/google.png     (xml文件中/要进行转义，不方便，所以一般只用,的)
+    pack://application:,,,/WPF_Image;component/Image/google.png
+                                                                      pack://application:////Image/google.png                         (xml文件中/要进行转义，不方便，所以一般只用,的)
+    pack://application:,,,/Image/google.png
+    /WPF_Image;component/Image/google.png
+    /Image/google.png
+
+
+    
+    
+    如果是引用外部项目资源，比如程序集WPF_Other
+                                                                      pack://application:////WPF_Other;component/Image/google.png     (xml文件中/要进行转义，不方便，所以一般只用,的)
+    pack://application:,,,/WPF_Other;component/Image/google.png
+    /WPF_Other;component/Image/google.png
+    
+    -->
+    
+    <StackPanel>
+        <ScrollViewer>
+            <StackPanel>
+                <Image Source="pack://application:,,,/WPF_Image;component/Image/google.png"/>
+                <Image Source="pack://application:,,,/Image/google.png"/>
+                <Image Source="/WPF_Image;component/Image/google.png"/><!--引用外部程序集的最优-->
+                <Image Source="/Image/google.png"/><!--最优-->
+            </StackPanel>
+        </ScrollViewer>
+    </StackPanel>
+</Window>
+
+    <!--查看google.png图片的属性：
+    “生成操作”这一栏当前是“Resource”，这样的话我们的图片在编译之后就以二进制的方式保存在了exe文件里面，即使我们现在把Image文件夹下的desktop.jpg删掉，之后双击exe执行文件也能正常显示图片。
+
+    那现在我把“生成操作”改成“内容”，把“复制到输出目录”改成“始终复制”，然后编译，可以看到生成路径下多了一个“Image”文件夹，里面放着一个desktop.jpg，如果我们删除这个jpg，则双击exe执行文件就
+    无法正常显示该图片背景。当然这样的方式有一个好处，就是如果我们想更换程序中使用的这张图片，直接在“Image”文件夹中替换该jpg就行，不过要保持名字一致，之后也不需要重新编译程序，直接双击运行就可以看到替换后的图片。-->

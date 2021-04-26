@@ -34,6 +34,11 @@ namespace WPF_Start_Startup
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             //MainWindow window = new MainWindow();
+            ////WPF 中的命令行参数
+            //if(e.Args.Length == 1)
+            //{
+            //    MessageBox.Show("Now opening file: \n\n" + e.Args[0]);
+            //}
             //window.Show();
 
             //或者

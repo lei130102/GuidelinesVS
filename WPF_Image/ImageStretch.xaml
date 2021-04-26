@@ -1,0 +1,42 @@
+﻿<Window x:Class="WPF_Image.ImageStretch"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Image"
+        mc:Ignorable="d"
+        Title="ImageStretch" Height="450" Width="600">
+
+    <!--Stretch属性
+在Source属性之后，显而易见这很重要，我认为Image控件的第二个最有趣的属性可能是Stretch属性。 它控制当加载的图片尺寸与Image控件的尺寸不完全匹配时怎么处理。 这将经常发生，因为窗口的大小可以由用户控制，除非您的布局非常静态，这意味着Image控件的大小也会改变。
+
+从下一个示例中可以看出，Stretch属性可以使图片的显示方式有很大差异：-->
+    
+
+    <!--它可能有点难以辨别，但所有四个Image控件都显示相同的图片，但Stretch属性的值不同。 以下是各种模式的工作原理：
+
+Uniform: 这是默认模式。 图片将自动缩放，以便它适合图片区域。 将保留图片的宽高比。
+UniformToFill: 图片将被缩放，以便完全填充图片区域。 将保留图片的宽高比。
+Fill: 图片将缩放以适合图片控件的区域。 可能无法保留宽高比，因为图片的高度和宽度是独立缩放的。
+None: 如果图片小于图片控件，则不执行任何操作。 如果它比图片控件大，则会裁剪图片以适合图片控件，这意味着只有部分图片可见。-->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Column="0" HorizontalAlignment="Center" FontWeight="Bold">Uniform</Label>
+        <Label Grid.Column="1" HorizontalAlignment="Center" FontWeight="Bold">UniformToFill</Label>
+        <Label Grid.Column="2" HorizontalAlignment="Center" FontWeight="Bold">Fill</Label>
+        <Label Grid.Column="3" HorizontalAlignment="Center" FontWeight="Bold">None</Label>
+        <Image Source="/Image/google.png" Stretch="Uniform" Grid.Column="0" Grid.Row="1" Margin="5"/>
+        <Image Source="/Image/google.png" Stretch="UniformToFill" Grid.Column="1" Grid.Row="1" Margin="5"/>
+        <Image Source="/Image/google.png" Stretch="Fill" Grid.Column="2" Grid.Row="1" Margin="5"/>
+        <Image Source="/Image/google.png" Stretch="None" Grid.Column="3" Grid.Row="1" Margin="5"/>
+    </Grid>
+</Window>

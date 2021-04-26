@@ -1,0 +1,39 @@
+﻿<Window x:Class="WPF_TextBox.TextBoxTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_TextBox"
+        mc:Ignorable="d"
+        Title="TextBoxTest" Height="450" Width="200">
+    <StackPanel Margin="10">
+        <!--TextBox控件是WPF中最基本的文字输入控件。它允许最终用户在一行、对话输入、或多行编写，就像是个编辑器。-->
+        <TextBox/>
+        <!--这就是你获取一个文本字段所需要的全部了，在运行这个示例之后，以及在截屏之前，我加入了一些文本，你也可以通过标签的方式来做，
+        通过使用Text属性去预先为文本框填充内容。-->
+        <TextBox Text="Hello, world!"/>
+        <!--尝试在文本框里鼠标右击。你会得到一个选项菜单，允许你和Windows剪贴板一块使用这个TextBox。
+        默认的撤销和重做的键盘快捷方式(Ctrl + Z 和 Ctrl + Y)也应该是起作用的，并且所有这些功能你能夠不受限制的使用。-->
+
+        <!--多行文本框
+如果你运行上面的例子，你会注意到，文本框控件默认是一个单行控件。当你按下 Enter时，啥事也不会发生，并且如果你添加
+    比一个单行文本框所能容纳的长度还要多的内容时，控件就出滚动条了。不过，使一个TextBox控件变成一个多行编辑器是非常简单的：-->
+        <TextBox AcceptsReturn="True" TextWrapping="Wrap"/>
+        <!--我添加了两个属性：AcceptsReturn使得TextBox变成一个多行控件，允许使用 回车/返回键进入到下一行， 
+        和TextWrapping属性，当内容到达一行的尾部时，它会使文本能够自动被包裹起来。-->
+
+        <!--有拼写检查的TextBox
+作为额外的好处，TextBox控件实际上带有英语和其他几种语言（as of writing、英语、法语、德语和西班牙语）的自动拼写检查。
+
+它非常类似于微软Word，其中拼写错误被划线，您可以右键单击它的建议替代品。启用拼写检查非常容易-->
+        <TextBox AcceptsReturn="True" TextWrapping="Wrap" SpellCheck.IsEnabled="True" Language="en-US"/>
+        <!--我们使用前面的多行文本框示例作为基础，然后添加了两个新属性：SpellCheck类中名为IsEnabled的附加属性，该属性仅支
+        持对父控件进行拼写检查，以及Language属性，该属性指示拼写检查器使用的语言。-->
+
+        <!--该示例由两个文本框控件组成：一个用于编辑，另一个用于输出当前的选择状态。为此，我们将IsReadOnly属性设置为true，以防止对状态文本框的编辑。
+        我们在第一个文本框中订阅SelectionChanged事件，我们在后面的代码中处理：-->
+        <TextBox SelectionChanged="TextBox_SelectionChanged"/>
+        <TextBox Name="txtStatus" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True"/>
+
+    </StackPanel>
+</Window>

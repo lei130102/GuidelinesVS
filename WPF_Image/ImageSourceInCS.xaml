@@ -1,0 +1,19 @@
+﻿<Window x:Class="WPF_Image.ImageSourceInCS"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Image"
+        mc:Ignorable="d"
+        Title="ImageSourceInCS" Height="800" Width="400">
+    <StackPanel>
+        <ScrollViewer>
+            <StackPanel>
+                <Image x:Name="image"/>
+                <Image x:Name="image2"/>
+                <Image x:Name="image3"/>
+                <Image x:Name="image4"/>
+            </StackPanel>
+        </ScrollViewer>
+    </StackPanel>
+</Window>

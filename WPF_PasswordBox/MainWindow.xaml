@@ -1,0 +1,22 @@
+﻿<Window x:Class="WPF_PasswordBox.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_PasswordBox"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="200">
+    <StackPanel>
+        <PasswordBox/>
+        <PasswordBox PasswordChar="X"/>
+        <PasswordBox MaxLength="6"/>
+    </StackPanel>
+</Window>
+
+<!--PasswordBox 与绑定
+当你需要从 PasswordBox 获得密码，你可以在逻辑代码里使用 Password 属性。然而，为了安全，
+Password 属性没有作为依赖属性实现，也就是说你不能绑定到它。
+
+这不一定会影响到你——就像上文所说，你仍旧可以在逻辑代码里读取密码。但如果你想实现 MVVM
+或者你就是喜欢数据绑定，这里有另一个解决方案。你可以在这里读到更详细的内容：
+http://blog.functionalfun.net/2008/06/wpf-passwordbox-and-data-binding.html-->

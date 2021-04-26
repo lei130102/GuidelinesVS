@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using WPF_MVVM_Basic.Utility;
 
 namespace WPF_MVVM_Basic
 {
@@ -13,5 +14,10 @@ namespace WPF_MVVM_Basic
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            //先初始化，再调用DispatcherHelper.CheckBeginInvokeOnUI方法来实现对UI线程的调度
+            DispatcherHelper.Initialize();
+        }
     }
 }
