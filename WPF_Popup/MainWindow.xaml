@@ -1,0 +1,58 @@
+﻿<Window x:Class="WPF_Popup.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Popup"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="300" Width="300">
+        <!--
+    Popup控件
+
+    Popup控件在许多方面与ToolTip控件相同，尽管他们之间没有相互继承的关系。
+
+    与ToolTip类似，Popup也只能包含单一内容(该内容存储在Popup.Child属性中，而不像ToolTip内容那样存储在ToolTip.Content属性中)
+
+    与ToolTip控件一样，Popup控件也可延伸出窗口的边界
+
+    可使用相同的布局属性放置Popup控件，并且可使用相同的IsOpen属性显示或隐藏Popup控件
+
+    Popup控件和ToolTip控件区别：
+    //1.Popup控件永远不会自动显示。为显示Popup控件，必须设置IsOpen属性
+    //2.默认情况下，Popup.StaysOpen属性被设置为true，并且Popup控件会一直显示，直到明确地将IsOpen属性设置为false为止。
+    //如果将Popup.StaysOpen属性设置为false，那么当用户在其他地方单击鼠标时，Popup控件将消失
+    //(注意，处于打开状态的Popup控件有点突兀，因为他的行为像是独立的窗口。如果移动他后面的窗口，Popup控件仍固定在原位置。
+    //对于ToolTip控件或将Popup控件的StaysOpen属性设置为false，就不会看到这一现象，因为这时一旦单击鼠标移动窗口，工具提示
+    //或弹出窗口就会消失)
+    //3.Popup控件提供了PopupAnimation属性，当把IsOpen属性设置为true时，通过该属性可控制Popup控件进入视野的方式。可以选择None(默认值)、
+    //Fade(弹出窗口的透明度逐渐增加)、Scroll(如果空间允许，弹出窗口将从窗口的左上角滑入)以及Slide(如果空间允许，弹出窗口将从上
+    //向下滑进其位置)。为使用这些动画中的任意一个，还必须将AllowsTransparency属性设置为true
+    //4.Popup控件可接收焦点。因此，可在其内部放置与用户交互的控件，如按钮。该功能是使用Popup控件(而不使用ToolTip控件)的主要
+    //原因之一
+    //5.Popup控件在System.Windows.Controls.Primitive命名空间中定义，因为他的最常见用法是用作更复杂控件的构件。在外观修
+    //饰方面可发现Popup控件和其他控件的区别很大。特别是，如果希望看到内容，就必须设置Background属性，因为Popup控件不会从包含
+    //他的窗口继承背景设置，而且您需要自行添加边框(对于这个目的，Border元素的效果堪称完美)
+
+    
+    
+    从技术角度看，在哪里定义Popup标签都无关紧要，因为这不与任何特定控件相关联。相反，为将Popup控件定位到恰当位置，需要由您来设置
+    布局属性
+
+    注意，可使用触发器显示和隐藏Popup控件——触发器是当特定属性遇到特定值时会自动发生的动作。只需创建当Popup.IsMouseOver属性值为true,
+    并且Popup.IsOpen属性也设置为true时进行响应的触发器
+    -->
+    <Grid Margin="10">
+        <TextBlock TextWrapping="Wrap">
+            You can use a Popup to provide a link for a specific
+            <Run TextDecorations="Underline" MouseEnter="Run_MouseEnter">term</Run> of interest.
+        </TextBlock>
+        <Popup Name="popLink" StaysOpen="False" Placement="Mouse" MaxWidth="200" PopupAnimation="Slide" AllowsTransparency="True">
+            <Border BorderBrush="Beige" BorderThickness="2" Background="White">
+                <TextBlock Margin="10" TextWrapping="Wrap">
+                For more information, see
+                <Hyperlink NavigateUri="http://en.wikipedia.org/wiki/Term" Click="Hyperlink_Click">Wikipedia</Hyperlink>
+                </TextBlock>
+            </Border>
+        </Popup>
+    </Grid>
+</Window>

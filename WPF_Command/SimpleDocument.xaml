@@ -1,0 +1,129 @@
+﻿<Window x:Class="WPF_Command.SimpleDocument"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Command"
+        mc:Ignorable="d"
+        Title="SimpleDocument" Height="300" Width="300">
+
+    <!--
+    禁用命令
+
+    当使用CanExecute事件时，还需要理解一个问题。由WPF负责调用RoutedCommand.CanExecute()方法来触发事件处理程序，并确定命令的状态。
+    当WPF命令管理器探测到某个确信十分重要的变化时——例如，当焦点从一个控件移到另一个控件上时，或执行了某个命令后，WPF命令管理器就会
+    完成该工作。控件还能引发CanExecuteChanged事件以通知WPF重新评估命令——例如，当用户在文本框中按下一个键时会发生该事件。总之，
+    CanExecute事件会被频繁地触发，并且不应在该事件的处理程序中使用耗时的代码
+
+    然而，其他因素可能影响命令状态。在当前示例中，为响应其他操作，可能会修改isDirty标志。如果发现命令状态未在正确的时间被更新，可强制WPF
+    为所有正在使用的命令调用CanExecute()方法。通过调用静态方法CommandManager.InvalidateRequerySuggested()完成该工作。然后命令管理器
+    触发RequerySuggested事件，通知窗口中的命令源(按钮、菜单项等)，此后命令源会重新查询他们链接的命令并相应地更新他们的状态
+    
+
+
+    WPF命令的局限性
+
+    WPF命令只能改变链接元素的状态的某个方面——IsEnabled属性的值。当需要更复杂的内容时，不难想象会出现什么情况。例如，可能希望创建可切换
+    打开或关闭状态的PageLayoutView命令。当切换到打开状态时，应相对调整对应的控件(例如，链接的菜单项应当被选中，在其旁边显示选中标记，并且
+    链接的工具栏按钮应高亮显示，就像将CheckBox控件添加到ToolBar控件上时那样)。但无法保持跟踪命令的“选中”状态，这意味着需要强制为控件处理
+    事件，并手动更新命令的状态以及其他所有链接的控件
+
+    并不存在解决该问题的简单方法。即使创建继承自RoutedUICommand的自定义类，并使其具有跟踪选中/未选中状态的能力(以及当该细节发生变化时引发事件)，
+    也仍需替换一些相关的基础结构。例如，需要创建能够监听来自自定义命令的通知的自定义CommandBinding类，但选中/未选中状态发生变化时进行响应，
+    然后更新链接的控件
+
+    一个明显的例子是，WPF命令模型不支持更新复选框按钮的用户界面状态。不过，可能会遇到其他类似的设计细节问题。例如，可创建一些能够切换到不同
+    “模式”的split按钮类型。同样，无法通过命令模型向其他链接的控件传播这一变化
+    -->
+
+    <!--
+    具有内置命令的控件
+
+    一些输入控件可自行处理命令事件
+    例如，TextBox类处理Cut、Copy以及Paste命令（还有Undo、Redo命令，以及一些来自EditingCommand类的用于选择文本以及将光标移到不同位置的命令）
+    
+    当控件具有自己的硬编码命令逻辑时，为使命令工作不需要做其他任何事情。例如，对于简单文本编辑器，添加下面的Cut等工具栏按钮，就会自动获得对
+    剪切、复制和粘贴文本的支持
+    单击这些按钮中的任意一个(当文本框具有焦点时)，就可以复制、剪切或从剪贴板粘贴文本。有趣的是，文本框还处理CanExecute事件。如果当前未在文本框
+    中选中任何内容，就会禁止剪切和复制命令。当焦点移到其他不支持这些命令的控件时，会自动禁用所有这三个命令(除非关联自己的CanExecute事件处理程序
+    以启用这些命令)
+
+    Cut、Copy和Paste命令被具有焦点的文本框处理。然而，由工具栏上的按钮触发的命令是完全独立的元素。在该例子中，这个过程之所以能够无缝工作，是因为
+    按钮被放到工具栏上，ToolBar类提供了一些内置逻辑，可将其子元素的CommandTarget属性动态设置为当前具有焦点的控件(从技术角度看，ToolBar控件一直
+    在关注着其父元素，即窗口，并在上下文中查找最近具有焦点的控件，即文本框。ToolBar控件有单独的焦点范围(focus scope)，并且在其上下文中按钮是具有
+    焦点的)
+
+    
+    
+    具有内置命令的控件不启用(禁用)内置命令的方法：
+    1.理想情况下，控件会提供用于关闭命令支持的属性，例如TextBox控件提供了IsUndoEnabled属性
+    2.为希望禁用的命令添加新的命令绑定，然后该命令绑定可提供新的CanExecute事件处理程序，并总是响应false
+    例如：
+    CommandBinding commandBinding = new CommandBinding(ApplicationCommands.Cut, null, SuppressCommand);
+    txt.CommandBindings.Add(commandBinding);
+    private void SuppressCommand(object sender, CanExecuteRoutedEventArgs e)
+    {
+        e.CanExecute = false;
+        e.Handled = true;       //阻止文本框自我执行计算，而文本框可能将CanExecute属性设置为true
+    }
+    (该方法并不完美。他可成功地为文本框禁用Cut快捷键(Ctrl+X)和上下文菜单中的Cut命令。然而，仍会在上下文菜单中显示处于禁用状态的该选项)
+    3.使用InputBinding集合删除触发命令的输入
+    例如，可使用代码禁用触发TextBox控件中Copy命令的Ctrl+C组合键
+    KeyBinding keyBinding = new KeyBinding(ApplicationCommands.NotACommand, Key.C, ModifierKeys.Control); //使用特定的ApplicationCommands.NotACommand值，该命令什么都不做，他专门用于禁用输入绑定
+    txt.InputBindings.Add(keyBinding);
+    当使用这种方法时，仍启用Copy命令。可通过自己创建的按钮触发该命令(或使用文本框的上下文菜单触发命令，除非也通过将ContextMenu属性设置为null删除了上下文菜单)
+
+    注意，为禁用某些特性，总需要添加新的命令绑定或输入绑定。不能删除已存在的绑定，这是因为已存在的绑定不在公有的CommandBinding和InputBinding集合中。反而，他们通过称为类绑定(class binding)的单独机制进行定义
+    -->
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Command="New"/>
+                <MenuItem Command="Open"/>
+                <MenuItem Command="Save"/>
+                <MenuItem Command="SaveAs"/>
+                <Separator/>
+                <MenuItem Command="Close"/>
+            </MenuItem>
+        </Menu>
+        <!--如果在不同容器(不是ToolBar或Menu控件)中放置按钮，就不会获得这项优势。这意味着除非手动设置CommandTarget属性，否则按钮不能工作。
+            为此，必须使用命名目标元素的绑定表达式：
+            假设文本框被命名为txtDocument，那么就应该像下面这样定义按钮：
+            <StackPanel>
+                <Button Command="ApplicationCommands.Cut" CommandTarget="{Binding ElementName=txtDocument}" Content="Cut"/>
+                <Button Command="ApplicationCommands.Copy" CommandTarget="{Binding ElementName=txtDocument}" Content="Copy"/>
+                <Button Command="ApplicationCommands.Paste" CommandTarget="{Binding ElementName=txtDocument}" Content="Paste"/>
+                <Button Command="ApplicationCommands.Undo" CommandTarget="{Binding ElementName=txtDocument}" Content="Undo"/>
+            </StackPanel>
+
+            另一个较简单的选择是使用附加属性FocusManager.IsFocusScope创建新的焦点范围。当触发命令时，该焦点范围会通知WPF在父元素的焦点范围内查找元素：
+            <StackPanel FocusManager.IsFocusScope="True">
+                <Button Command="ApplicationCommands.Cut" Content="Cut"/>
+                <Button Command="ApplicationCommands.Copy" Content="Copy"/>
+                <Button Command="ApplicationCommands.Paste" Content="Paste"/>
+                <Button Command="ApplicationCommands.Undo" Content="Undo"/>
+            </StackPanel>
+            该方法还有一个附加优点，即相同的命令可应用于多个控件，不像上面那样对CommandTarget进行硬编码。此外，Menu和ToolBar控件默认将
+            FocusManager.IsFocusScope属性设置为true，但如果希望简化命令路由行为，不在父元素上下文中查找具有焦点的元素，也可将该属性设为false
+            -->
+        <ToolBarTray Grid.Row="1">
+            <ToolBar>
+                <Button Command="New" Content="New"/>
+                <Button Command="Open" Content="Open"/>
+                <Button Command="Save" Content="Save"/>
+            </ToolBar>
+            <ToolBar>
+                <Button Command="Cut" Content="Cut"/>
+                <Button Command="Copy" Content="Copy"/>
+                <Button Command="Paste" Content="Paste"/>
+            </ToolBar>
+        </ToolBarTray>
+        <TextBox Name="txt" Margin="5" Grid.Row="2" TextWrapping="Wrap" AcceptsReturn="True" TextChanged="txt_TextChanged"/>
+    </Grid>
+</Window>

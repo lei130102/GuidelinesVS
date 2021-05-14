@@ -1,0 +1,94 @@
+﻿<Window x:Class="WPF_Command.TwoDocument"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Command"
+        mc:Ignorable="d"
+        Title="TwoDocument" Height="300" Width="300">
+        <!--
+        在不同位置使用相同的命令
+
+    在WPF命令模型中，一个重要概念是范围(scope)。尽管每个命令仅有一份副本，但使用命令的效果却会根据触发命令的位置而异。例如，如果有两个文本框，他们都支持
+    Cut、Copy和Paste命令，操作只会在当前具有焦点的文本框中发生
+
+    如果使用Cut、Copy和Paste命令，就会发现他们能够在正确的文本框中自动工作。然而对于自己实现的命令——New、Open以及Save命令——情况就不同了。问题在于当为这些
+    命令中的某个命令触发Executed事件时，不知道该事件是属于第一个文本框还是第二个文本框。尽管ExecutedRoutedEventArgs对象提供了Source属性，但该属性反映的
+    是具有命令绑定的元素(像sender引用)；而到目前为止，所有命令都被绑定到了容器窗口
+    
+    解决这个问题的方法是使用文本框的CommandBindings集合分别为每个文本框绑定命令
+        <TextBox Margin="5" Grid.Row="2" TextWrapping="Wrap" AcceptsReturn="True" TextChanged="txt_TextChanged">
+            <TextBox.CommandBindings>
+                <CommandBinding Command="ApplicationCommands.Save" Executed="SaveCommand_Executed" CanExecute="SaveCommand_CanExecute"></CommandBinding>
+            </TextBox.CommandBindings>
+        </TextBox>
+        <TextBox Margin="5" Grid.Row="3" TextWrapping="Wrap" AcceptsReturn="True" TextChanged="txt_TextChanged">
+            <TextBox.CommandBindings>
+                <CommandBinding Command="ApplicationCommands.Save" Executed="SaveCommand_Executed" CanExecute="SaveCommand_CanExecute"></CommandBinding>
+            </TextBox.CommandBindings>
+        </TextBox>
+    现在文本框处理Executed事件。在事件处理程序中，可使用这一信息确保保存正确的信息
+    private void SaveCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+        string text = ((TextBox)sender).Text;
+        MessageBox.Show("About to save:" + text);
+        ...
+        isDirty = false;
+    }
+    带来的问题：
+    1.简单地isDirty标志不再能满足需要，因为现在需要跟踪两个文本框
+     可以使用TextBox.Tag属性存储isDirty标志——使用该方法，无论何时调用CanExecuteSave()方法，都可以查看sender的Tag属性
+     (更好)可以创建私有地字典集合来保存isDirty值，按照控件引用编写索引。当触发CanExecuteSave()方法时，查找属于sender的isDirty值
+    2.创建了两个命令绑定，而实际上只需要一个。这会使XAML文件更加混乱，维护起来更难。如果在这两个文本框之间有大量共享的命令，这个问题尤其明显
+     可以在窗口资源创建一个命令绑定，并向两个文本框的CommandBindings集合中添加同一个绑定
+    
+    -->
+    <Window.Resources>
+        <CommandBinding x:Key="binding" Command="ApplicationCommands.Save"
+                        Executed="SaveCommand" CanExecute="SaveCommand_CanExecute"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Command="New"/>
+                <MenuItem Command="Open"/>
+                <MenuItem Command="Save"/>
+                <MenuItem Command="SaveAs"/>
+                <Separator/>
+                <MenuItem Command="Close"/>
+            </MenuItem>
+        </Menu>
+        <ToolBarTray Grid.Row="1">
+            <ToolBar>
+                <Button Command="New" Content="New"/>
+                <Button Command="Open" Content="Open"/>
+                <Button Command="Save" Content="Save"/>
+            </ToolBar>
+            <ToolBar>
+                <Button Command="Cut" Content="Cut"/>
+                <Button Command="Copy" Content="Copy"/>
+                <Button Command="Paste" Content="Paste"/>
+            </ToolBar>
+        </ToolBarTray>
+        <TextBox Margin="5" Grid.Row="2" TextWrapping="Wrap" AcceptsReturn="True" TextChanged="txt_TextChanged">
+            <TextBox.CommandBindings>
+                <StaticResource ResourceKey="binding"/>
+            </TextBox.CommandBindings>
+        </TextBox>
+        <TextBox Margin="5" Grid.Row="3" TextWrapping="Wrap" AcceptsReturn="True" TextChanged="txt_TextChanged">
+            <TextBox.CommandBindings>
+                <StaticResource ResourceKey="binding"/>
+            </TextBox.CommandBindings>
+
+            <!--<TextBox.CommandBindings>
+                <CommandBinding Command="ApplicationCommands.Save" Executed="SaveCommand"/>
+            </TextBox.CommandBindings>-->
+        </TextBox>
+    </Grid>
+</Window>

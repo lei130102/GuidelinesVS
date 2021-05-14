@@ -1,0 +1,9 @@
+﻿<Application x:Class="WPF_ItemsControl.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WPF_ItemsControl"
+             StartupUri="ItemTemplate.xaml">
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>

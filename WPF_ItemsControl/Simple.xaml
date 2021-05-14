@@ -1,0 +1,23 @@
+﻿<Window x:Class="WPF_ItemsControl.Simple"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ItemsControl"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="Simple" Height="150" Width="200">
+    <!--WPF具有多种用于显示数据列表的控件。它们有多种形状和形式，并且它们的复杂程度和它们为您执行的工作量各不相同。最简单的变体是ItemsControl，它几乎只是一个基于标记的循环 - 你需要应用所有的样式和模板，但在很多情况下，这正是你需要的。-->
+    <!--正如您所看到的，没有任何内容表明我们使用控件来重复项目而不是仅仅手动添加项目。 5个TextBlock控件 - 默认情况下，ItemsControl完全没有外观。如果你点击其中一个项目，没有任何反应，因为没有选定项目的概念或类似的东西。-->
+    
+    <Grid Margin="10">
+        <ItemsControl>
+            <system:String>ItemsControl Item #1</system:String>
+            <system:String>ItemsControl Item #2</system:String>
+            <system:String>ItemsControl Item #3</system:String>
+            <system:String>ItemsControl Item #4</system:String>
+            <system:String>ItemsControl Item #5</system:String>
+        </ItemsControl>
+    </Grid>
+
+</Window>

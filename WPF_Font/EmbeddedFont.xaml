@@ -1,0 +1,37 @@
+﻿<Window x:Class="WPF_Font.EmbeddedFont"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Font"
+        mc:Ignorable="d"
+        Title="EmbeddedFont" Height="300" Width="300">
+        <!--
+    字体嵌入
+
+    处理不常见字体的另一种选择是在应用程序中嵌入字体。通过嵌入字体，应用程序就永远不会出现查找所需字体这一问题
+
+    首先向应用程序添加字体文件(通常是具有.ttf扩展名的文件)，并将Build Action选项设置为Resource，接下来，当使用字体时，需要在字体家族名称之前
+    添加字符序列“./#”。WPF将“./”字符解释为“当前文件夹”
+
+    XAML打包系统
+    可直接在浏览器中运行单独的未编译的(称为松散的)XAML文件。唯一的限制是XAML文件不能使用代码隐藏文件。在这种情况下，当前文件夹就是XAML所在的文件夹
+    并且WPF在保存XAML文件的同一目录下查找字体文件，从而可以在应用程序中使用他们
+    更普遍的情况是，在运行前把WPF应用程序编译为.NET程序集。对于这种情况，当前文件夹仍然是XAML文档所在的位置，只是文档已被编译过并已嵌入到程序集中。
+    WPF使用特定的URI语法来引用编译过的资源。可在几个地方使用该URI，包括通过FontFamily.BaseUri属性加以使用。WPF使用该URI作为查找字体的基础。因此，
+    当在编译过的应用程序中使用“./”语法时，WPF会查找作为资源嵌入到程序集中的字体，他们是和编译过的XAML文件一起被嵌入到程序集中的
+    可以在“./”字符序列之后提供文件名称，但通常添加数字记号(#)和字体的实际家族名，在本示例中，嵌入的字体名为Bayern
+
+    显然，嵌入字体需要考虑许可问题，遗憾的是，大多数字体销售商允许他们的字体被嵌入到文档中(如PDF文件)，但不允许嵌入到应用程序中(如WPF程序集)，即使
+    最终用户不直接访问嵌入的WPF字体也同样如此。WPF并未强制使用字体许可，但开发人员在重新分发字体前，应当确保具有合法的许可
+
+    可使用Microsoft提供的免费字体属性扩展使用工具来检查字体的嵌入权限，可以从
+    http://www.microsoft.com/typography/TrueTypeProperty21.mspx
+    网址获得该工具。一旦安装该实用工具，就可右击任意字体文件，选择Properties菜单项以查看与其相关的更多细节信息。确切地讲，可以通过检查Embedding选项卡
+    来查看当前字体是否允许嵌入的更详细信息。使用Installed Embedding Allowed标识的字体可嵌入到WPF应用程序中，而使用Editable Embedding Allowed标识的
+    字体不能嵌入到WPF应用程序中。对于特定字体的许可信息，可从其销售商处咨询
+    -->
+    <Grid>
+        <Label Name="tst" FontSize="20" FontFamily="./#Bayern">This is an embedded font</Label>
+    </Grid>
+</Window>

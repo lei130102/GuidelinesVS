@@ -1,0 +1,135 @@
+﻿<!--
+    资源字典
+
+    如果希望在多个项目之间共享资源，可创建资源字典。资源字典只是XAML文档，除了存储希望使用的资源外，不做其他任何事件
+
+    当为应用程序添加资源字典时，务必将Build Action设置为Page(与其他任意XAML文件一样)。这样可保证为了获得最佳性能而将资源字典编译为BAML。
+    不过，将资源字典的Build Action设置为Resource也是非常完美的，这样他会被嵌入到程序集中，但是不会被编译(在运行时解析他的速度要稍微慢一些)
+    
+    资源字典的用处：
+    1.可将“皮肤”应用到控件上
+    2.为了存储需要被本地化的内容(如错误字符串)
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    使用资源字典
+
+    需要将其合并到应用程序某些位置的资源集合中，通常将其合并到应用程序的资源集合中
+
+    <Application.Resources>
+        <ResourceDictionary>                                                 这个就是应用程序的资源集合
+
+            如果希望添加自己的资源并合并到资源字典中，那么放在这里
+
+            <ResourceDictionary.MergedDictionaries>                          如果不执行这一步骤，MergedDictionaries属性将为空
+                <ResourceDictionary Source="AppBrushes.xaml"/>
+                <ResourceDictionary Source="WizardBrushes.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            如果希望添加自己的资源并合并到资源字典中，那么放在这里
+    
+        </ResourceDictionary>
+    </Application.Resources>
+
+    
+    注意，在相互重叠的不同资源集合中存储同名的资源是完全合理的。然而，不允许合并使用相同资源名称的资源字典。如果使用重复的资源名称，当编译
+    应用程序时将收到XamlParseException异常
+
+    
+    
+    
+    
+    
+    在程序集之间共享资源
+
+    如果希望在多个应用程序之间共享资源字典，可复制并分发包含资源字典的XAML文件。这是最简单的方法。但这样不能对版本进行任何控制，更有条例的方法
+    是将资源字典编译到单独的类库程序集中，并分发组件
+
+    1.通过代码
+    ResourceDictionary resourceDictionary = new ResourceDictionary();
+    resourceDictionary.Source = new Uri("ResourceLibrary;component/ReusableDictionary.xaml", UriKind.Relative);
+    cmd.Background = (Brush)resourceDictionary["TileBrush"];
+    2.通过标记扩展
+    使用ComponentResourceKey标记扩展为资源创建键名
+    (注意，直到现在，只介绍了为键名使用字符串(如TileBrush)的资源。命名资源的最常用方式就是使用字符串。然而，WPF还提供了一些聪明的资源扩展功能，
+    当使用特定类型的非字符串键名时，他们会自动起作用。例如对于样式，可使用Type对象作为键名。这会告诉WPF自动将样式应用到相应类型的元素上。同样，
+    可为希望在程序集之间共享的任何资源使用ComponentResourceKey实例作为键名)
+    在继续执行任何操作前，需要确保已经为资源字典提供了正确的名称。为了让这种技巧生效，必须将资源字典放置到generic.xaml文件中，并且必须将该文件放到
+    应用程序文件夹的Themes子文件夹中。generic.xaml文件中的资源被认为是默认主题的一部分，并且他们总是可用的
+    (如果有大量资源，并希望尽量合理地组织他们，可创建单独的资源字典，就像前面介绍的那样。但要确保将这些资源字典合并到generic.xaml文件中，从而为
+    共享资源做好准备)
+    下一步是为存储在ResourceLibrary程序集中希望共享的资源创建键名。当使用ComponentResourceKey时，需要提供两部分信息：
+    a.类库程序集中类的引用
+    本例就是CustomResources类，可以不包含任何代码
+    public class CustomResources
+    {}
+    可以使用该类和资源ID创建键名(x:key部分)：
+    <ImageBrush
+      x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type local:CustomResources}, ResourceId=SadTileBrush}"
+      TileMode="Tile"
+      ViewportUnits="Absolute" Viewport="0 0 32 32"
+      ImageSource="ResourceLibrary;component/sadface.jpg" Opacity="0.3">
+    </ImageBrush>
+    注意ImageSource使用相对URI，明确地指示图像是ResourceLibrary组件的一部分(如果只是使用图像名，应用程序就会在他自己的资源中查找图像)
+
+    然后就可以在另一个应用程序中使用他
+    xmlns:res="clr-namespace:ResourceLibrary;assembly=ResourceLibrary"
+
+    使用包含ComponentResourceKey的DynamicResource(这是合理的，因为ComponentResourceKey是资源名)
+    <Button Background="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type res:CustomResources}, ResourceId=SadTileBrush}}" ... />
+    (注意，当使用ComponentResourceKey时，必须使用动态资源，不能使用静态资源)
+
+    还可以进一步优化，使资源更容易使用。可定义一个静态属性，让他返回需要使用的正确ComponentResourceKey。通常在组件的类中定义该属性
+    public class CustomResources
+    {
+        public static ComponentResourceKey SadTileBrushKey
+        {
+            get
+            {
+                return new ComponentResourceKey(typeof(CustomResources), "SadTileBrush");
+            }
+        }
+    }
+    现在可以使用static标记扩展访问该属性并应用资源，而不必在标记中使用很长的ComponentResourceKey
+    <ImageBrush
+      x:Key="SadTileBrush"
+      TileMode="Tile"
+      ViewportUnits="Absolute" Viewport="0 0 32 32"
+      ImageSource="ResourceLibrary;component/sadface.jpg" Opacity="0.3">
+    </ImageBrush>
+
+    本质上，这种便捷方法与前面介绍的SystemXxx类使用相同的技术。例如，当检索SystemColors.WindowTextBrushKey时，所接收的也是正确的资源键对象。
+    唯一的区别是，他是私有SystemResourceKey(而不是ComponentResourceKey)的一个实例。这两个类都继承自ResourceKey抽象类
+    b.描述性的资源ID
+    
+    -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ResourceLibrary"
+    >
+
+
+    <ImageBrush
+      x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type local:CustomResources}, ResourceId=SadTileBrush}"
+      TileMode="Tile"
+      ViewportUnits="Absolute" Viewport="0 0 32 32"
+      ImageSource="ResourceLibrary;component/sadface.jpg" Opacity="0.3">
+    </ImageBrush>
+
+    <ImageBrush
+      x:Key="SadTileBrush"
+      TileMode="Tile"
+      ViewportUnits="Absolute" Viewport="0 0 32 32"
+      ImageSource="ResourceLibrary;component/sadface.jpg" Opacity="0.3">
+    </ImageBrush>
+
+</ResourceDictionary>

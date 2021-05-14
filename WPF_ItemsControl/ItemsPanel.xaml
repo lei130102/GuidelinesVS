@@ -1,0 +1,34 @@
+﻿<Window x:Class="WPF_ItemsControl.ItemsPanel"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ItemsControl"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="ItemsPanel" Height="150" Width="250">
+
+    <!--在上面的示例中，所有项目都是从上到下呈现，每个项目占据整行。发生这种情况是因为ItemsControl默认情况下将所有项抛出到垂直对齐的StackPanel中。尽管如此，它很容易改变，因为ItemsControl允许您更改用于保存所有项目的面板类型。这是一个例子：-->
+
+    <!--我们指定ItemsControl应该使用WrapPanel作为其模板，方法是在ItemsPanelTemplate属性中声明一个，只是为了好玩，我们引入一个ItemTemplate，使字符串呈现为按钮。您可以使用任何WPF面板，但有些面板比其他面板更有用。-->
+
+    <Grid Margin="10">
+        <ItemsControl>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding}" Margin="0,0,5,5"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <system:String>Item #1</system:String>
+            <system:String>Item #2</system:String>
+            <system:String>Item #3</system:String>
+            <system:String>Item #4</system:String>
+            <system:String>Item #5</system:String>
+        </ItemsControl>
+    </Grid>
+</Window>

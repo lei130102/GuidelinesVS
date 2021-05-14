@@ -1,0 +1,21 @@
+﻿<Window x:Class="WPF_TextOptions.TextRenderingMode"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_TextOptions"
+        mc:Ignorable="d"
+        Title="TextRenderingMode" Height="300" Width="400">
+
+    <!--TextRenderingMode 属性可以让你控制显示文本所用的抗锯齿算法。当 TextFormattingMode 属性被设为 Display 时，它的效果最明显。-->
+
+    <StackPanel Margin="10" TextOptions.TextFormattingMode="Display">
+        <Label TextOptions.TextRenderingMode="Auto" FontSize="9">TextRenderMode.Auto, small text</Label>
+        <Label TextOptions.TextRenderingMode="Aliased" FontSize="9">TextRenderMode.Aliased, small text</Label>
+        <Label TextOptions.TextRenderingMode="ClearType" FontSize="9">TextRenderMode.ClearType, small text</Label>
+        <Label TextOptions.TextRenderingMode="GrayScale" FontSize="9">TextRenderMode.GrayScale, small text</Label>
+        <Label TextOptions.TextRenderingMode="Auto" FontSize="9">TextRenderMode.Auto, small text</Label>
+        <Label TextOptions.TextRenderingMode="ClearType" FontSize="9">TextRenderMode.ClearType, small text</Label>
+        <Label TextOptions.TextRenderingMode="GrayScale" FontSize="9">TextRenderMode.GrayScale, small text</Label>
+    </StackPanel>
+</Window>

@@ -1,0 +1,57 @@
+﻿<Window x:Class="WPF_Command.MonitorCommands"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Command"
+        mc:Ignorable="d"
+        Title="MonitorCommands" Height="300" Width="340" Unloaded="window_Unloaded">
+
+    <!--
+    跟踪和翻转命令
+
+    WPF命令模型缺少的一个特性是翻转命令。
+    
+    尽管提供了ApplicationCommands.Undo命令，但该命令通常用于编辑控件(如TextBox控件)以维护他们自己的Undo历史。如果希望支持应用程序范围内的
+    Undo特性，需要在内部跟踪以前的状态，并当触发Undo命令时还原该状态
+
+    遗憾的是，扩展WPF命令系统并不容易。相对来说没几个入口点可用于连接自定义逻辑，并且对于可用的几个入口点也没有提供说明文档。
+    为创建通用的、可重用的Undo特性，需要创建一组全新的“能够撤销的”命令类，以及一个特定类型的命令绑定。本质上，必须使用自己创建的新
+    命令系统替换WPF命令系统
+
+    更好的解决方案是设计自己的用于跟踪和翻转命令的系统，但使用CommandManager类保存命令历史。在本例中，窗口包含两个文本框和一个列表框，
+    可以自由地在这两个文本框中输入内容，而列表框则一直跟踪在这个两个文本框中发生的所有命令。可通过单击Reverse Last Command按钮翻转最后一个命令
+    
+    
+    
+    
+    -->
+   
+    <Window.CommandBindings>
+        <CommandBinding Command="local:MonitorCommands.ApplicationUndo"
+                        Executed="ApplicationUndoCommand_Executed"
+                        CanExecute="ApplicationUndoCommand_CanExecute"/>
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ToolBarTray Grid.Row="0">
+            <ToolBar>
+                <Button Command="ApplicationCommands.Cut" Content="Cut"/>
+                <Button Command="ApplicationCommands.Copy" Content="Copy"/>
+                <Button Command="ApplicationCommands.Paste" Content="Paste"/>
+                <Button Command="ApplicationCommands.Undo" Content="Undo"/>
+            </ToolBar>
+            <ToolBar>
+                <Button Command="local:MonitorCommands.ApplicationUndo" Content="Reverse Last Command"/>
+            </ToolBar>
+        </ToolBarTray>
+        <TextBox Margin="5" Grid.Row="1" TextWrapping="Wrap" AcceptsReturn="True"/>
+        <TextBox Margin="5" Grid.Row="2" TextWrapping="Wrap" AcceptsReturn="True"/>
+        <ListBox Grid.Row="3" Name="lstHistory" Margin="5" DisplayMemberPath="CommandName"/>
+    </Grid>
+</Window>

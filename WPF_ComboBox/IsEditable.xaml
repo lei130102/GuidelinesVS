@@ -1,0 +1,41 @@
+﻿<Window x:Class="WPF_ComboBox.IsEditable"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ComboBox"
+        mc:Ignorable="d"
+        Title="IsEditable" Height="450" Width="800">
+    <StackPanel Margin="10">
+
+        <!--
+    ComboBox的一个很酷的事情是它支持让用户从项列表中选择或输入自己的值。 
+    在您希望通过为用户提供预定义选项集来帮助用户的情况下非常有用，同时仍然为他们提供手动输入所需值的选项。 这全部由IsEditable属性控制，
+    它可以更改ComboBox的行为和外观：
+    
+    如您所见，我可以随意输入什么值或从列表中选择一个。 如果从列表中选中，它会覆盖ComboBox的文本。
+还有自动完成功能，ComboBox将自动尝试帮助用户在输入时选择现有值，如下一个屏幕截图所示，我刚刚开始输入“Co”：
+    
+    默认情况下，匹配不区分大小写，但您可以通过将IsTextSearchCaseSensitive设置为True来区分。 如果您根本不想要自动完成功能，可以通过将
+    IsTextSearchEnabled设置为False来禁用它。
+    -->
+        
+        <ComboBox IsEditable="True">
+            <ComboBoxItem>
+            ComboBox Item #1
+            </ComboBoxItem>
+            <ComboBoxItem>
+            ComboBox Item #2
+            </ComboBoxItem>
+            <ComboBoxItem>
+            ComboBox Item #3
+            </ComboBoxItem>
+            <ComboBoxItem>
+            ComboBox Item #1
+            </ComboBoxItem>
+            <ComboBoxItem>
+            ComboBox Item #4
+            </ComboBoxItem>
+        </ComboBox>
+    </StackPanel>
+</Window>

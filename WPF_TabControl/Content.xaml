@@ -1,0 +1,145 @@
+﻿<Window x:Class="WPF_TabControl.Content"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_TabControl"
+        mc:Ignorable="d"
+        Title="Content" Height="900" Width="400">
+    <StackPanel>
+
+<!--使用WPF TabControl
+
+WPF标签栏控制功能能够实现将界面拆分为多个分区。 用户可以通过点击通常位于界面顶部的页面标签，访问对应的页面分区。
+页面控制被广泛的运用在Windows软件甚至其自身系统的界面上， 例如运用在文件及文件夹的对话框等等一些界面上。
+
+如你所见，每一个分栏表现为一个标签栏组件。组件上的文字可以通过标题属性进行设置。标签栏组件附属于内容控制类，
+这就意味着如果标签栏启用状态下，你可以自定义标签栏页面显示中的每一个部分。（如图所示）我在这个例子中我仅用了一个标签，
+但是如果你想在选项卡中放置多个标签栏控件，你只需要在其中增加多个子控制组件即可。-->
+
+<!--自定义标头
+
+再次重申，当你想自定义标签栏的外观时，WPF是非常具有灵活性的，其中的内容可以用任何你喜好的风格形式进行表达。
+因此，标签栏的标题也一样，标签栏的属性可以被设置成任何你喜欢的形式-->
+
+
+        <!--
+        TabItem表示TabControl控件中的一页。TabItem类添加的唯一有意义的属性是IsSelected，该属性指示选项卡当前是否显示在TabControl控件中
+
+        与Content属性一样，Header属性也可接受任何类型的对象。继承自UIElement的类通过渲染来显示，对于内联文本以及其他所有对象则使用ToString()方法
+        
+        -->
+
+            <TabControl>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Image/n00.png"/>
+                        <TextBlock Text="Blue" Foreground="Blue"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <Label Content="Content goes here..."/>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Image/n01.png"/>
+                        <TextBlock Text="Red" Foreground="Red"/>
+                    </StackPanel>
+                </TabItem.Header>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Image/n02.png"/>
+                        <TextBlock Text="Green" Foreground="Green"/>
+                    </StackPanel>
+                </TabItem.Header>
+            </TabItem>
+        </TabControl>
+
+
+
+
+<!--WPF TabControl-设置TabItems的样式
+
+在前一章，我们看过了自定义WPF TabControl的选项卡标题有多容易，例如为文本添加图像或颜色。 但是，如果您想修改选项卡
+的外观（包括形状和边框），就需要覆盖TabItem元素的控件模板，虽然这不像WPF的其他区域那样直接，但它仍然可以管理
+
+正如您所看到的，这使得TabControl看起来有点像Windows 8的风格，没有边框和不太精致的颜色来标记选定的选项卡，未选定的
+选项卡没有背景。 所有这一切都是通过使用Style更改ControlTemplate来实现的。 通过添加ContentPresenter 控件，我们指
+定TabItem的内容应放在何处。 我们还有几个触发器，它们根据IsSelected属性控制选项卡的背景颜色。-->
+
+        <TabControl Margin="10" BorderThickness="0" Background="LightGray">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Grid Name="Panel">
+                                    <ContentPresenter x:Name="ContentSize"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      ContentSource="Header"
+                                                      Margin="10,2"/>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Panel" Property="Background" Value="LightSkyBlue"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="False">
+                                        <Setter TargetName="Panel" Property="Background" Value="white"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+            <TabItem Header="General">
+                <Label Content="Content goes here..."/>
+            </TabItem>
+            <TabItem Header="Security"/>
+            <TabItem Header="Details"/>
+        </TabControl>
+
+
+        <!--如果你想要一个不那么精致的外观，它就像更改模板一样简单。 例如，你可能想要一个边框，但有圆角和渐变背景 - 没问题！ 看看下一个例子，我们在那里完成：
+        正如您所看到的，我只是在ContentPresenter周围添加了一个Border控件来实现这种外观的变化。 希望这能证明选项卡的自定义样式是多么容易，以及这种技术的无限可能。-->
+        
+        
+        <TabControl Margin="10" BorderBrush="Gainsboro">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border Name="Border" BorderThickness="1,1,1,0" BorderBrush="Gainsboro" CornerRadius="4,4,0,0" Margin="2,0">
+                                    <ContentPresenter x:Name="ContentSite"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      ContentSource="Header"
+                                                      Margin="10,2"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="LightSkyBlue"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="False">
+                                        <Setter TargetName="Border" Property="Background" Value="GhostWhite"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+            <TabItem Header="General">
+                <Label Content="Content goes here..."/>
+            </TabItem>
+            <TabItem Header="Security"/>
+            <TabItem Header="Details"/>
+        </TabControl>
+
+    </StackPanel>
+</Window>

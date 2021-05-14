@@ -21,6 +21,7 @@ namespace WPF_MVVM_Basic.View
     /// </summary>
     [Export(typeof(IPluginView))]
     [ExportMetadata("Type", new[] { "歌曲" })]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public partial class SongView : Window, IPluginView
     {
         public SongView()

@@ -6,12 +6,30 @@
         xmlns:local="clr-namespace:WPF_TextBox"
         mc:Ignorable="d"
         Title="TextBoxTest" Height="450" Width="200">
-    <StackPanel Margin="10">
+    <!--
+    WPF提供了三个用于输入文本的控件：TextBox、RichTextBox和PasswordBox
+
+    PasswordBox控件直接集成自Control类
+    TextBox和RichTextBox控件间接继承自TextBoxBase类
+
+    与其他内容控件不同，文本框能够包含的内容类型是有限的：
+    TextBox总是存储字符串(由Text属性提供)
+    PasswordBox控件也处理字符串内容(由Password属性提供)，尽管为了减轻特定类型的攻击，他在内部使用SecureString属性
+    只有RichTextBox控件可存储更复杂的内容：可包含复杂元素组合的FlowDocument对象(RichTextBox控件是用于显示FlowDocument对象的高级控件)
+    
+    -->
+
+
+
+
+        <StackPanel Margin="10">
         <!--TextBox控件是WPF中最基本的文字输入控件。它允许最终用户在一行、对话输入、或多行编写，就像是个编辑器。-->
         <TextBox/>
         <!--这就是你获取一个文本字段所需要的全部了，在运行这个示例之后，以及在截屏之前，我加入了一些文本，你也可以通过标签的方式来做，
         通过使用Text属性去预先为文本框填充内容。-->
         <TextBox Text="Hello, world!"/>
+        <!--可通过设置MaxLength属性来限制字符的数量-->
+        <TextBox Text="123456789" MaxLength="4"/>
         <!--尝试在文本框里鼠标右击。你会得到一个选项菜单，允许你和Windows剪贴板一块使用这个TextBox。
         默认的撤销和重做的键盘快捷方式(Ctrl + Z 和 Ctrl + Y)也应该是起作用的，并且所有这些功能你能夠不受限制的使用。-->
 
@@ -21,14 +39,66 @@
         <TextBox AcceptsReturn="True" TextWrapping="Wrap"/>
         <!--我添加了两个属性：AcceptsReturn使得TextBox变成一个多行控件，允许使用 回车/返回键进入到下一行， 
         和TextWrapping属性，当内容到达一行的尾部时，它会使文本能够自动被包裹起来。-->
+        <!--
+        如果将TextWrapping属性设置为Wrap，那么总是会在控件的边缘换行，甚至将一个特别长的单词放在两行中
+        如果将TextWrapping属性设置为WrapWithOverflow，这时如果换行算法没有发现合适的位置（如空格或连字符）进行换行，就允许拉伸某些行使其超出右边缘
+            -->
+
+            <!--
+            为了能自动在文本框中看到多行文本，需将其尺寸设置得足够大。不应当设置硬编码的高度（这样不能适应不同的字体大小，而且可能导致布局问题），可使用
+            方便地MinLines和MaxLines属性。
+            MinLines属性是在文本框中必须显示的最小行数。例如，如果MinLines属性值为2，文本框的高度就会增大到至少两行的高度。如果容器的空间不足，部分文本框可能会被剪裁掉。
+            MaxLines属性设置文本框能够显示的最大行数。即使扩展文本框使其适合容器（例如，按比例改变尺寸的Grid控件的行或DockPanel面板的最后一个元素），也不会超过这一限制
+            (MinLines和MaxLines属性不影响放置到文本框中的内容数量，他们只是帮助改变文本框的尺寸。在代码中，可检查LineCount属性准确地获取文本框中共有多少行)
+
+            如果文本框支持换行，用户可输入更多能够立即在可视行中显示的文本。因此，通过将VerticalScrollBarVisibility属性设置为Visible或Auto，添加始终
+            显示或按需显示的滚动条是有意义的(也可设置HorizontalScrollBarVisibility属性来显示不常见的水平滚动条)
+
+            可能希望允许用户在多行文本框中通过按下Enter键输入硬回车（通常，在文本框中按下Enter键将触发默认按钮）。为确保文本框支持Enter键，需要将AcceptsReturn属性设置为true。
+            也可设置AcceptsTabs属性，从而允许用户插入Tab键。否则，Tab键会根据Tab键焦点顺序将焦点移到下一个可得到焦点的控件上。
+
+            (TextBox类还提供了几个方法，通过这些方法可使用代码以较小或较大的步长在文本内容中移动。这些方法包括LineUp()、LineDown()、PageUp()、PageDown()、ScrollToHome()
+            ScrollToEnd()以及ScrollToLine())
+            
+            有时，可能会创建纯粹为了显示文本的文本框。这时，可将IsReadOnly属性设置为true以阻止编辑文本。最好通过将IsEnabled属性设置为false来禁用文本框，因为禁用的文本框会显示
+            变灰的文本(更加难以阅读)，不支持文本选择(也不支持复制到剪切板)，并且不支持滚动
+            -->
 
         <!--有拼写检查的TextBox
 作为额外的好处，TextBox控件实际上带有英语和其他几种语言（as of writing、英语、法语、德语和西班牙语）的自动拼写检查。
 
-它非常类似于微软Word，其中拼写错误被划线，您可以右键单击它的建议替代品。启用拼写检查非常容易-->
+它非常类似于微软Word，其中拼写错误的单词下面添加红色波浪下划线，您可以右键单击它的建议替代品。启用拼写检查非常容易
+            
+            拼写检查是WPF的特有功能，该功能不依赖与其他软件(如Office)。拼写检查根据为键盘配置的输入语言来决定使用哪个词典。
+            
+            可使用SpellingReform属性设置是否将1990年之后对拼写规则的修改应用于法语和德语中。
+            
+            
+            -->
         <TextBox AcceptsReturn="True" TextWrapping="Wrap" SpellCheck.IsEnabled="True" Language="en-US"/>
         <!--我们使用前面的多行文本框示例作为基础，然后添加了两个新属性：SpellCheck类中名为IsEnabled的附加属性，该属性仅支
         持对父控件进行拼写检查，以及Language属性，该属性指示拼写检查器使用的语言。-->
+
+        <!--
+            选择文本
+            
+            在任何文本框中都可以通过单击并拖动鼠标，或按住Shift键并使用方向键在文本中移动来选择文本。TextBox类还提供了使用
+            SelectionStart、SelectionLength以及SelectedText属性，通过编程决定选择哪些文本或改变当前所选文本的能力
+
+            SelectionStart属性确定所选文本的开始位置，该位置是从0开始的。例如，如果将该属性设置为10，选择的第一个字符是文本框中的第11个字符
+            SelectionLength属性指示选中的字符的总数量(0表示没有选中字符)
+            SelectedText属性可快速检查或改变在文本框中选中的文本。
+
+            可通过处理SelectionChanged事件对文本选择变化加以响应
+
+            TextBox类还提供了可控制文本选择行为的属性AutoWordSelection。如果将该属性设为true，那么当在文本中拖动鼠标时文本框每次会选择整个单词。
+
+            TextBox控件的另一个有用功能是Undo，该功能允许用户撤销最近的操作。只要未将CanUndo属性设置成false，就可通过代码获得Undo功能(调用Undo()方法)，
+            并使用Ctrl+Z快捷键获得该功能
+
+            (当通过代码操作文本框中的文本时，可使用BeginChange()和EndChange()方法将一系列动作合并起来，TextBox会将其作为单独的更改“块”进行处理。
+            可在单个步骤中将这些操作撤销)
+            -->
 
         <!--该示例由两个文本框控件组成：一个用于编辑，另一个用于输出当前的选择状态。为此，我们将IsReadOnly属性设置为true，以防止对状态文本框的编辑。
         我们在第一个文本框中订阅SelectionChanged事件，我们在后面的代码中处理：-->

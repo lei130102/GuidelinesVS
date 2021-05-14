@@ -1,0 +1,84 @@
+﻿<Window x:Class="WPF_Binding.ElementToElementBinding"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Binding"
+        mc:Ignorable="d"
+        Title="ElementToElementBinding" Height="300" Width="300">
+        <!--WPF不会引发异常来通知与数据绑定相关的问题。幸运的是，WPF输出了绑定失败细节的跟组信息，当调试应用程序时，该信息
+    显示在Visual Studio的Output窗口中
+    
+    BindingMode枚举值
+    OneWay                                当源属性变化时更新目标属性
+    TwoWay                                当源属性变化时更新目标属性，并且当目标属性变化时更新源属性
+    OneTime                               最初根据源属性值设置目标属性，然而，其后的所有改变都会被忽略(除非绑定被设置为一个完全不同的
+                                          对象或者调用BindingExpression.UpdateTarget()方法)。通常，如果知道源属性不会改变，可使用
+                                          这种模式降低开销
+    OneWayToSource                        与OneWay类型类似，但反向相反。当目标属性变化时更新源属性(这看起来有点像向后传递)，但目标属性永远不会被更新
+                                          使用他最常见的原因是要设置非依赖项属性的属性，因为绑定表达式只能用于设置依赖项属性。但通过使用OneWayToSource模式可以克服这一限制
+                                          但前提是提供数值的属性本事是依赖性属性
+    Default                               此类绑定依赖于目标属性。既可以是双向的(对于用户可以设置的属性，如TextBox.Text属性)，也可以是单向的(对于所有其他属性)。
+                                          除非明确指定了另一种模式，否则所有绑定都使用该方法
+                                          (在每个依赖项属性中都有一个元数据——FrameworkPropertyMetadata.BindsTwoWayByDefault标志——该标志
+                                          指示属性是使用单向绑定还是双向绑定)
+                                          (作为一条常用的经验法则，明确设置绑定模式永远不是坏主意)
+    
+
+    
+    
+    
+    
+    -->
+
+    
+    
+    
+    
+    <StackPanel Margin="5">
+        <!--不必对源元素做任何改动-->
+        <!--因为Slider.Value属性是双精度类型，所以当拖动滑动条上的滑块时，得到的字体尺寸数值是小数。可通过将TickFrequency属性设置为1(或其他整数间隔)，并
+        将IsSnapToTickEnabled属性设置为true，将滑动条的值限制为整数-->
+        <Slider Name="sliderFontSize" Margin="3" Minimum="1" Maximum="40" Value="10" TickFrequency="1" IsSnapToTickEnabled="True" TickPlacement="TopLeft"/>
+        <!--绑定是在目标元素中定义的，FontSize是依赖项属性
+        ElementName 源元素
+        Path        源元素的属性(不必一定是依赖项属性)(之所以使用名称"Path"而不是"Property"，是因为Path可能指向属性的属性(如FontFamily.Source)，也可能指向属性使用的索引器(如Content.Children[0])。可构建具有多级层次的路径，使其指向属性的属性的属性，依次类推)
+                    如果希望引用附加属性，那么需要在圆括号中封装属性名称。例如，如果绑定到Grid控件中的某个元素，路径(Grid.Row)将检索放置元素的行的行号
+        -->
+        <TextBlock Name="lblSampleText" Margin="10" FontSize="{Binding ElementName=sliderFontSize, Path=Value, Mode=TwoWay}"
+                   Text="Simple Text"/>
+        <StackPanel Orientation="Horizontal">
+            <Button Name="SetSmall" Margin="5" Padding="3" Content="Set to Small" Click="SetSmall_Click"/>
+            <Button Name="SetNormal" Margin="5" Padding="3" Content="Set to Normal" Click="SetNormal_Click"/>
+            <Button Name="SetLarge" Margin="5" Padding="3" Content="Set to Large" Click="SetLarge_Click"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5">
+            <TextBlock VerticalAlignment="Center" xml:space="preserve">Exact Size：</TextBlock>
+            <!--在文本框中输入字母以及其他非数字字符。如果输入了任何内容，文本框的值就不再被解释为数值。因此，数据绑定自动失败，并且字体尺寸会被设置为0
+            另一个解决方法是处理在文本框中按下的键来阻止非法输入，或者使用数据绑定验证-->
+            <!--直到文本框失去焦点，才会应用文本框中的改变。如果这不是所希望的行为，可通过使用Binding对象的UpdateSourceTrigger属性立即进行更新-->
+            <!--也可以绑定到Slider.Value    {Binding ElementName=sliderFontSize, Path=Value, Mode=TwoWay}-->
+            <!--
+            绑定延迟
+
+            在极少数情况下，需要防止数据绑定触发操作和修改源对象，至少在某一时段是这样的。
+            例如，可能想在从文本框复制信息之前暂停，而不是在每次按键后获取。或者，源对象在数据绑定属性变化时执行处理器密集型操作。在此情况下，
+            可能要添加短暂的延迟时间，避免过分频繁地触发操作
+
+            在这些特殊情况下，可使用Binding对象的Delay属性。等待数毫秒，之后再提交更改。
+
+            下面会在用户停止输入500毫秒(半秒钟)后更新源对象
+            -->
+            <TextBox Name="txtBound" Text="{Binding ElementName=lblSampleText, Path=FontSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Delay=500}" Width="100"/>
+        </StackPanel>
+        <Button Name="GetBoundObject" Margin="5" Padding="3" HorizontalAlignment="Left" Click="GetBoundObject_Click" Content="Get Bound Object"/>
+    </StackPanel>
+</Window>
+
+    <!--
+    通常，在何处放置绑定表达式是由编码模型的逻辑决定的。在TextBox.Text属性(而不是在Slider.Value属性)中放置绑定更合理，因为文本框是为了完成示例而添加的可选的
+    附加内容，并非滑动条依赖的核心组件。直接将文本框绑定到TextBlock.FontSize属性而不是绑定到Slider.Value属性更合理(从概念上讲，我们对报告当前的字体尺寸感兴趣，
+    滑动条只是设置这一字体尺寸的方式之一。尽管滑动条的位置和字体尺寸相同，但如果正在试图编写尽可能清晰的标记，这一额外的细节并不是必需的)。当然，这些决定带有主观
+    色彩，而且与编码风格有关
+
+    -->

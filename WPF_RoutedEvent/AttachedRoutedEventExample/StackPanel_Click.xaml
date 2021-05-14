@@ -1,0 +1,24 @@
+﻿<Window x:Class="WPF_RoutedEvent.AttachedRoutedEventExample.StackPanel_Click"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_RoutedEvent.AttachedRoutedEventExample"
+        mc:Ignorable="d"
+        Title="StackPanel_Click" Height="450" Width="800">
+
+    <StackPanel Name="stackPanel">                        <!--通过BehindCode-->
+        <StackPanel Button.Click="StackPanel_Click_1">    <!--通过XAML-->
+            <Button Name="cmd1" Tag="The first button.">Command 1</Button>
+            <Button Name="cmd2" Tag="The second button.">Command 2</Button>
+            <Button Name="cmd3" Tag="The third button.">Command 3</Button>
+        </StackPanel>
+    </StackPanel>
+
+    <!--
+    注意!!!!
+    Click事件实际是在ButtonBase类中定义的，而Button类继承了该事件。如果为ButtonBase.Click事件关联事件处理程序，那么当单击
+    任何继承自ButtonBase的控件(包括Button类、RadioButton类以及CheckBox类)时，都会调用该事件处理程序。如果为Button.Click
+    事件关联事件处理程序，事件处理程序就只能被Button对象使用
+    -->
+</Window>

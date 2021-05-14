@@ -1,0 +1,59 @@
+﻿<Window x:Class="WPF_DatePicker.Simple"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_DatePicker"
+        mc:Ignorable="d"
+        Title="Simple" Height="350" Width="604">
+
+    <!--
+    日期控件
+    
+    WPF包含两个日期控件：Calendar和DatePicker
+
+    Calendar控件显示日历，与在Windows操作系统中看到的日历相似。该控件每次显示一个月份，允许从一个月份跳到另一个月份或者跳到某个特定的月份
+
+    DatePicker控件需要的空间更少。他模仿简单地文本框，该文本框以长日期格式或短日期格式保存日期字符串。该控件提供了一个下拉箭头，当单击时
+    会弹出完整的日历视图，该视图和Calendar控件显示的视图相同。这个弹出视图显示在其他任何内容的上面，就像是下拉组合框
+
+    Calendar和DatePicker类的属性
+    DisplayDateStart/DisplayDateEnd                     设置在日历视图中显示的日期范围，从第一个最早的日期(DisplayDateStart)到最后最近的日期(DisplayDateEnd)
+                                                        用户不能导航到未包含能够显示的日期的月份。为显示所有日期，可将DisplayDateStart属性设置为DateTime.MinValue
+                                                        并将DisplayDateEnd属性设置为DateTime.MaxValue
+    BlackoutDates                                       保存在日历中将被禁用或不能选择的日期集合。如果这些日期不在可显示的日期范围内，或者如果已经选择了这些日期中的某个日期，
+                                                        那么将接收到异常。为阻止选择过去的任何日期，可调用BlackoutDates.AddDatesInPast()方法
+    SelectedDate                                        作为DateTime对象提供选择的日期(或者在没有日期被选中时使用null值)。可以通过代码、通过单击日历中的日期或通过用户键入日期字符串
+                                                        (在DatePicker控件中)设置该属性。在日历视图中，选择的日期使用具有阴影的方框标识，只有当日期控件具有焦点时才会显示该方框
+    SelectedDates                                       作为DateTime对象的集合提供选择的日期。Calendar控件支持该属性，并且只有当修改了SelectionMode属性以允许选择多个日期时，该属性才有用
+    DisplayDate                                         使用DateTime对象确定在日历视图中最初显示的日期。如果该属性为空，将显示SelectedDate属性的值。如果
+                                                        DisplayDate和SelectedDate属性均为空，那么使用当前日期。显示的日期决定了日历视图中最初的月份页面。当日期控件具有焦点时，在该月份中
+                                                        恰当的某天周围显示方形边框(该方形边框和用于当前选择日期的阴影方框是有区别的)
+    FirstDayOfWeek                                      确定在日历中每行的开始位置(最左边的位置)显示一星期中的哪一天
+    IsTodayHighlighted                                  确定日历视图是否通过突出显示指出当前日期
+    DisplayMode(只用于Calendar控件)                      确定日历最初的月份显示模式。如果将该属性设置为Month，Calendar控件显示标准的单一月份视图。
+                                                        如果设置为Year，Calendar控件显示当前年份中的月份(与当用户单击月份标题头时显示的内容类似)
+                                                        一旦用户单击某月份，Calendar控件就会显示该月份的完整日历视图
+    SelectionMode(只用于Calendar控件)                   确定允许的日期选择类型。默认值是SingleDate，该设置允许选择单个日期。其他选项包括
+                                                       None(完全禁止选择日期)
+                                                       SingleRange(可选择一组连续的日期)
+                                                       MultipleRange(可选择任意日期的组合)
+                                                       在SingleRange和MultipleRange模式下，用户可拖动选择多个日期，或当按下Ctrl键时通过单击选择多个日期。
+                                                       可使用SelectedDates属性获取包含所有选择日期的集合
+    IsDropDownOpen(只用于DatePicker控件)                确定是否打开DatePicker控件中的下拉日历视图。可以通过代码设置该属性以显式或隐藏日历
+    SelectedDateFormat(只用于DatePicker控件)            确定在DatePicker控件的文本部分显示选择的日期的方式。可选择Short或Long。实际的显示格式取决于客户计算机的
+                                                       区域设置。例如，如果使用Short，可能以yyyy/mm/dd或dd/mm/yyyy格式显示日期。长日期通常包含月份和天的名称
+
+    日期控件还提供了几个不同事件。最有用的事件是DatePicker控件中的SelectedDateChanged事件或Calendar控件中类似的SelectedDatesChanged事件，该事件添加了
+    对多个日期选择的支持。
+    
+    Calendar控件还添加了DisplayDateChanged事件(当用户浏览到新的月份时触发该事件)。DatePicker控件添加了CalendarOpened和CalendarClosed事件(当下拉日历显示和关闭时触发这两个事件)
+    以及DateValidationError事件(当用户在文本输入部分输入不能被解释为合法时间的值时触发该事件)
+    
+    -->
+    <StackPanel>
+        <DatePicker HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" SelectedDateChanged="DatePicker_SelectedDateChanged"/>
+        <DatePicker Name="datePickerDateValidationError" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" DateValidationError="datePickerDateValidationError_DateValidationError"/>
+        <Calendar Name="calendarNoWeekend" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" SelectedDatesChanged="calendarNoWeekend_SelectedDatesChanged"/>
+    </StackPanel>
+</Window>

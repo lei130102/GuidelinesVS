@@ -1,0 +1,46 @@
+﻿<Window x:Class="WPF_Binding.CommandBinding"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Binding"
+        mc:Ignorable="d"
+        Title="CommandBinding" Height="400" Width="200">
+    <Window.CommandBindings>
+        <CommandBinding x:Name="newCommandBinding" Command="ApplicationCommands.New" Executed="newCommandBinding_Executed"  CanExecute="newCommandBinding_CanExecute"/>
+        <CommandBinding x:Name="cutCommandBinding" Command="ApplicationCommands.Cut" Executed="cutCommandBinding_Executed" CanExecute="cutCommandBinding_CanExecute"/>
+        <CommandBinding x:Name="pasteCommandBinding" Command="ApplicationCommands.Paste" Executed="pasteCommandBinding_Executed" CanExecute="pasteCommandBinding_CanExecute"/>
+        <CommandBinding x:Name="exitCommandBinding" Command="local:CustomCommands.Exit" Executed="exitCommandBinding_Executed" CanExecute="exitCommandBinding_CanExecute"/>
+    </Window.CommandBindings>
+        <StackPanel HorizontalAlignment="Center">
+        <Menu>
+            <MenuItem Header="File">
+                <MenuItem Command="local:CustomCommands.Exit"/>
+            </MenuItem>
+        </Menu>
+        <Button Command="ApplicationCommands.New" Content="New"/>
+        <DockPanel>
+            <WrapPanel DockPanel.Dock="Top" Margin="3">
+                <Button Command="ApplicationCommands.Cut" Width="60" Content="_Cut"/>
+                <Button Command="ApplicationCommands.Paste" Width="60" Margin="3,0" Content="_Paste"/>
+            </WrapPanel>
+            <TextBox AcceptsReturn="True" Name="txtEditor"/>
+        </DockPanel>
+        <!--默认命令行为和命令目标
+正如我们在前面的例子中看到的那样，处理一组命令可能导致相当多的代码，其中很多是方法声明和非常标准的逻辑。这可能就是为什么WPF团队决定为你处理它的原因。实际上，我们可以避免前一个示例中的所有Code-behind，因为WPF TextBox可以自动处理常见命令，如剪切，复制，粘贴，撤消和重做。
+
+当像TextBox这样的文本输入控件具有焦点时，WPF通过为您处理Executed和CanExecute事件来完成此操作。您可以自由地覆盖这些事件，这基本上就是我们在前面的示例中所做的，但如果您只是想要基本行为，您可以让WPF连接命令和TextBox控件并为您完成工作。看看这个例子有多简单：-->
+
+        <!--注意我如何在按钮上使用CommandTarget属性，将命令绑定到TextBox控件。这在此特定示例中是必需的，因为WrapPanel不会以相同的方式处理焦点，例如工具栏或菜单会，但是将命令作为目标也很有意义。-->
+        <DockPanel>
+            <WrapPanel DockPanel.Dock="Top" Margin="3">
+                <Button Command="ApplicationCommands.Cut" CommandTarget="{Binding ElementName=txtEditor2}" Width="60" Content="_Cut"/>
+                <Button Command="ApplicationCommands.Paste" CommandTarget="{Binding ElementName=txtEditor2}" Width="60" Margin="3,0" Content="_Paste"/>
+            </WrapPanel>
+            <TextBox AcceptsReturn="True" Name="txtEditor2"/>
+        </DockPanel>
+        <StackPanel>
+            <Button Command="local:CustomCommands.Exit" Content="Exit"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

@@ -1,0 +1,62 @@
+﻿<Window x:Class="WPF_Shape.View.CombiningShapes"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Shape.View"
+        mc:Ignorable="d"
+        Title="CombiningShapes" Height="481" Width="341">
+    <Window.Resources>
+        <RectangleGeometry x:Key="rect" Rect="0 0 100 100"/>
+        <EllipseGeometry x:Key="ellipse" Center="85 50" RadiusX="65" RadiusY="35"/>
+    </Window.Resources>
+
+    <Grid Margin="5" TextBlock.FontSize="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Path Fill="Yellow" Stroke="Blue" Margin="5">
+            <Path.Data>
+                <CombinedGeometry GeometryCombineMode="Union"
+                                  CombinedGeometry.Geometry1="{StaticResource rect}"
+                                  CombinedGeometry.Geometry2="{StaticResource ellipse}"/>
+            </Path.Data>
+        </Path>
+        <TextBlock Grid.Column="1" Margin="10" VerticalAlignment="Center" Text="Union"/>
+
+        <Path Grid.Row="1" Fill="Yellow" Stroke="Blue" Margin="5">
+            <Path.Data>
+                <CombinedGeometry GeometryCombineMode="Intersect"
+                                  CombinedGeometry.Geometry1="{StaticResource rect}"
+                                  CombinedGeometry.Geometry2="{StaticResource ellipse}"/>
+            </Path.Data>
+        </Path>
+        <TextBlock Grid.Row="1" Grid.Column="1" Margin="10" VerticalAlignment="Center" Text="Intersect"/>
+
+        <Path Grid.Row="2" Fill="Yellow" Stroke="Blue" Margin="5">
+            <Path.Data>
+                <CombinedGeometry GeometryCombineMode="Xor"
+                                  CombinedGeometry.Geometry1="{StaticResource rect}"
+                                  CombinedGeometry.Geometry2="{StaticResource ellipse}"/>
+            </Path.Data>
+        </Path>
+        <TextBlock Grid.Row="2" Grid.Column="1" Margin="10" VerticalAlignment="Center" Text="Xor"/>
+
+        <Path Grid.Row="3" Fill="Yellow" Stroke="Blue" Margin="5">
+            <Path.Data>
+                <CombinedGeometry GeometryCombineMode="Exclude"
+                                  CombinedGeometry.Geometry1="{StaticResource rect}"
+                                  CombinedGeometry.Geometry2="{StaticResource ellipse}"/>
+            </Path.Data>
+        </Path>
+        <TextBlock Grid.Row="3" Grid.Column="1" Margin="10" VerticalAlignment="Center" Text="Exclude"/>
+    </Grid>
+</Window>

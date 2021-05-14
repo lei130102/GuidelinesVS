@@ -1,0 +1,14 @@
+﻿<Window x:Class="WPF_RoutedEvent.ButtonMouseUpEvent"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_RoutedEvent"
+        mc:Ignorable="d"
+        Title="ButtonMouseUpEvent" Height="300" Width="300">
+    <Grid Margin="5">
+        <!--当单击按钮时，不会引发MouseUp事件，因为按钮内部包含一些代码，这些代码会挂起MouseUp事件(并且handled标志被设置为true，从而会阻止MouseUp事件继续传递)并引发更高级的Click事件-->
+        <Button Name="cmd" Click="cmd_Click" MouseUp="cmd_MouseUp" Content="Click me."/>
+        <!--大多数WPF元素没有提供Click事件，而是提供了更直接的MouseDown和MouseUp事件。Click事件专用于基于按钮的控件(不用对按钮使用MouseUp事件，因为可采用多种方式使用键盘“单击”按钮)-->
+    </Grid>
+</Window>

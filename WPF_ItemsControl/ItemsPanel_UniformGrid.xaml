@@ -1,0 +1,32 @@
+﻿<Window x:Class="WPF_ItemsControl.ItemsPanel_UniformGrid"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ItemsControl"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="ItemsPanel_UniformGrid" Height="150" Width="250">
+
+    <!--另一个很好的例子是UniformGrid面板，我们可以在其中定义多个列，然后将我们的项目整齐地显示在同样宽的列中：-->
+    
+    <Grid Margin="10">
+        <ItemsControl>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="2"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding}" Margin="0,0,5,5"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <system:String>Item #1</system:String>
+            <system:String>Item #2</system:String>
+            <system:String>Item #3</system:String>
+            <system:String>Item #4</system:String>
+            <system:String>Item #5</system:String>
+        </ItemsControl>
+    </Grid>
+</Window>

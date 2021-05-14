@@ -1,0 +1,29 @@
+﻿<Window x:Class="WPF_TextOptions.TextFormattingMode"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_TextOptions"
+        mc:Ignorable="d"
+        Title="TextFormattingMode" Height="200" Width="400">
+
+    <!--相比其他 UI 框架，例如 WinForms 大量使用 Windows API，WPF 自己做了很多额外的事情。渲染文本的时候这个对比也很明显
+    ——WinForms 使用 Windows 的 GDI API，而 WPF 有它自己的文本渲染实现。这样就能使 WPF 更好地支持动画，也使得它不受设备依赖。
+
+不幸的是，这使得 WPF 渲染的文本变得有些模糊，特别是在小号字体上。这曾经是令 WPF 程序员很头疼的一个问题，但幸运的是 Microsoft 
+    在 .NET 框架 4.0 中为 WPF 文本渲染引擎做了很多优化。这意味着如果你使用 4.0 或更高的版本，你的文本看起来应该完美无瑕。-->
+
+    <!--在 .NET 框架 4.0 中，Microsoft 引入了 TextOptions 类和 TextFormattingMode，TextRenderingMode 属性来给予程序员更多
+    的文本渲染控制。这让你可以在控制层面指定文本格式化与渲染的方式。-->
+
+    <!--TextFormattingMode
+使用 TextFormattingMode 属性，你便可以决定文本格式化所用的算法。你可以选择用 Ideal（默认值）或 Display。一般你不需要改动这
+    个属性，因为 Ideal 设置在大多数情况下都是最好的。但如果你需要渲染非常小的文本，Display 设置有时候更好。-->
+    
+    <StackPanel Margin="10">
+        <Label TextOptions.TextFormattingMode="Ideal" FontSize="9">TextFormattingMode.Ideal, small text</Label>
+        <Label TextOptions.TextFormattingMode="Display" FontSize="9">TextFormattingMode.Display, small text</Label>
+        <Label TextOptions.TextFormattingMode="Ideal" FontSize="20">TextFormattingMode.Ideal, large text</Label>
+        <Label TextOptions.TextFormattingMode="Display" FontSize="20">TextFormattingMode.Display, large text</Label>
+    </StackPanel>
+</Window>

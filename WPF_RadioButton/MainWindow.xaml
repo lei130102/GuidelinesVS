@@ -1,0 +1,71 @@
+﻿<Window x:Class="WPF_RadioButton.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_RadioButton"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <StackPanel Margin="10">
+        
+        
+        <Label FontWeight="Bold">Are you ready?</Label>
+        <RadioButton>Yes</RadioButton>
+        <RadioButton>No</RadioButton>
+        <RadioButton IsChecked="True">Maybe</RadioButton>
+
+
+        <!--RadioButton 控件允许你向用户提供一列可能的选项，而同时只允许选中一个。你可以用 Combobox 来占用更少的空间实现同样的效果，
+    但一组单选框会令用户更直观地看到他们的可用选项。-->
+
+        <!--如果你试着运行上面的例子，你会发现这些 RadioButton 同时只能被选中一个，正如期望。但如果你需要多组 RadioButton，
+    每一组都能有它们自己的选择呢？这时就要用到 GroupName 属性，允许你指定 RadioButton 的分组-->
+
+        <StackPanel>
+            <Label FontWeight="Bold">Are you ready?</Label>
+            <RadioButton GroupName="ready">Yes</RadioButton>
+            <RadioButton GroupName="ready">No</RadioButton>
+            <RadioButton GroupName="ready" IsChecked="True">Maybe</RadioButton>
+            <Label FontWeight="Bold">Male or female?</Label>
+            <RadioButton GroupName="sex">Male</RadioButton>
+            <RadioButton GroupName="sex">Female</RadioButton>
+            <RadioButton GroupName="sex" IsChecked="True">Not sure</RadioButton>
+        </StackPanel>
+
+
+
+        <!--给每一个单选框设定了 GroupName 属性以后，两组单选框里都可以各有一个选择了。如果没有这个属性，六个单选框里只能有一个选择。-->
+
+
+        <!--自定义内容
+RadioButton 继承自 ContentControl 类，这意味着它可以接受自定义内容并把它显示在旁边。如果你像我在上面的例子中一样，
+    指定了一些文本，WPF 就会把它放入一个 TextBlock 控件并显示出来。这比手工创建 TextBlock 控件要方便。
+    在 RadioButton 中可以使用任何控件-->
+        <StackPanel>
+            <Label FontWeight="Bold">Are you ready></Label>
+            <RadioButton>
+                <WrapPanel>
+                    <Image Source="/Image/n00.png" Width="42" Height="30" Margin="0,0,5,0"/>
+                    <TextBlock Text="Yes" Foreground="Green"/>
+                </WrapPanel>
+            </RadioButton>
+            <RadioButton Margin="0,5">
+                <WrapPanel>
+                    <Image Source="/Image/n01.png" Width="42" Height="30" Margin="0,0,5,0"/>
+                    <TextBlock Text="No" Foreground="Red"/>
+                </WrapPanel>
+            </RadioButton>
+            <RadioButton IsChecked="True">
+                <WrapPanel>
+                    <Image Source="/Image/n02.png" Width="42" Height="30" Margin="0,0,5,0"/>
+                    <TextBlock Text="Maybe" Foreground="Gray"/>
+                </WrapPanel>
+            </RadioButton>
+        </StackPanel>
+
+        <!--从 XAML 标记语法看来这个例子有点复杂，但概念很简单。我们为每个 RadioButton 加上一个带有图片和文本的 WrapPanel。既然我们使用 TextBlock 获得了文本控制，我们便可以随意指定文本的格式。在这个例子中，我为每个选项都加了对应的颜色。每个选项都有一个 Image 控件（后文有更多讨论）来显示图像。
+
+        你可以点击 RadioButton 的任何部分，甚至是图像和文本来选中它，因为我们将图像和文本指定为 RadioButton 的内容。如果你把这些内容放在 RadioButton 旁的一个独立的 Panel 上，用户便只能点击 RadioButton 的圆形部分来激活它，令界面变得不那么易用。-->
+
+    </StackPanel>
+</Window>

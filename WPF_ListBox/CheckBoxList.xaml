@@ -1,0 +1,25 @@
+﻿<Window x:Class="WPF_ListBox.CheckBoxList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ListBox"
+        mc:Ignorable="d"
+        Title="CheckBoxList" Height="300" Width="300">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListBox Name="lst" SelectionChanged="lst_SelectionChanged" CheckBox.Click="lst_SelectionChanged">
+            <CheckBox Margin="3" Content="Option 1"/>
+            <CheckBox Margin="3" Content="Option 2"/>
+            <CheckBox Margin="3" Content="Option 3"/>
+        </ListBox>
+        <StackPanel Grid.Row="1" Margin="0,10,0,0">
+            <TextBlock Text="Current selection:"/>
+            <TextBlock Name="txtSelection" TextWrapping="Wrap"/>
+            <Button Margin="0,10,0,0" Click="Button_Click" Content="Examine All Items"/>
+        </StackPanel>
+    </Grid>
+</Window>

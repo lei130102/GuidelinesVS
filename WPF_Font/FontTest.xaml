@@ -1,0 +1,83 @@
+﻿<Window x:Class="WPF_Font.FontTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Font"
+        mc:Ignorable="d"
+        Title="FontTest" Height="450" Width="800">
+    <StackPanel>
+    <!--
+    Control类定义了一小部分与字体相关的属性:
+        FontFamily  字体家族(必须提供完整的字体家族名称)
+        FontSize    字体的设备无关单位尺寸(每单位表示1/96英寸)
+        FontWeight  字体的粗细(Bold Heavy Light ExtraBold)
+        FontStyle   字体角度(Normal Italic Oblique)
+        FontStretch 字体拉伸或者压缩程度(字体拉伸是一个OpenType特性，很多字体都不支持该特性)
+        -->
+        <Button Name="cmd" FontFamily="Times New Roman" FontSize="18" FontWeight="Bold" FontStyle="Italic" Content="A Button"/>
+
+        <!--
+        设置字体时务必要谨慎，确保选择的字体在用户计算机上已经存在。
+
+        可将FontFamily属性设置为由逗号分隔的字体选项列表，WPF将按顺序遍历该列表，尝试查找在列表中指定的一种字体
+        (如果某个字体家族的名称中确实包含一个逗号，那么需要通过在一行中将其包含两次来转义该逗号)
+
+        使用System.Windows.Media.Fonts类的静态SystemFontFamilies集合，可获得在当前计算机上已安装的所有字体的列表
+        foreach(FontFamily fontFamily in Fonts.SystemFontFamilies)
+        {
+            //fontFamily.Source
+        }
+
+        WPF未提供字体选择对话框
+        -->
+        <Button FontFamily="Technical Italic, Comic Sans MS, Arial">A Button</Button>
+
+        <!--
+        TextDecorations属性
+           None
+           Baseline
+           OverLine
+           Underline       下划线
+           Strikethrough   删除线
+        -->
+        <TextBlock Text="A TextBlock" TextDecorations="None"/>
+        <TextBlock Text="A TextBlock" TextDecorations="Baseline"/>
+        <TextBlock Text="A TextBlock" TextDecorations="OverLine"/>
+        <TextBlock Text="A TextBlock" TextDecorations="Underline"/>
+        <TextBlock Text="A TextBlock" TextDecorations="Strikethrough"/>
+
+        <!--
+        Typography属性
+        通过该属性可以访问只有某些字体才会提供的特殊字体变种，这方面的例子包括不同的数字对齐方式、连字(在相邻字母之间的连接)和小音标(caps)
+
+        (对于大多数情况，TextDecorations和Typograhpy特征只用于流文档内容——用于创建丰富的可读文档。然而，这些属性也可以用于TextBox TextBlock等)
+        -->
+
+<!--
+        字体继承
+
+        当设置任何字体属性时，属性值都会流经嵌套的对象。例如，如果为顶级窗口设置FontFamily属性，窗口中的所有控件都会得到相同的FontFamily属性值(除非为控件明确设置了不同的字体)。
+        这种做法之所以可行，是因为字体属性是依赖项属性，并且依赖项属性能够提供的特性之一就是属性值继承
+
+        属性值继承能够流经那些根本就不支持相应属性的元素，如下面可为Button设置FontSize属性，因为Button类继承自Control类，但不能为StackPanel面板设置FontSize属性，因为他不是控件。
+        但如果设置了Button的FontSize属性，属性值仍然会“经过”StackPanel面板，到达其内部的标签，并改变标签的字体尺寸
+
+        (
+        与字体设置一样，其他几个基本属性也使用属性值继承。在Control类中，Foreground属性使用继承。Background属性不使用(然而，默认背景是空引用，大多数控件将其呈现为透明背景
+        这意味着仍会显示父元素的背景)。
+
+        在UIElement类中，AllowDrop、IsEnabled以及IsVisible属性都使用属性继承。
+        在FrameworkElement中，CultureInfo和FlowDirection属性也使用属性值继承
+
+        只有在将FrameworkPropertyMetadata.Inherits标志设置为true时(这并非是默认设置)，依赖项属性才支持属性值继承
+        )
+        
+        -->
+        <Button FontFamily="Times New Roman" FontSize="18" FontWeight="Bold" FontStyle="Italic">
+            <StackPanel>
+                <TextBlock Text="A TextBloc"/>
+            </StackPanel>
+        </Button>
+    </StackPanel>
+</Window>

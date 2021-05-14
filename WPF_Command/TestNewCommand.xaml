@@ -1,0 +1,114 @@
+﻿<Window x:Class="WPF_Command.TestNewCommand"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Command"
+        mc:Ignorable="d"
+        Title="TestNewCommand" Height="134" Width="281">
+        <!--
+    命令绑定
+
+    当将命令关联到命令源时，命令源将会被自动禁用(例如按钮的颜色就会变浅并且不能被单击，就像将IsEnabled属性设置为false那样)，这是因为按钮已经查询了命令的状态，
+    而且由于命令还没有与其关联的绑定，所以按钮被认为是禁用的
+
+    为改变这种状态，需要为命令创建绑定以明确一下三件事情：
+    1.当命令被触发时执行什么操作
+    Executed=
+    2.如何确定命令是否能够被执行(这是可选的。如果未提供这一细节，只要提供了关联的事件处理程序，命令总是可用)
+    CanExecute=
+    3.命令在何处起作用。例如，命令可被限制在单个按钮中使用，或在整个窗口中使用(这种情况更常见)
+    Window.CommandBindings
+
+    创建的CommandBinding对象被添加到包含窗口的CommandBindings集合中，这通过事件冒泡进行工作，当单击按钮时，CommandBinding.Executed事件从按钮冒泡到窗口元素
+
+    CommandBindings属性实际是在UIElement基类中定义的。这意味着任何元素都支持该属性。
+    例如，如果将命令绑定直接添加到使用他的按钮中，这个示例仍工作得很好（尽管不能再将该绑定重用于其他高级元素）。为得到最大的灵活性，命令绑定通常被添加到顶级窗口。
+    如果希望在多个窗口中使用相同的命令，需要在这些窗口中分别创建命令绑定
+
+    注意，也可以处理CommandBinding.PreviewExecuted事件，首先在最高层次的容器(窗口)中引发该事件，然后隧道路由至按钮，在事件完成前，可通过事件隧道拦截和停止事件。
+    如果将RoutedEventArgs.Handled属性设置为true，将永远不会发生Executed事件
+
+    Visual Studio没有为定义命令绑定提供任何设计时支持。对连接控件和命令的支持也较弱。可使用Properties窗口设置控件的Command属性，但您需要输入正确的命令名称——由于
+    并未提供包含命令的下拉列表，因此不能方便地从列表中选择命令
+    -->
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.New" Executed="NewCommand" />
+        <!--CanExecute="..."-->
+    </Window.CommandBindings>
+    
+    <!--
+    等价的后端代码：
+
+    窗口的构造函数中：
+    CommandBinding binding = new CommandBinding(ApplicationCommands.New);
+    binding.Executed += NewCommand;
+
+    this.CommandBindings.Add(binding);
+    -->
+
+    <StackPanel>
+        <Menu>
+            <MenuItem Header="File">
+            <!--
+                MenuItem类对象可以从命令中提取文本作为Header属性(如果没有设置Header属性的话)  Button控件不具有这一特性
+                (如果计划使用不同的语言本地化应用程序时，这一特性就很重要了，在这种情况下，只需要在一个地方修改文本即可(通过设置命令的Text属性)，这比
+                在整个窗口中进行跟踪更容易)
+
+                MenuItem类对象能自动提取Command.InputBindings集合中的第一个快捷键(如果存在的话)。对于ApplicationCommands.New命令对象，这意味着在
+                菜单文本的旁边会显示Ctrl+N快捷键
+                (注意，在此无法获得一个特性是下划线访问键。WPF无法了解会在菜单中放置什么命令，所以他不能确定将要使用的最恰当的访问键。这意味着，如果希望
+                使用N键作为快速访问键(从而当使用键盘打开菜单时，字母N具有下划线，并且用户可以通过按下N键触发New命令)，需要手动设置菜单文本，在访问键
+                之前添加下划线。如果希望为按钮使用快速访问键，需要执行相同的操作)
+                -->
+                <MenuItem Command="New"/>
+            </MenuItem>
+        </Menu>
+
+<!--
+        命令源
+                
+        触发命名库中的命令(这里是ApplicationCommands.New)的最简单方法是将他们关联到实现了ICommandSource接口的控件，其中包括继承自ButtonBase类的控件
+        (Button和CheckBox等)、单独的ListBoxItem对象、Hyperlink以及MenuItem
+        
+        ICommandSource接口定义了三个属性
+        Command                 指向连接的命令，唯一必需
+        CommandParameter        提供其他希望随命令发送的数据
+        CommandTarget           确定将在其中执行命令的元素
+ -->
+        <!--也可以简化为Command="New"，但不建议-->
+        <!--
+        MenuItem类对象可以自动提取命令文本(如果没有设置Header属性的话)，但Button就只能使用{x:Static ApplicationCommands.New}获取命令名(实际自动调用对象的ToString()方法)，
+        更好的使用数据绑定表达式获取命令文本
+        Content="{Binding RelativeSource={RelativeSource Self}, Path=Command.Text}"
+        -->
+        <Button Margin="5" Padding="5" Command="ApplicationCommands.New" ToolTip="{x:Static ApplicationCommands.New}" Content="{Binding RelativeSource={RelativeSource Self}, Path=Command.Text}"/>
+
+        <Button Margin="5" Padding="5" Visibility="Hidden" Command="ApplicationCommands.Open" Content="Open (unwired)"/>
+
+        <Button Name="DoCommand" Margin="5" Padding="5" Visibility="Hidden" Click="DoCommand_Click" Content="DoCommand"/>
+    </StackPanel>
+</Window>
+
+    <!--
+        
+    直接调用命令
+    
+    并非只能使用实现了ICommandSource接口的类来触发希望执行的命令
+
+    1.使用命令(RoutedCommand)的Execute方法
+    ApplicationCommands.New.Execute(
+    null                   //参数值(或者null引用)
+    , targetElement        //对目标元素的引用。目标元素是WPF开始查找命令绑定(CommandBindings)的地方。可使用包含窗口(具有命令绑定)或嵌套的元素(例如，实际引发事件的元素)
+    );
+    2.使用命令绑定(CommandBinding)的Execute方法
+    this.CommandBindings[0].Command.Execute(
+    null                   //参数值(或者null引用)
+    );
+    这种方式只使用了半个命令模型，虽然也可触发命令，但不能响应命令的状态变化。如果希望实现该特性，当命令变为启用或者禁用时，您也可能希望处理
+    RoutedCommand.CanExecuteChanged事件进行响应。当引发CanExecuteChanged事件时，需要调用RoutedCommand.CanExecute()方法检查命令是否处于
+    可用状态。如果命令不可用，可禁用或改变用户界面中的部分内容
+    
+    
+    
+        -->

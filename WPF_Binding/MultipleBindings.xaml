@@ -1,0 +1,35 @@
+﻿<Window x:Class="WPF_Binding.MultipleBindings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Binding"
+        mc:Ignorable="d"
+        Title="MultipleBindings" Height="300" Width="300">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Slider Name="sliderFontSize" Margin="3" Minimum="1" Maximum="40" Value="10"/>
+
+        <TextBox Name="txtContent" Margin="3" Grid.Row="2" Text="Sample Content"/>
+
+        <ListBox Name="lstColors" Margin="3" Grid.Row="3">
+            <ListBoxItem Tag="Blue">Blue</ListBoxItem>
+            <ListBoxItem Tag="DarkBlue">Dark Blue</ListBoxItem>
+            <ListBoxItem Tag="LightBlue">Light Blue</ListBoxItem>
+        </ListBox>
+
+        <TextBlock Name="lblSampleText" Margin="3" Grid.Row="4"
+                   FontSize="{Binding ElementName=sliderFontSize, Path=Value}"
+                   Text="{Binding ElementName=txtContent, Path=Text}"
+                   Foreground="{Binding ElementName=lstColors, Path=SelectedItem.Tag}"/>
+        <!--注意这里的SelectedItem.Tag-->
+
+    </Grid>
+</Window>

@@ -1,0 +1,22 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_CustomDatePicker.View"
+        xmlns:utility="clr-namespace:WPF_CustomDatePicker.Utility"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" x:Class="WPF_CustomDatePicker.View.CustomDatePickerView"
+        mc:Ignorable="d"
+        Title="CustomDatePickerView" Height="350" Width="525"
+        DataContext="{Binding CustomDatePickerViewModel, Source={StaticResource Locator}}">
+    <StackPanel>
+        <DatePicker x:Name="DatePicker1"/>
+        <DatePicker x:Name="DatePicker2" utility:DatePickerCalendar.IsMonthYear="True" utility:DatePickerDateFormat.DateFormat="yyyy-MM"/>
+        <!--不要绑定Text，因为输入的可能是2020-01-01，返回的是2020，对于TwoWay不方便-->
+        <!--输入年份后需要回车才能生效-->
+        <DatePicker x:Name="DatePicker3" utility:DatePickerCalendar.IsYear="True" utility:DatePickerDateFormat.DateFormat="yyyy" SelectedDate="{Binding YearDT}"/>
+        <TextBlock Text="YearDT:"/>
+        <TextBlock Text="{Binding YearDT}"/>
+
+    </StackPanel>
+</Window>

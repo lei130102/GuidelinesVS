@@ -1,0 +1,42 @@
+﻿<Window x:Class="WPF_Shape.View.DropShadowEffects"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Shape.View"
+        mc:Ignorable="d"
+        Title="DropShadowEffects" Height="318" Width="344">
+    <StackPanel>
+
+        <TextBlock FontSize="20" Margin="5" Text="Basic dropshadom">
+            <TextBlock.Effect>
+                <DropShadowEffect/>
+            </TextBlock.Effect>
+        </TextBlock>
+
+        <TextBlock FontSize="20" Margin="5" Text="Light blue dropshadow">
+            <TextBlock.Effect>
+                <DropShadowEffect Color="SlateBlue"/>
+            </TextBlock.Effect>
+        </TextBlock>
+
+        <TextBlock FontSize="20" Foreground="White" Margin="5" Text="Blurred dropshadow with white text">
+            <TextBlock.Effect>
+                <DropShadowEffect BlurRadius="15"/>
+            </TextBlock.Effect>
+        </TextBlock>
+
+        <TextBlock FontSize="20" Foreground="Magenta" Margin="5" Text="Close dropshadow">
+            <TextBlock.Effect>
+                <DropShadowEffect ShadowDepth="0"/>
+            </TextBlock.Effect>
+        </TextBlock>
+
+        <TextBlock FontSize="20" Foreground="LimeGreen" Margin="5" Text="Distant dropshadow">
+            <TextBlock.Effect>
+                <DropShadowEffect ShadowDepth="25"/>
+            </TextBlock.Effect>
+        </TextBlock>
+
+    </StackPanel>
+</Window>

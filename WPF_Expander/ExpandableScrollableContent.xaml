@@ -1,0 +1,31 @@
+﻿<Window x:Class="WPF_Expander.ExpandableScrollableContent"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Expander"
+        mc:Ignorable="d"
+        Title="ExpandableScrollableContent" Height="300" Width="300">
+        <!--
+        这里进一步说明如何组合使用Expander控件和ScrollViewer控件。为让这个方法奏效，需要硬编码ScrollViewer控件的尺寸。否则，ScrollViewer控件
+        会进行扩展以适应他包含的内容
+
+    如果有一个系统，能让Expander控件根据窗口的可用空间，设置内容区域的尺寸，那将是非常好的。但这会明显增加复杂度(例如，当Expander控件展开时，如何在多个区域共享空间)。
+    Grid布局容器看起来像是潜在的解决方案，但他不能和Expander控件很好地集成。如果尝试这样做的话，当折叠Expander控件时，可能导致非常奇怪的行为，不能正确地更新网格的行高
+    -->
+    <StackPanel>
+        <Expander Margin="5" Padding="5" Header="Region One">
+        </Expander>
+        <Expander Margin="5" Padding="5" Header="Region Two">
+            <ScrollViewer Height="50">
+                <TextBlock TextWrapping="Wrap">
+                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nam mi sapien, viverra et, lacinia varius, ullamcorper sed, sapien. Proin rutrum arcu vitae tellus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque libero dui, eleifend faucibus, auctor at, aliquet a, nulla, Nunc eros. Phasellus mauris nisi, eleifend nec, adipiscing nec, luctus nec, lacus. Aliquam justo metus, vestibulum non, accumsan id, hendrerit at, nibh. Praesent accumsan urna quis tortor. Proin erat libero, facilisis nec, rhoncus ut, malesuada ut, ipsum. Donec id nibh.
+                </TextBlock>
+            </ScrollViewer>
+        </Expander>
+        <Expander Margin="5" Padding="5" Header="Region Three" IsExpanded="True">
+            <Button Padding="3">Hidden Button Two
+            </Button>
+        </Expander>
+    </StackPanel>
+</Window>

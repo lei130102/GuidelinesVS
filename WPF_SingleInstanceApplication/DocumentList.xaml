@@ -1,0 +1,10 @@
+﻿<Window x:Class="WPF_SingleInstanceApplication.DocumentList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_SingleInstanceApplication"
+        mc:Ignorable="d"
+        Title="DocumentList" Height="326" Width="462">
+    <ListBox Margin="5" Name="lstDocuments"/>
+</Window>

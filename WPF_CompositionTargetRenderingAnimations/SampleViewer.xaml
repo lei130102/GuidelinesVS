@@ -1,0 +1,28 @@
+﻿<Page x:Class="WPF_CompositionTargetRenderingAnimations.SampleViewer"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WPF_CompositionTargetRenderingAnimations"
+      mc:Ignorable="d" 
+      WindowTitle="SampleViewer"
+      Background="White">
+    <!--Title="SampleViewer"-->
+    <TabControl>
+        <TabItem Header="Color Changing Example">
+            <Frame Source="SimpleExample\SimpleExample.xaml"/>
+        </TabItem>
+        <TabItem Header="Follow Animation">
+            <Frame Source="FollowExample\FollowExample.xaml"/>
+        </TabItem>
+        <TabItem Header="Frame-Independent Follow Animation">
+            <Frame Source="FrameIndependentFollowExample\FrameIndependentFollowExample.xaml"/>
+        </TabItem>
+        <TabItem Header="Reusable Frame-Independent Follow Animation">
+            <Frame Source="ReusableFollowExample\ReusableFollowExample.xaml"/>
+        </TabItem>
+        <TabItem Header="Particle Effect Examples">
+            <Frame Source="ParticleEffectExamples\ParticleEffectExamples.xaml"/>
+        </TabItem>
+    </TabControl>
+</Page>

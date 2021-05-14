@@ -1,0 +1,37 @@
+﻿<Window x:Class="WPF_ListView.GridView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ListView"
+        mc:Ignorable="d"
+        Title="GridView" Height="200" Width="400">
+    <Grid>
+        <ListView Margin="10" Name="lvUsers">
+            <ListView.Resources>
+
+                <!--在普通的ListView中，列名左对齐，但由于某种原因，Microsoft决定默认将名称置于WPF ListView中心
+                遗憾的是，GridViewColumn上没有直接属性来控制它，但幸运的是，这并不意味着它无法更改
+                使用以GridViewColumHeader为目标的Style，它是用于显示GridViewColumn标题的元素，我们可以更改
+                Horizo​​ntalAlignment属性。在这种情况下，它默认为Center，但我们可以将其更改为Left，以实现我们想要的目标-->
+                <Style TargetType="{x:Type GridViewColumnHeader}">
+                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                </Style>
+                
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" Width="120" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Age" Width="50" DisplayMemberBinding="{Binding Age}"/>
+                    <GridViewColumn Header="Mail" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Mail}" TextDecorations="Underline" Foreground="Blue" Cursor="Hand"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>

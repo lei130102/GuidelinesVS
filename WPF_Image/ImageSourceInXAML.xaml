@@ -12,7 +12,7 @@
     其中较为常见的情况是用Uri加载图像。Uri表达式的一般形式为：协议+授权+资源的相对路径路径
 
     协议：pack://
-    授权：有两种。一种用于访问编译时已经知道的文件，用application:///   另一种用于访问编译时不知道、运行时才知道的文件，用SiteOfOrigin:///         一般用逗号代替斜杠，也就是改写作application:,,,和pack:,,,
+    授权：有两种。一种用于访问编译时已经知道的文件，用application:///   另一种用于访问编译时不知道、运行时才知道的文件(可以访问完全松散的文件。完全松散的文件指那些没有添加到项目中，只是拷贝在程序目录中的文件)，用SiteOfOrigin:///         一般用逗号代替斜杠，也就是改写作application:,,,和pack:,,,
     资源的路径：分为绝对路径和相对路径。一般使用相对路径，比如/Image/google.png
 
     举例:
@@ -31,6 +31,13 @@
     pack://application:,,,/WPF_Other;component/Image/google.png
     /WPF_Other;component/Image/google.png
     
+
+    如果使用强名称的程序集，可使用包含版本和/或公钥标记的限定程序集引用代替程序集的名称。使用分号隔离每段信息，并在版本号数字之前添加字母v
+    img.Source = new BitmapImage(new Uri("ImageLibrary;v1.25;component/images/winter.jpg", UriKind.Relative));
+
+    下面的示例同时使用了版本号和公钥标记
+    img.Source = new BitmapImage(new Uri("ImageLibrary;v1.25;dc642a7f5bd64912;component/images/winter.jpg", UriKind.Relative));
+
     -->
     
     <StackPanel>

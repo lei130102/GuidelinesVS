@@ -1,0 +1,44 @@
+﻿<Window x:Class="WPF_ListView.Content"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ListView"
+        mc:Ignorable="d"
+        Title="Content" Height="200" Width="200">
+    <Grid>
+
+        <!--
+        ListView 在WPF裡不盡然與WinForms相同. 其中有一個最主要的差異是WinForms裡的ListView會呼叫Windows API的函數來處理通用的 Windows ListView
+        控制元件; 而WPF ListView是一個不依靠Windows API的獨立控制元件.WPF ListView(列表顯示)控制元件會使用 ListViewItem (列表顯示單元控制項) 類
+        別當作是他基本單元控制元件. 但如果你將他跟WinForms 版本相比, 你可能會開始尋找元件特性像是 ImageIndex(影像索引), Group(群組)及此基本單元控
+        制元件的子項目, 不過在WPF裡會找不到. WPF ListView 以完全不同的處理方式來操作images(影像), groups(群組)及其子項.
+        
+        WPF ListView控件是最简单的形式。事实上，它看起来很像WPF ListBox，直到你开始添加专门的视图。这并不奇怪，因为ListView直接从ListBox控件继承。
+        因此，默认的ListView实际上只是一个ListBox，具有不同的选择模式
+
+        因为ListViewItem派生自ContentControl类，所以我们可以指定WPF控件作为其内容。在这种情况下，我们使用StackPanel，它有一个Image和一个TextBlock作为它的子控件。
+        -->
+        
+        <ListView Margin="10">
+            <ListViewItem>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Image/n00.png"/>
+                    <TextBlock Text="Green"/>
+                </StackPanel>
+            </ListViewItem>
+            <ListViewItem>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Image/n01.png"/>
+                    <TextBlock Text="Green"/>
+                </StackPanel>
+            </ListViewItem>
+            <ListViewItem>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Image/n02.png"/>
+                    <TextBlock Text="Green"/>
+                </StackPanel>
+            </ListViewItem>
+        </ListView>
+    </Grid>
+</Window>

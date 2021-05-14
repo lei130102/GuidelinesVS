@@ -1,0 +1,51 @@
+﻿<Window x:Class="WPF_CheckBox.Content"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_CheckBox"
+        mc:Ignorable="d"
+        Title="Content" Height="500" Width="250">
+    <StackPanel Margin="10">
+        <Label FontWeight="Bold">Application Options
+        </Label>
+        <CheckBox>
+            <TextBlock>
+            Enable feature <Run Foreground="Green" FontWeight="Bold">ABC</Run>
+            </TextBlock>
+        </CheckBox>
+        <CheckBox IsChecked="True">
+            <WrapPanel>
+                <TextBlock>
+                Enable feature <Run FontWeight="Bold">XYZ</Run>
+                </TextBlock>
+                <Image Source="/Image/n00.png" Width="42" Height="30" Margin="5,0"/>
+            </WrapPanel>
+        </CheckBox>
+        <CheckBox>
+            <TextBlock>
+            Enable feature <Run Foreground="Blue" TextDecorations="Underline" FontWeight="Bold">WWW</Run>
+            </TextBlock>
+        </CheckBox>
+
+        <!--IsThreeState 属性
+            之前提到，CheckBox 通常对应一个布尔值，也就是说它只有两种状态——真与假，即启用与禁用。然而，布尔值也可以是空值，
+            这就带来了第三种状态（真，假或空）。CheckBox 也支持第三种状态。如果把 IsThreeState 属性设为真，CheckBox 
+            就会拥有第三种状态，被称作“不定态”。
+
+            IsThreeState 的一般用法是创建一个“全部启用”的 CheckBox，让它控制一系列的子 CheckBox，并显示它们作为一个整体的状态。
+            我们下面的例子展示了如何创建几个可开关的功能，并在窗口最上面有一个“全部启用”的 CheckBox：-->
+
+
+        <StackPanel Margin="10,5">
+            <CheckBox IsThreeState="True" Name="cbAllFeatures" Checked="cbAllFeatures_CheckedChanged" Unchecked="cbAllFeatures_CheckedChanged">Enable all</CheckBox>
+            <StackPanel Margin="20, 5">
+                <CheckBox Name="cbFeatureAbc" Checked="cbFeature_CheckedChanged" Unchecked="cbFeature_CheckedChanged">Enable feature ABC</CheckBox>
+                <CheckBox Name="cbFeatureXyz" IsChecked="True" Checked="cbFeature_CheckedChanged" Unchecked="cbFeature_CheckedChanged">Enable feature XYZ</CheckBox>
+                <CheckBox Name="cbFeatureWww" Checked="cbFeature_CheckedChanged" Unchecked="cbFeature_CheckedChanged">Enable feature WWW</CheckBox>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</Window>
+
+<!--如你所见，你在内容中想放什么都可以。三个 CheckBox 里每一个的文本格式都不一样，我甚至在第二个里放了一个 Image 控件。如果我们用控件而非文本作为 CheckBox 的内容，我们就能随意控制样式。更酷的是，无论你点击内容的哪一部分，都可以开关 CheckBox 本身-->

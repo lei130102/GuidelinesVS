@@ -1,0 +1,37 @@
+﻿<Window x:Class="WPF_Style.ReuseFontWithResources"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Style"
+        xmlns:s="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="ReuseFontWithResources" Height="368" Width="378">
+    <Window.Resources>
+        <!--注意Window.Resources里面要求都必须有x:Key-->
+        <FontFamily x:Key="ButtonFontFamily">
+            Times New Roman
+        </FontFamily>
+        <s:Double x:Key="ButtonFontSize">
+            18
+        </s:Double>
+        <FontWeight x:Key="ButtonFontWeight">
+            Bold
+        </FontWeight>
+    </Window.Resources>
+    <StackPanel Margin="5">
+        <Button Padding="5" Margin="5"
+                FontFamily="{StaticResource ButtonFontFamily}"
+                FontWeight="{StaticResource ButtonFontWeight}"
+                FontSize="{StaticResource ButtonFontSize}"
+                Content="A Customized Button"/>
+        <TextBlock Margin="5" Text="Normal Content."/>
+        <Button Padding="5" Margin="5" Content="A Normal Button"/>
+        <TextBlock Margin="5" Text="More normal Content"/>
+        <Button Padding="5" Margin="5"
+                FontFamily="{StaticResource ButtonFontFamily}"
+                FontWeight="{StaticResource ButtonFontWeight}"
+                FontSize="{StaticResource ButtonFontSize}"
+                Content="Another Customized Button"/>
+    </StackPanel>
+</Window>

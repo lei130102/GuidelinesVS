@@ -60,8 +60,47 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="NoSymbol.xaml.cs">
+      <DependentUpon>NoSymbol.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\BezierCurve.xaml.cs">
+      <DependentUpon>BezierCurve.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\BlurEffects.xaml.cs">
+      <DependentUpon>BlurEffects.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ClipArt.xaml.cs">
+      <DependentUpon>ClipArt.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Clipping.xaml.cs">
+      <DependentUpon>Clipping.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ClippingWithViewbox.xaml.cs">
+      <DependentUpon>ClippingWithViewbox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CombiningShapes.xaml.cs">
+      <DependentUpon>CombiningShapes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CustomPixelShader.xaml.cs">
+      <DependentUpon>CustomPixelShader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Drawings.xaml.cs">
+      <DependentUpon>Drawings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DropShadowEffects.xaml.cs">
+      <DependentUpon>DropShadowEffects.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GenerateBitmap.xaml.cs">
+      <DependentUpon>GenerateBitmap.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GroupedShapes.xaml.cs">
+      <DependentUpon>GroupedShapes.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\LinearGradientBrush.xaml.cs">
       <DependentUpon>LinearGradientBrush.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MiniLanguage.xaml.cs">
+      <DependentUpon>MiniLanguage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Opacity.xaml.cs">
       <DependentUpon>Opacity.xaml</DependentUpon>
@@ -80,6 +119,9 @@
     </Compile>
     <Compile Include="View\RectangleRadius.xaml.cs">
       <DependentUpon>RectangleRadius.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ReusingGeometry.xaml.cs">
+      <DependentUpon>ReusingGeometry.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\RotateTransform.xaml.cs">
       <DependentUpon>RotateTransform.xaml</DependentUpon>
@@ -102,6 +144,9 @@
     <Compile Include="View\ShapeStretch.xaml.cs">
       <DependentUpon>ShapeStretch.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\SimpleArc.xaml.cs">
+      <DependentUpon>SimpleArc.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SolidColorBrush.xaml.cs">
       <DependentUpon>SolidColorBrush.xaml</DependentUpon>
     </Compile>
@@ -113,6 +158,9 @@
     </Compile>
     <Compile Include="View\StrokeStartLineCapStrokeEndLineCap.xaml.cs">
       <DependentUpon>StrokeStartLineCapStrokeEndLineCap.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\VisualLayer.xaml.cs">
+      <DependentUpon>VisualLayer.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -137,12 +185,65 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="View\Grayscale_Compiled.ps" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="NoSymbol.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\BezierCurve.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\BlurEffects.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ClipArt.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Clipping.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ClippingWithViewbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CombiningShapes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomPixelShader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Drawings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DropShadowEffects.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\GenerateBitmap.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\GroupedShapes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\LinearGradientBrush.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MiniLanguage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -167,6 +268,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\RectangleRadius.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ReusingGeometry.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -198,6 +303,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\SimpleArc.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\SolidColorBrush.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -214,6 +323,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\VisualLayer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\Creek.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\pointer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\harpsichord.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

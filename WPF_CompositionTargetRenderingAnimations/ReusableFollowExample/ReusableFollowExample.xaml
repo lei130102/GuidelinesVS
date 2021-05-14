@@ -1,0 +1,20 @@
+﻿<Page x:Class="WPF_CompositionTargetRenderingAnimations.ReusableFollowExample.ReusableFollowExample"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WPF_CompositionTargetRenderingAnimations.ReusableFollowExample"
+      mc:Ignorable="d">
+    <Canvas Background="Transparent">
+        <local:FollowMouseCanvas Canvas.Left="0" Canvas.Top="0" Background="red" Width="50" Height="50">
+            <!--could put more content that will also follow mouse here-->
+        </local:FollowMouseCanvas>
+        <local:FollowMouseCanvas Canvas.Left="300" Canvas.Top="0" Background="green" Width="50" Height="50">
+            <!--could put more content that will also follow mouse here-->
+        </local:FollowMouseCanvas>
+        <local:FollowMouseCanvas Canvas.Left="0" Canvas.Top="300" Background="blue" Width="50" Height="50">
+            <!--could put more content that will also follow mouse here-->
+        </local:FollowMouseCanvas>
+    </Canvas>
+
+</Page>

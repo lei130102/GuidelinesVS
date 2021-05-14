@@ -21,6 +21,7 @@ namespace WPF_MVVM_Basic.View
     /// </summary>
     [Export(typeof(IPluginView))]
     [ExportMetadata("Type", new[]{ "新窗口" })]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public partial class SecondView : Window, IPluginView
     {
         public SecondView()

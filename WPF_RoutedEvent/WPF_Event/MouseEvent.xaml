@@ -1,0 +1,33 @@
+﻿<Window x:Class="WPF_RoutedEvent.WPF_Event.MouseEvent"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_RoutedEvent.WPF_Event"
+        mc:Ignorable="d"
+        Title="MouseEvent" Height="300" Width="390">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Rectangle Name="rect" Fill="LightBlue" MouseMove="rect_MouseMove"/>
+        <Button Grid.Row="1" Name="cmdCapture" Click="cmdCapture_Click" Content="Capture the Mouse"/>
+        <TextBlock Name="lblInfo" Grid.Row="2"/>
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBox Padding="10" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Drag from this TextBox"/>
+            <Label Grid.Column="1" Padding="20" Background="LightGoldenrodYellow" VerticalAlignment="Center" HorizontalAlignment="Center" MouseDown="Label_MouseDown" Content="Or this Label"/>
+            <Label Grid.Row="1" Grid.ColumnSpan="2" Background="LightGoldenrodYellow" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="20" AllowDrop="True" Drop="Label_Drop" DragEnter="Label_DragEnter" Content="To this Label"/>
+        </Grid>
+    </Grid>
+</Window>

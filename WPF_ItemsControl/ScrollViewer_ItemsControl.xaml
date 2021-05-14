@@ -1,0 +1,30 @@
+﻿<Window x:Class="WPF_ItemsControl.ScrollViewer_ItemsControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ItemsControl"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="ScrollViewer_ItemsControl" Height="150" Width="200">
+
+
+    <!--一旦你开始使用ItemsControl，你可能会遇到一个非常常见的问题：默认情况下，ItemsControl没有任何滚动条，这意味着如果内容不适合，它只是被剪裁。通过本文中的第一个示例并调整窗口大小可以看出这一点：-->
+    <!--WPF使这很容易解决。有一些可能的解决方案，比如，你可以通过改变ItemsControl的用于包括ScrollViewer控件的模板，但最简单的方法是在ItemsControl的外层实现一个ScrollViewer中。这是一个例子：-->
+
+
+    <!--我将两个可见性选项设置为“自动”，以使它们仅在需要时可见。从屏幕截图中可以看到，您现在可以滚动项目列表。-->
+    <!--当您想要完全控制数据的显示方式，以及何时不需要任何内容​​可供选择时，ItemsControl非常棒。如果您希望用户能够从列表中选择项目，那么您最好使用其他控件之一，例如： ListBox或ListView。它们将在后面的章节中描述。-->
+
+    <Grid Margin="10">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <ItemsControl>
+                <system:String>ItemsControl Item #1</system:String>
+                <system:String>ItemsControl Item #2</system:String>
+                <system:String>ItemsControl Item #3</system:String>
+                <system:String>ItemsControl Item #4</system:String>
+                <system:String>ItemsControl Item #5</system:String>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Window>

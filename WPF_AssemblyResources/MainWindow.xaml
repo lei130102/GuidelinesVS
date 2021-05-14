@@ -1,0 +1,14 @@
+﻿<Window x:Class="WPF_AssemblyResources.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_AssemblyResources"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="300" Width="300">
+    <StackPanel>
+        <Button Name="cmdPlay" Margin="5" Padding="5" Content="Play" Click="cmdPlay_Click"/>
+        <Image Name="img" Margin="5" Source="/Image/Blue hills.jpg"/>
+        <MediaElement Name="Sound" Source="/Sound/start.wav" LoadedBehavior="Manual"/>
+    </StackPanel>
+</Window>

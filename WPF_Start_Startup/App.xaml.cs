@@ -33,12 +33,17 @@ namespace WPF_Start_Startup
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            //1.At this point, the main window has been created but not shown
             //MainWindow window = new MainWindow();
+
+            //2.Configure the main window
             ////WPF 中的命令行参数
-            //if(e.Args.Length == 1)
+            //if(e.Args.Length > 0)
             //{
             //    MessageBox.Show("Now opening file: \n\n" + e.Args[0]);
             //}
+
+            //3.This window will automatically be set as the Application.MainWindow.
             //window.Show();
 
             //或者

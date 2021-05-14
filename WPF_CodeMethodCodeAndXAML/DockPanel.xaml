@@ -1,0 +1,5 @@
+﻿<DockPanel xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+    <Button Name="button1" Margin="30" Content="Please click me."/>
+</DockPanel>
+<!--通过添加页，创建单独的XAML文件-->
+<!--注意，动态加载的xaml文件的属性要设置成 复制到输出目录：始终复制，生成操作：无-->

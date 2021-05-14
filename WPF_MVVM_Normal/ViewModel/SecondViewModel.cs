@@ -16,6 +16,7 @@ namespace WPF_MVVM_Normal.ViewModel
 {
     [Export(typeof(IPluginViewModel))]
     [ExportMetadata("Type", new[]{ "新窗口" })]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class SecondViewModel : ViewModelBase, IPluginViewModel
     {
         private ICommand _window_Loaded;

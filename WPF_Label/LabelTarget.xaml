@@ -6,12 +6,14 @@
         xmlns:local="clr-namespace:WPF_Label"
         mc:Ignorable="d"
         Title="LabelTarget" Height="180" Width="250">
-    <!--Label控件在最简单的形式下和我们在另外一篇文章中用到的TextBlock看起来非常像。但你很快就会发现，Label使用的是Content属性而不是Text属性。这是因为Label内部可以放置任意类型的控件而不仅仅是文本。当然这个内容也可以是一个字符串
+    <!--
+    
+    TextBlock使用Text属性
+    Label使用Content属性(因为Label内部可以放置任意类型的控件而不仅仅是文本。当然这个内容也可以是一个字符串)
+    
+    Label 在預設中會有一點 padding，讓文字距離左上角幾個 pixels。這不像 TextBlock 控制項允許你手動指定，在這個簡單的例子中，內容只是一個string，Label實際上會在內部創建一個TextBlock並在其中顯示您的string。
 
-另外一件你可能會注意到的是，事實上，Label 在預設中會有一點 padding，讓文字距離左上角幾個 pixels。這不像 TextBlock 控制項允許你手動指定。
-在這個簡單的例子中，內容只是一個string，Label實際上會在內部創建一個TextBlock並在其中顯示您的string。
-
-Label控件和TextBlock控件的对比
+Label控件和TextBlock控件的对比：
 TextBlock僅允許您呈現文本字串，而Label還允許您做下列的事情：
 設定邊界(border)
 渲染其他控件，例如一张图片
@@ -26,7 +28,11 @@ TextBlock僅允許您呈現文本字串，而Label還允許您做下列的事情
 
 所以，这里有几个新概念。首先，我们通过在字符前放置下划线（_）来定义访问键。它不必是第一个字符，它可以在标签内容中的任何字符之前。通常的做法是使用尚未用作另一个控件的访问键的第一个字符。
 
-我们使用Target属性来连接 Label和指定的控件。我们使用一个标准的WPF绑定，使用ElementName属性，我们将在本教程后面描述所有这些内容。绑定是基于控件的名称，因此，如果更改此名称，还必须记住更改绑定。-->
+我们使用Target属性来连接 Label和指定的控件。我们使用一个标准的WPF绑定，使用ElementName属性，我们将在本教程后面描述所有这些内容。绑定是基于控件的名称，因此，如果更改此名称，还必须记住更改绑定。
+    
+    如果确实需要在标签中显示下划线，必须添加两个下划线
+    
+    -->
     
     <StackPanel Margin="10">
         <Label Content="_Name:" Target="{Binding ElementName=txtName}"/>

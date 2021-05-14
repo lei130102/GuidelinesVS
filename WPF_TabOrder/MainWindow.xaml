@@ -1,0 +1,59 @@
+﻿<Window x:Class="WPF_TabOrder.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_TabOrder"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="250" Width="400">
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <Label>First name:</Label>
+            <TextBox Name="tbFocus" TabIndex="0"/>
+            <Label>Street name:</Label>
+            <TextBox TabIndex="2"/>
+            <Label>City:</Label>
+            <TextBox TabIndex="5" IsReadOnly="True" IsTabStop="False" Background="Gainsboro"/>
+        </StackPanel>
+        <StackPanel Grid.Column="2">
+            <Label>Last name:</Label>
+            <TextBox TabIndex="1"/>
+            <Label>Zip Code:</Label>
+            <TextBox TabIndex="4"/>
+        </StackPanel>
+        <Button Grid.Row="1" HorizontalAlignment="Right" Width="80" Content="Add"/>
+        <Button Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Width="80" Content="Cancel"/>
+    </Grid>
+</Window>
+
+    <!--
+        为将焦点从一个元素移到另一个元素，用户可单击鼠标或者使用Tab键和方向键
+
+        在WPF中，因为WPF使用层次结构的元素布局实现了Tab键切换焦点的顺序。本质上，按下Tab键时会将焦点移到当前元素的第一个元素，如果当前元素
+        没有子元素，会将焦点移到同级的下一个子元素
+
+        如果在具有两个StackPanel面板容器的窗口中使用Tab键转移焦点，焦点首先会通过第一个StackPanel面板中的所有控件，然后通过第二个StackPanel面板中的所有控件
+
+        如果希望获得控制使用Tab键转移焦点顺序的功能，可按数字顺序设置每个控件的TabIndex属性。TabIndex属性为0的控件首先获得焦点，然后是次高的TabIndex值，
+        如果多个元素具有相同的TabIndex值，WPF就使用自动Tab顺序，这意味着会跳过随后最靠近的元素。
+        (默认情况下，所有控件的TabIndex属性都被设置为Int32.MaxValue，这意味着可通过将某个特定控件的TabIndex属性设置为0，让该控件作为窗口的开始点，并且依赖于自动导航
+        指导用户从这个开始点开始，根据元素的定义顺序转移焦点并通过窗口的剩余部分)
+        TabIndex属性是在Control类中定义的，在该类中还定义了IsTabStop属性。可通过将IsTabStop属性设置为false来阻止控件被包含进Tab键焦点顺序
+
+        IsTabStop属性和Focusable属性区别：
+        如果控件的IsTabStop属性被设置为false，控件仍可通过其他方式获得焦点——通过编程(使用代码调用Focus()方法)或通过鼠标单击
+        
+        不可见或禁用的控件("变灰的控件")通常会忽略Tab键焦点顺序，并且不能被激活，不管TabIndex属性，IsTapStop属性以及Focusable属性如何设置
+        (为了隐藏或者禁用某个控件，可以分别设置Visibility属性和IsEnabled属性)
+        
+        
+        -->

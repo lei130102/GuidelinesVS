@@ -14,6 +14,7 @@ namespace WPF_MVVM_Basic.ViewModel
 {
     [Export(typeof(IPluginViewModel))]
     [ExportMetadata("Type", new[] { "歌曲" })]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class SongViewModel : INotifyPropertyChanged, IPluginViewModel
     {
         private Song _song;

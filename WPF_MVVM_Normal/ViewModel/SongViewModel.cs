@@ -18,6 +18,7 @@ namespace WPF_MVVM_Normal.ViewModel
     //选择派生自ViewModelBase，而非ObservableObject是因为他还提供了消息发送的功能
     [Export(typeof(IPluginViewModel))]
     [ExportMetadata("Type", new[] { "歌曲" })]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class SongViewModel : ViewModelBase, IPluginViewModel
     {
         private Song _song;

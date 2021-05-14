@@ -1,0 +1,43 @@
+﻿<Window x:Class="WPF_Binding.BindToFont"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Binding"
+        mc:Ignorable="d"
+        Title="BindToFont" Height="300" Width="300">
+        <!--
+        Source属性
+
+    1.将Source属性指向一些已经准备好了的静态对象
+    {Binding Source={x:Static SystemFonts.IconFontFamily}, Path=LineSpacing}
+    绑定表示式获取由静态属性SystemFonts.IconFontFamily提供的FontFamily对象。然后将Binding.Path属性设置为
+    FontFamily.LineSpacing属性
+
+    2.绑定到先前作为资源创建的对象
+   <Window.Resources>
+        <FontFamily x:Key="CustomFont">Calibri</FontFamily>
+    </Window.Resources> 
+    {Binding Source={StaticResource CustomFont}, Path=Source}
+    
+
+    
+    
+    
+    
+    
+    DataContext属性
+    特别适用于将大量元素绑定到同一个对象的情况
+    
+    -->
+    <Window.Resources>
+        <FontFamily x:Key="CustomFont">Calibri</FontFamily>
+    </Window.Resources>
+    <StackPanel Margin="10" DataContext="{x:Static SystemFonts.IconFontFamily}">
+        <TextBlock Margin="5" Text="{Binding Path=Source}"/>
+        <TextBlock Margin="5" Text="{Binding Source={x:Static SystemFonts.IconFontFamily}, Path=LineSpacing}"/>
+        <TextBlock Margin="5" Text="{Binding Source={x:Static SystemFonts.IconFontFamily}, Path=FamilyTypefaces[0].Style}"/>
+        <TextBlock Margin="5" Text="{Binding Source={x:Static SystemFonts.IconFontFamily}, Path=FamilyTypefaces[0].Weight}"/>
+        <TextBlock Margin="5" Text="{Binding Source={StaticResource CustomFont}, Path=Source}"/>
+    </StackPanel>
+</Window>

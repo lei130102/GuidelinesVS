@@ -1,0 +1,47 @@
+﻿<Window x:Class="WPF_Binding.StringFormat_ConverterCulture"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Binding"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"           
+        mc:Ignorable="d"
+        Title="StringFormat_ConverterCulture" Height="250" Width="300"
+        Name="window">
+    <!--指定 xmlns:system ，使用程序集mscorlib中的System命名空间-->
+
+    <!--
+    Binding.ElementName
+    The ElementName property is used to reference an object by the name of the object. This is particularly useful in XAML, where you can directly reference other elements defined in XAML.
+
+    Binding.Source
+    The Source property is used to specify an object reference on which the binding Path or XPath will be evaluated. The Source property is usually used when the object on which the Binding is set is known and differs from the DataContext.
+    
+    简单地说，“ElementName”用于绑定到xaml界面设计中添加的其它控件对象，“Source”用于绑到资源中的对象。
+    -->
+
+    <!--
+    StaticResource
+    指向的对象通常是Xaml里定义的Style或者Template之类。
+    
+    x:Static
+    指向的对象通常是后台代码里的某个静态类。用来在Xaml中引用类的静态字段或静态属性，如Text={x:Static local:Window1.ShowText}。
+    -->
+
+    <!--StringFormat见string.Format的规则-->
+    
+    <StackPanel Margin="10">
+        <TextBlock Text="{Binding ElementName=window, Path=ActualWidth, StringFormat=窗口宽度：{0:##.0}}"/>
+        <!--StringFormat中有自定义文本“窗口宽度：”-->
+        <TextBlock Text="窗口宽度："/>
+        <TextBlock Text="{Binding ElementName=window, Path=ActualWidth, StringFormat={}{0:##.0}}"/>
+        <!--StringFormat中没有自定义文本，所以前面需要加{}，防止与用于标记扩展的语法混淆-->
+        <TextBlock Text="{Binding ElementName=window, Path=ActualHeight, StringFormat=窗口高度：{0:C}}"/>
+        <TextBlock Text="{Binding Source={x:Static system:DateTime.Now}, StringFormat=日期：{0:yyyy-MM-dd}}"/>
+        <TextBlock Text="{Binding Source={x:Static system:DateTime.Now}, StringFormat=时间：{0:HH:mm}}"/>
+        <!--根据特定文化输出绑定值-->
+        <TextBlock Text="{Binding Source={x:Static system:DateTime.Now}, ConverterCulture='de-DE', StringFormat=德国日期：{0:D}}"/>
+        <TextBlock Text="{Binding Source={x:Static system:DateTime.Now}, ConverterCulture='en-US', StringFormat=美国日期：{0:D}}"/>
+        <TextBlock Text="{Binding Source={x:Static system:DateTime.Now}, ConverterCulture='ja-JP', StringFormat=日本日期：{0:D}}"/>
+    </StackPanel>
+</Window>

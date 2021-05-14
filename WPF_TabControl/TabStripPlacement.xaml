@@ -1,0 +1,62 @@
+﻿<Window x:Class="WPF_TabControl.TabStripPlacement"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_TabControl"
+        mc:Ignorable="d"
+        Title="TabStripPlacement" Height="200" Width="250">
+    <StackPanel>
+
+        <!--WPF TabControl-标签位置
+        TabControl的选项卡通常放在控件的顶部
+        TabStripPlacement可以设置到顶部、底部、左侧和右侧.-->
+        
+        <TabControl TabStripPlacement="Bottom">
+            <TabItem Header="General">
+                <Label Content="Content goes here..."/>
+            </TabItem>
+            <TabItem Header="Security"/>
+            <TabItem Header="Details"/>
+        </TabControl>
+
+
+
+
+
+<!--TabStripPlacement可以设置到顶部、底部、左侧和右侧。但是，如果将其设置为左侧或者右侧，则选项卡不会跟着旋转
+
+我个人更希望当选项卡放在左右一侧时也能跟着旋转，即标签文本变为纵向显示而不是横向，但是标准功能却不是这样。不过
+幸运的是，我们能够通过一点小的修改达到这种效果
+
+如果您尚未阅读有关模板或样式的章节，你可能会有点困惑，但我们所做的是针对TabItem元素样式的修改，我们覆盖了HeaderTemplate，
+然后在选项卡上运用一个旋转变换。 对于放置在左侧的标签，我们旋转270度 ；如果放置在右侧，您应该只旋转90度，使其看起来正确。-->
+
+        <TabControl TabStripPlacement="Left">
+            <TabControl.Resources>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="HeaderTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <ContentPresenter Content="{TemplateBinding Content}">
+                                    <ContentPresenter.LayoutTransform>
+                                        <RotateTransform Angle="270"/>
+                                    </ContentPresenter.LayoutTransform>
+                                </ContentPresenter>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Padding" Value="3"/>
+                </Style>
+            </TabControl.Resources>
+            <TabItem Header="General">
+                <Label Content="Content goes here..."/>
+            </TabItem>
+            <TabItem Header="Security"/>
+            <TabItem Header="Details"/>
+        </TabControl>
+
+
+
+    </StackPanel>
+</Window>

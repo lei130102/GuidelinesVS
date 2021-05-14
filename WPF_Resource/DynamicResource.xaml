@@ -1,0 +1,78 @@
+﻿<Window x:Class="WPF_Resource.DynamicResource"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Resource"
+        mc:Ignorable="d"
+        Title="DynamicResource" Height="300" Width="300">
+        <!--
+    静态资源和动态资源
+
+    即便以静态资源方式引用画刷资源，当后台代码修改该资源时：
+    ImageBrush brush = (ImageBrush)this.Resources["TileBrush"];
+    brush.Viewport = new Rect(0, 0, 5, 5);
+    使用该资源的控件仍会更新
+    这是因为Brush类继承自Freezable类。Freezable类有一个基本的变化跟踪特性(如果不需要改变，能被“冻结”为只读状态)。这意味着无论
+    何时在WPF中改变画刷，所有使用该画刷的控件都会自动更新。控件是否是通过资源获取其画刷无关紧要
+
+    静态资源和动态资源的区别：
+    区别在于静态资源只从资源集合中获取对象一次。根据对象的类型(以及使用对象的方式)，对象的任何变化都可能被立即注意到。然而，动态
+    资源在每次需要时都会重新从资源集合中查找对象。这意味着可在同一键下放置一个全新对象，而且动态资源会应用该变化
+    例如，当后台代码修改资源：
+    this.Resources["TileBrush"] = new SolidColorBrush(Colors.LightBlue);     //注意跟上面的修改方式不同
+    那么静态资源不会更新，而动态资源会更新
+    
+    创建依赖于Window设置(例如系统颜色)的资源时，如果希望能够响应当前颜色方案的任何改变，就需要使用动态资源(否则，如果使用静态资源，将
+    仍使用原来的颜色方案，直到用户重新启动应用程序为止)
+
+    作为一般规则，只有在下列情况下才需要使用动态属性：
+    1.资源具有依赖于系统设置的属性(例如当前Windows操作系统的颜色或字体)
+    2.准备通过编程方式替换资源对象(例如实现几类动态皮肤特性)
+    然而，不应过度使用动态资源。主要问题是对资源的修改未必会触发对用户界面的更新(在画刷示例中，因为构造画刷对象的方式——画刷具有内置的通知支持，确实更新了用户界面)。
+    许多情况下，需要在控件中显示动态内容，而且控件需要随着内容的改变调整自身。对于这种情况，使用数据绑定更合理
+    (注意，在极少数情况下，动态资源还用于提高第一次加载窗口时的性能，这是因为静态资源总是在创建窗口时加载，而动态资源在第一次使用他们时加载。然而，除非资源非常大并且非常复杂
+    （在这种情况下，解析资源标记会消耗较长时间），否则这样做没有任何益处)
+    -->
+
+    <!--
+    非共享资源
+
+    通常，在多个地方使用某种资源时，使用的是同一个对象实例。这种行为——称为共享——通常这也正是所希望的。然而，也可能希望告诉解析器在每次使用时创建单独的对象实例
+
+    为关闭共享行为，需要使用Shared特性
+   <ImageBrush x:Key="TileBrushNoShared" x:Shared="False" ... /> 
+
+    使用非共享资源的情况
+    1.希望以后分别修改资源实例
+    不过更好是告诉所有按钮使用同一个画刷对象，当需要时再创建并应用新的画刷对象，这样，只有当确实需要时才承担额外的画刷对象开销
+    2.希望以一种原本不允许的方式重用某个对象，比如可将某个元素(如一幅图像或一个按钮)定义为资源，然后在窗口的多个不同位置显示该元素
+    不过更好是比如重用Image元素，那么存储图像源的BitmapImage对象，并在多个Image元素之间共享，如果只是希望标准化控件，让他们共享相同的属性，
+    那么最好使用样式，通过样式可为任意元素创建相同或几乎相同的副本，当属性值还没有被应用时，可以重写他们而且可以关联不同的事件处理程序。
+    如果简单地使用非共享资源克隆元素，就会丢失这两个特性
+    -->
+
+    <!--
+    通过代码访问资源
+
+    可使用FrameworkElement.FindResource()方法以与XAML相同的方式查找资源
+    Button cmd = (Button)sender;
+    ImageBrush brush = (ImageBrush)sender.FindResource("TileBrush");
+    可使用TryFindResource()方法替代FindResource()方法。如果找不到资源，该方法会返回null引用，而不是抛出异常
+    (此外，还可通过编写代码添加资源。选择希望放置资源的元素，并使用资源集合的Add()方法。然而，通常在标记中定义资源)
+    
+    -->
+
+    <Window.Resources>
+        <ImageBrush x:Key="TileBrush" x:Name="DynamicBrush" TileMode="Tile"
+                    ViewportUnits="Absolute" Viewport="0 0 32 32"
+                    ImageSource="happyface.jpg" Opacity="0.3"/>
+        <ImageBrush x:Key="TileBrushNoShared" x:Shared="False"/>
+    </Window.Resources>
+    <StackPanel Margin="5">
+        <Button Background="{DynamicResource TileBrush}" Padding="5"
+                FontWeight="Bold" FontSize="14" Margin="5" Content="Uses a Dynamic Resource"/>
+        <Button Padding="5" Margin="5" Click="cmdChange_Click" FontWeight="Bold" FontSize="14" Content="Change the Brush"/>
+        <Button Background="{StaticResource TileBrush}" Padding="5" Margin="5" FontWeight="Bold" FontSize="14" Content="Uses a Static Resource"/>
+    </StackPanel>
+</Window>

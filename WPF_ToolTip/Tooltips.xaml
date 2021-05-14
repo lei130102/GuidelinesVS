@@ -1,0 +1,100 @@
+﻿<Window x:Class="WPF_ToolTip.Tooltips"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ToolTip"
+        mc:Ignorable="d"
+        Title="Tooltips" Height="321" Width="301">
+    <!--
+    工具提示
+
+    直接使用ToolTip类不是显示工具提示的最简单方法，相反，可为元素简单地设置ToolTip属性。
+    ToolTip属性是在FrameworkElement类中定义的，所以所有能放到WPF窗口上的元素都可以使用该属性
+
+    注意，不要在工具提示中放置于用户进行交互的控件，因为ToolTip窗口不能接收焦点。
+    例如，如果在ToolTip控件中放置一个按钮，虽然会显示该按钮，但不能单击他(如果试图单击该按钮，鼠标单击就会被传递到下层窗口中)
+    如果希望创建能包含其他控件，并与工具提示类似的窗口，可考虑改用Popup控件
+
+
+    
+    
+    ToolTip对象的属性
+    HasDropShadow                           决定工具提示是否具有扩散的黑色阴影，使其和背后的窗口区别开来
+    Placement                               使用PlacementMode枚举值决定如何放置工具提示。默认值是Mouse，表示工具提示方框的左上角与当前鼠标的位置相关
+                                            (根据HorizontalOffset和VerticalOffset属性的值，工具提示的实际位置可能会偏离这个起始点)。其他枚举值使用
+                                            绝对屏幕坐标来设置工具提示的位置，或相对于其他元素(通过使用PlacementTarget属性指定该元素)设置工具提示的位置
+    HorizontalOffset/VerticalOffset         将工具提示微调到所希望的准确位置。可使用正值或者负值
+    PlacementTarget                         允许相对于另一个元素定位工具提示。为使用该属性，Placement属性必须设置为Left、Right、Top、Bottom或者Center
+                                            (这些值指定了工具提示和指定元素的哪个边缘对齐)
+    PlacementRectangle                      用于偏移工具提示的位置。该属性的工作方式与HorizontalOffset和VerticalOffset属性相同。如果Placement属性被设置
+                                            为Mouse，该属性无效
+    CustomPopupPlacementCallback            允许使用代码动态地定位工具提示。如果Placement属性被设置为Custom，此属性确定由ToolTip调用来获取ToolTip对象放置
+                                            位置的方法。回调方法接收三部分信息——popupSize(ToolTip的大小)、targetSize(PlacementTarget的大小，如果使用的话)
+                                            和offset(根据HorizontalOffset和VerticalOffset属性创建的一个点)。该方法返回一个CustomPopupPlacement对象，该对
+                                            象告诉WPF将工具提示放在哪个位置
+    StaysOpen                               该属性实际上不起作用。他的目的是让您创建一直保持打开状态的工具提示，直到用户在其他地方单击鼠标才关闭该提示。然而，
+                                            ToolTipService.ShowDuration属性重写了StaysOpen属性。因此，在经历了设置的时间之后(通常约5秒)或当用户移开鼠标时，
+                                            工具提示总是会消失。如果希望创建始终保持打开状态的类似工具提示的窗口，最简单地方法是使用Popup控件
+    IsEnabled/IsOpen                        允许使用代码控制工具提示。通过IsEnabled属性可暂时禁用工具提示，而通过IsOpen属性可使用代码显示或隐藏工具提示(或者
+                                            只是检查是否打开了工具提示)
+    
+    
+    工具提示默认位于当前鼠标位置，然而ToolTip的各种属性提供了更多选择：
+    //a.根据鼠标的当前位置(依赖于将Placement属性设置为Mouse)
+    //工具提示框的左上角和包围鼠标指针的不可见“边界框”的左下角对齐
+    //b.根据悬停鼠标的元素的位置(依赖于将Placement属性设置为Left、Right、Top、Bottom或者Center)
+    //工具提示框的左上角与边缘对齐
+    //c.根据另一个元素(或窗口)的位置(依赖于将Placement属性设置为Left、Right、Top、Bottom或者Center，然后通过设置PlacementTarget属性选择元素(注意需要使用“{绑定元素名=名称}”语法来确定想要使用的元素))
+    //d.使用偏移
+    //使用上述任意一种策略，并设置HorizontalOffset和VertialOffset属性来添加一定的额外空间
+    //e.使用绝对坐标
+    //将Placement属性设置为Absolute，并使用HorizontalOffset和VerticalOffset属性(或使用PlacementRectangle属性)在工具提示和窗口左上角之间设置一些空间
+    //f.使用运行时的计算结果
+    //将Placement属性设置为Custom。设置CustomPopupPlacementCallback属性指向一个已经创建的方法
+
+    
+    
+    有几个工具提示属性，比如延迟时间等， 不能通过ToolTip类的属性进行配置，而需要使用ToolTipService类，ToolTipService类的所有属性都是附加属性，所以可以在控件标签中直接设置他们
+    
+    ToolTipService类提供了两个路由事件：
+    ToolTipOpening和ToolTipClosing
+    可响应这些事件，使用即时内容填充工具提示，或者重写工具提示的工作方式(例如，如果在这两个事件中设置已经处理过的标志，将不再自动显示或隐藏工具提示。反而，需要通过设置IsOpen属性来手动显示和隐藏工具提示)
+
+    (为几个控件复制相同的工具提示设置几乎没有任何意义。如果准备对整个应用程序中的工具提示的处理方式进行调整，可通过使用样式自动应用设置，但ToolTipService属性值
+    是不能继承的，这意味着如果在窗口和容器级别上设置了属性值，他们不能到达嵌套的元素)
+
+    ToolTipService类的属性
+    InitialShowDelay              设置当鼠标悬停在元素上时，工具提示显示之前的延迟时间(单位为毫秒)
+    ShowDuration                  设置如果用户不移动鼠标，在工具提示消失之前显示的时间(单位为毫秒)
+    BetweenShowDelay              设置时间间隔(单位为毫秒)，在该期间用户可以在工具提示之间移动而不用经历InitialShowDelay属性设置的延迟时间。例如，如果BetweenShowDelay
+                                  属性设置为5000毫秒，用户就具有5秒的时间移到另一个具有工具提示的控件。如果用户在此期间移到另一个控件，新的工具提示就会立即显示。如果用户
+                                  超出了这一期间，BetweenShowDelay属性将失去作用，并且会使用InitialShowDelay属性。在这种情况下，直到经历了InitialShowDelay属性设置的
+                                  时间后，才会显示第二个工具提示
+    ToolTip                       为工具提示设置内容。设置ToolTipService.ToolTip属性相当于设置元素的FrameworkElement.ToolTip属性
+    HasDropShadow                 确定工具提示是否具有扩散的黑色阴影，从而使其与背后的窗口区别开来
+    ShowOnDisabled                确定当相关联的元素被禁用后是否显示工具提示。如果该属性为true，将为禁用的元素(元素的IsEnabled属性被设置为false)显示工具提示。默认值为false,
+                                  即只有启用了相关联的元素后才会显示工具提示
+    Placement、PlacementTarget、  这些属性用来控制工具提示的位置。这些属性和ToolTipHorizontalOffset类的对应属性的工作方式相同
+    PlacementRectangle
+    以及VerticalOffset
+    -->
+        <StackPanel Margin="5" ToolTip="StackPanel tooltip">
+        <Button ToolTip="This is my tooltip" ToolTipService.InitialShowDelay="5000" Content="I have a tooltip"/>
+        <Button ToolTipService.InitialShowDelay="0" ToolTipService.BetweenShowDelay="5000">
+            <Button.ToolTip>
+                <ToolTip Background="#60AA4030" Foreground="White" HasDropShadow="False">
+                    <StackPanel>
+                        <TextBlock Margin="3" Text="Image and text"/>
+                        <Image Source="/Image/happyface.jpg" Stretch="None"/>
+                        <TextBlock Margin="3" Text="Image and text"/>
+                    </StackPanel>
+                </ToolTip>
+            </Button.ToolTip>
+            <Button.Content>I have a fancy tooltip</Button.Content>
+        </Button>
+        <Button ToolTip="This is my tooltip" ToolTipService.Placement="Bottom" Content="Placement test"/>
+        <Button Padding="50" Content="Does Nothing"/>
+        <TextBox TextWrapping="Wrap" MinLines="2" AutoWordSelection="True"/>
+    </StackPanel>
+</Window>
