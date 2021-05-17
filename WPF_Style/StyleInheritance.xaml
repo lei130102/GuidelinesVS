@@ -6,6 +6,18 @@
         xmlns:local="clr-namespace:WPF_Style"
         mc:Ignorable="d"
         Title="StyleInheritance" Height="300" Width="300">
+        <!--
+    
+    多层样式
+    
+    利用了 属性值继承 和 样式继承
+
+    只要设置的属性具有属性值继承特性，比如IsEnabled、IsVisible、Foreground以及所有字体属性，如果希望为一组控件设置属性那么可以将他们放置到面板(或其他类型的容器)中，并设置容器的
+    样式，这些属性就会被传递到子元素
+
+    如果希望在另一个样式的基础上创建样式，可通过为样式设置BasedOn特性来使用此类样式继承，唯一的规则是，如果两次设置了同一个属性，最后的属性设置器(在继承链中最远的派生类中的设置器)会覆盖其他以前的定义
+    
+    -->
     <Window.Resources>
         <Style x:Key="BigFontButtonStyle">
             <Setter Property="Control.FontFamily" Value="Times New Roman"/>
@@ -26,3 +38,22 @@
         <Button Padding="5" Margin="5" Style="{StaticResource EmphasizedBigFontButtonStyle}" Content="Uses EmphasizedBigFontButtonStyle"/>
     </StackPanel>
 </Window>
+
+    <!--
+    样式继承增加了复杂性
+    
+    尽管乍一看样式继承看起来好像非常方便，但通常不值得因为他增加这么多麻烦。因为样式继承和代码继承存在相同的问题：依赖性使应用程序更脆弱。例如，如果使用上面显示的标记，就必须为两个样式保持相同的字体特征
+    如果决定改变BigFontButtonStyle，EmphasizedBigFontButtonStyle将随之改变——除非明确地增加更多设置器来覆盖继承来的值。
+    
+    在这个两样式示例中，这个问题还比较简单，但如果在更贴近实用的应用程序中实用样式继承，这个问题就变得很重要了。通常，根据不同的内容类型以及内容扮演的角色对样式进行分类。
+    例如，销售应用程序可包括以下样式：ProductTitleStyle、ProductTextStyle、HightlightQuoteStyle和NavigationButtonStyle等。如果使ProductTitleStyle基于ProductTextStyle(可能因为二者共享相同的字体)，
+    当以后为ProductTextStyle应用设置，但又不想讲这些设置应用于ProductTitleStyle时(如不同的外边距)，您将遇到麻烦。对于这种情况，必须在ProductTextStyle中定义设置，并在ProductTitleStyle中明确地覆盖这些
+    设置。最终将得到一个更复杂的模型，而且真正重复使用的样式设置非常少
+
+    除非有特殊原因要求一个样式继承自另一个样式(例如，第二个样式是第一个样式的特例，并且只改变了继承来的大量设置中的几个特征)，否则不要使用样式继承
+    
+    
+    
+    
+    
+    -->

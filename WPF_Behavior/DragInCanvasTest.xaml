@@ -8,6 +8,22 @@
         xmlns:local="clr-namespace:WPF_Behavior"
         mc:Ignorable="d"
         Title="DragInCanvasTest" Height="350" Width="525">
+        <!--
+    使用行为
+    
+    使用行为步骤：
+    1.创建一个新的WPF应用程序
+    2.添加对定义DragInCanvasBehavior类的类库以及System.Windows.Interactivity.dll程序集的引用
+    3.在XAML中映射这两个命名空间
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:custom="clr-namespace:CustomBehaviorsLibrary;assembly=CustomBehaviorsLibrary"
+    4.使用i:Interaction.Behaviors附加属性在Canvas面板中添加任意元素
+      下面的两个Ellipse元素使用了DragInCanvasBehavior，并能在Canvas面板中拖动
+      Rectangle元素没有使用DragInCanvasBehavior，因此无法移动
+
+    
+    如果正在使用Expression Blend进行开发，行为甚至提供了更好的设计体验——可以根本不用编写任何标记
+    -->
     <Canvas>
         <Rectangle Canvas.Left="10" Canvas.Top="10" Fill="Yellow" Width="40" Height="60"/>
         <Ellipse Canvas.Left="10" Canvas.Top="70" Fill="Blue" Width="80" Height="60">

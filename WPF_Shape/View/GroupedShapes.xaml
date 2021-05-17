@@ -6,6 +6,73 @@
         xmlns:local="clr-namespace:WPF_Shape.View"
         mc:Ignorable="d"
         Title="GroupedShapes" Height="300" Width="300">
+        <!--
+    
+    Path类提供了Data属性，该属性接受一个Geometry对象(抽象类)，该对象定义路径包含的一个或多个图形
+
+    Geometry抽象类的派生类：
+    LineGeometry          代表直线，该几何图形相当于Line形状
+    RectangleGeometry     代表矩形(可以具有圆形拐角)，该几何图形相当于Rectangle形状
+    EllipseGeometry       代表椭圆，该图形相当于Ellipse形状
+    GeometryGroup         为单个路径添加任意多个Geometry对象，使用EvenOdd或NonZero填充规则来确定要填充的区域
+    CombinedGeometry      将两个几何图形合并为一个形状。可使用CombineMode属性选择如何组合两个几何图形
+    PathGeometry          代表更复杂的由弧线、曲线以及直线构成的图形，并且既可以是闭合的，也可以是不闭合的
+    StreamGeometry        相当于PathGeometry的只读的轻量级类。StreamGeometry图形可节省内存，因为他不在内存中
+                          同时保存路径的所有单个分段。并且这类图形一旦被创建就不能再修改
+
+    Geometry对象为形状定义了坐标和尺寸等细节，而Path对象提供了用于绘制形状的Stroke和Fill画刷。Path类还提供了继承自UIElement基础架构的特性，如键盘和鼠标处理
+    几何图形类都继承自Freezable类(通过Geometry基类)，所以支持更改通知。因此，如果使用几何图形创建路径，然后修改几何图形，就会自动被重新绘制路径
+
+    
+    下面分别介绍这些Geometry抽象类的派生类:
+    
+    RectangleGeometry：
+    矩形：
+    <Rectangle Fill="Yellow" Stroke="Blue" Width="100" Height="50"/>
+    转为
+    <Path Fill="Yellow" Stroke="Blue">
+        <Path.Data>
+            <RectangleGeometry Rect="0,0 100,50"/>
+        </Path.Data>
+    </Path>
+    Rect前两个数值描述左上角的X和Y坐标，而后两个数值设置矩形的宽度和高度
+    RectangleGeometry类还提供了RadiusX和RadiusY属性，这两个属性用于圆滑拐角
+
+    
+    LineGeometry：
+    直线：
+    <Line Stroke="Blue" X1="0" Y1="0" X2="10" Y2="100"/>
+    转为
+    <Path Fill="Yellow" Stroke="Blue">
+        <Path.Data>
+            <LineGeometry StartPoint="0,0" EndPoint="10,100"/>
+        </Path.Data>
+    </Path>
+
+    EllipseGeometry：
+    椭圆：
+    <Ellipse Fill="Yellow" Stroke="Blue" Width="100" Height="50" HorizontalAlignment="Left"/> 
+    转为
+    <Path Fill="Yellow" Stroke="Blue">
+        <Path.Data>
+            <EllipseGeometry RadiusX="50" RadiusY="25" Center="50,25"/>
+        </Path.Data>
+    </Path>
+    注意，两个半径值只是宽度和高度值得一半。还可使用Center属性偏移椭圆的位置。在本例中，中心被设置为椭圆外包围框的正中心位置
+    
+    GeometryGroup：
+    组合图形
+    比如组合了一个RectangleGeometry和一个EllipseGeometry，效果相当于两个Path对象，其中一个Path元素具有RectangleGeometry，而另一个Path元素具有EllipseGeometry
+    优点：
+    1.降低了用户界面的开销
+    通常，使用数量更少的较复杂几何图形元素的窗口比具有大量较简单几何图形元素的窗口的性能要高。在只有几十个形状的窗口中这一效果并不明显，但对于需要几百或几千个形状的窗口，这一问题就会变得很重要了
+    缺点：
+    1.不能单独为不同的形状执行事件处理
+    2.丧失了不同形状可以作为资源被Path.Data引用的优点，见ReusingGeometry.xaml
+
+    
+    当形状相互交叉时，这时不能将图画简单地作为固定形状的组合对待，GeometryGroup使用FillRule属性(该属性可设置为EvenOdd或者Nonzero)决定填充哪些形状
+    -->
     <Canvas>
         <TextBlock Canvas.Top="50" Canvas.Left="20" FontSize="25" FontWeight="Bold">
             Hello There
@@ -18,5 +85,10 @@
                 </GeometryGroup>
             </Path.Data>
         </Path>
+        <!--
+        如果将FillRule属性修改为Nonzero，在纯色正方形的上面就会有一个纯色的椭圆，椭圆和正方形都使用黄色填充
+
+        注意，对象以处理他们的顺序被绘制出来。换句话说，如果希望在形状的后面显示文本，务必在Path元素的标记之前添加TextBlock元素。或者，如果使用Canvas或Grid面板包含内容，可明确地为元素设置Panel.ZIndex附加属性
+        -->
     </Canvas>
 </Window>

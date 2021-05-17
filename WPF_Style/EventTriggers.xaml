@@ -16,10 +16,27 @@
             </Style.Setters>
 
             <Style.Triggers>
+            <!--
+                EventTrigger(事件触发器)
+
+                普通触发器等待属性发生变化，而事件触发器等待特定的事件被引发。您可能会认为此时应使用设置器来改变元素，但情况并非如此。相反，事件触发器要求用户提供一系列修改控件的动作，
+                这些动作通常被用于动画
+                
+                下面的事件触发器等待MouseEnter事件，然后动态改变按钮的FontSize属性从而形成动画效果，在0.2秒的时间内将字体放大到22个单位
+                -->
                 <EventTrigger RoutedEvent="Mouse.MouseEnter">
                     <EventTrigger.Actions>
                         <BeginStoryboard>
+                        <!--
+                            在XAML中，必须在故事板中定义每个动画，故事板为动画提供了时间线。用户可以在故事板内部定义希望使用的一个或多个动画对象。每个动画对象执行本质上相同的任务：
+                            在一定时期内修改依赖项属性
+
+                            -->
                             <Storyboard>
+                            <!--
+                                DoubleAnimation  (System.Windows.Media.Animation)
+                                能在一段给定的时间内将任何双精度数值(如FontSize属性值)逐渐改变为设定的目标值
+                                -->
                                 <DoubleAnimation
                                     Duration="0:0:0.2"
                                     Storyboard.TargetProperty="FontSize"
@@ -28,13 +45,16 @@
                         </BeginStoryboard>
                     </EventTrigger.Actions>
                 </EventTrigger>
+                <!--
+                与属性触发器不同，如果希望元素返回到原始状态，需要翻转事件触发器(这是因为默认的动画行为是一旦动画完成就继续处于激活状态，从而保持最后的属性值)
+                -->
                 <EventTrigger RoutedEvent="Mouse.MouseLeave">
                     <EventTrigger.Actions>
                         <BeginStoryboard>
                             <Storyboard>
                                 <DoubleAnimation
                                     Duration="0:0:1"
-                                    Storyboard.TargetProperty="FontSize"/>
+                                    Storyboard.TargetProperty="FontSize"/><!--不需要指定目标字体尺寸——如果没有指明该目标，WPF假定您希望使用第一次动画之前按钮原来的字体尺寸-->
                             </Storyboard>
                         </BeginStoryboard>
                     </EventTrigger.Actions>
@@ -53,3 +73,9 @@
         <Button Padding="5" Margin="5" Style="{StaticResource BigFontButton}" Content="Another Customized ButtonBase."/>
     </StackPanel>
 </Window>
+
+    <!--
+     当依赖项属性等于某个特定值时也可以执行动画。当没有合适的事件可供使用而又希望执行动画时，这是非常有用的。这需要使用属性触发器，技巧是不为属性触发器提供任何Setter对象
+    而是设置Trigger.EnterActions和Trigger.ExitActions属性。这两个属性都有一个动作集合，例如启动动画的BeginStoryboard动作。当属性达到指定的值时，执行EnterActions：而当
+    属性离开指定的值时，执行ExitActions
+        -->

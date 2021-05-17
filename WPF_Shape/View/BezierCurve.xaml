@@ -6,6 +6,11 @@
         xmlns:local="clr-namespace:WPF_Shape.View"
         mc:Ignorable="d"
         Title="BezierCurve" Height="264" Width="281">
+        <!--
+        BezierSegment  贝塞尔曲线
+        为在标记中定义贝塞尔曲线，需要提供三个点。前两个点(BezierSegment.Point1和BezierSegment.Point2)是控制点，第三个点(BezierSegment.Point3)是曲线的终点。同样，起点是路径的起点或前一条线段的终点
+    
+    -->
     <Canvas>
         <Path Stroke="Blue" StrokeThickness="5" Canvas.Top="20">
             <Path.Data>

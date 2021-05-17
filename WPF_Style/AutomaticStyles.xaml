@@ -6,8 +6,18 @@
         xmlns:local="clr-namespace:WPF_Style"
         mc:Ignorable="d"
         Title="AutomaticStyles" Height="300" Width="300">
+        <!--
+        通过类型自动应用样式
+
+    只需要设置TargetType类型以指定合适的乐行，并完全忽略键名
+    
+    -->
     <Window.Resources>
         <Style TargetType="Button">
+        <!--
+            WPF实际上是使用类型标记扩展来隐式地设置键名
+            x:Key="{x:Type Button}"
+            -->
             <Setter Property="FontFamily" Value="Times New Roman"/>
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -18,7 +28,21 @@
         <Button Padding="5" Margin="5" Content="Customized Button"/>
         <TextBlock Margin="5" Text="Normal Content."/>
         <Button Padding="5" Margin="5" Style="{x:Null}" Content="A Normal Button"/>
+        <!--
+        Style="{x:Null}"
+        删除了自动样式
+        -->
         <TextBlock Margin="5" Text="More normal Content."/>
         <Button Padding="5" Margin="5" Content="Another Customized Button"/>
     </StackPanel>
 </Window>
+
+    <!--
+    尽管自动样式非常方便，但他们会让设计变得复杂
+    1.在具有许多样式和多层样式的复杂窗口中，很难跟踪是否通过属性值继承或通过样式设置了某个特定属性(如果是通过样式设置的，那么是通过哪个样式设置的呢？)因此，如果希望改变某个简单细节，就需要查看整个窗口的全部标记
+    2.窗口中的格式化操作在开始时通常更一般，但会逐渐变得越来越详细。如果刚开始为窗口应用了自动样式，在许多地方可能需要使用显式的样式覆盖自动样式。这会使整个设计变得复杂。为每个希望设置的格式化特征的组合创建命名的
+    样式，并根据名称应用他们会更加直观
+    3.再比如，如果为TextBlock元素创建自动样式，那么会同时修改使用TextBlock的其他控件(如模板驱动的ListBox控件)
+
+    为免出现这些问题，最好果断地使用自动样式。如果决定使用自动样式为整个用户界面提供单一、一致的外观，可尝试为特例使用明确地样式
+    -->

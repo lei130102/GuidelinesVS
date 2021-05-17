@@ -6,6 +6,26 @@
         xmlns:local="clr-namespace:WPF_Shape.View"
         mc:Ignorable="d"
         Title="CombiningShapes" Height="481" Width="341">
+
+<!--
+    CombinedGeometry
+    融合几何图形
+
+    (对于通过基本图元(矩形、椭圆和直线)构建复杂形状，GeometryGroup类是非常有价值的工具。但他也有明显的局限性。如果是绘制形状，并在其内部“减去”另一个形状来创建新的形状，GeometryGroup类可以工作得很好。
+    然而，如果形状的边界相互交叉，就很难得到所希望的结果了，并且如果希望移除形状的一部分，GeometryGroup类就不能提供任何帮助了)
+    CombinedGeometry类专门用于组合重叠到一起并且不相互包含的形状。与GeometryGroup类不同，CombinedGeometry类只使用两个几何图形，通过Geometry1和Geometry2属性提供这两个几何图形
+
+    CombinedGeometry类没有包含FillRule属性，反而具有功能更强大的GeometryCombineMode属性，该属性可以使用4个值中的一个
+
+    GeometryCombineMode枚举值
+    Union                  创建包含两个几何图形所有区域的形状
+    Intersect              创建包含两个几何图形共有区域的形状
+    Xor                    创建包含两个几何图形非共有区域的形状。换句话说，就像先合并形状(使用Union)，再移除共有的部分(使用Intersect)那样
+    Exclude                创建的形状包含第一个几何图形的所有区域，但不包含第二个几何图形的区域
+
+    
+    
+    -->
     <Window.Resources>
         <RectangleGeometry x:Key="rect" Rect="0 0 100 100"/>
         <EllipseGeometry x:Key="ellipse" Center="85 50" RadiusX="65" RadiusY="35"/>

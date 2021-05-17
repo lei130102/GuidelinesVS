@@ -74,6 +74,12 @@
     <Compile Include="ReuseFontWithStyles.xaml.cs">
       <DependentUpon>ReuseFontWithStyles.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ReuseFontWithStylesClass.xaml.cs">
+      <DependentUpon>ReuseFontWithStylesClass.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ReuseFontWithStylesTargetType.xaml.cs">
+      <DependentUpon>ReuseFontWithStylesTargetType.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SimpleTriggers.xaml.cs">
       <DependentUpon>SimpleTriggers.xaml</DependentUpon>
     </Compile>
@@ -128,6 +134,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ReuseFontWithStylesClass.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ReuseFontWithStylesTargetType.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SimpleTriggers.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -136,6 +150,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="happyface.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -8,7 +8,20 @@
         mc:Ignorable="d"
         Title="ReuseFontWithResources" Height="368" Width="378">
     <Window.Resources>
+    <!--因为在WPF中没有Font对象(只有与字体属性相关的集合)，所以需要定义几个相关的资源:
+        包含希望使用的字体名称的FontFamily名称
+        存储数字18的double对象
+        枚举值FontWeight.Bold
+        -->
+
         <!--注意Window.Resources里面要求都必须有x:Key-->
+
+        <!--
+        在使用资源设置属性时，正确地匹配数据类型是非常重要的。这时，WPF使用类型转换器的方式和直接设置特性值是不同的。
+        例如，如果正为元素设置FontFamily特性，可使用字符串Times New Roman，因为FontFamilyConverter转换器会创建所需要的FontFamily对象。但如果试图使用字符串资源设置
+        FontFamily属性，情况就不同了——这时，XAML解析器就会抛出异常
+        
+        -->
         <FontFamily x:Key="ButtonFontFamily">
             Times New Roman
         </FontFamily>
@@ -35,3 +48,15 @@
                 Content="Another Customized Button"/>
     </StackPanel>
 </Window>
+
+<!--
+存在的问题：
+    1.除了资源名称相似外，没有明确指明这三个资源是相关的。这使维护应用程序变得复杂。如果需要设置更多字体属性，或决定为不同类型的元素维护不同的字体设置，这个问题尤为严重
+    2.需要使用资源的标记非常繁琐。实际上，还没有原来不使用资源时简明(直接在元素中定义字体属性)
+
+    可通过定义将所有字体细节捆绑在一起的自定义类(如FontSetting类)来改善第一个问题。然后可作为资源创建FontSetting对象，并在标记中使用他的各种属性。然而，这种方法仍需使用
+    繁琐的标记——并且还需要做一些额外的工作
+
+    样式为解决这个问题提供了非常好的解决方案，可定义独立的用于封装所有希望设置的属性的样式
+    
+    -->

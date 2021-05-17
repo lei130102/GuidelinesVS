@@ -6,6 +6,13 @@
         xmlns:local="clr-namespace:WPF_Shape.View"
         mc:Ignorable="d"
         Title="Clipping" Height="352" Width="707">
+        <!--
+        1.几何图形可用于Path元素
+        2.几何图形可用于设置Clip属性
+        所有元素都提供了该属性，可以通过Clip属性约束元素的外边界以符合特定的几何图形。可使用Clip属性创建大量的特殊效果。尽管该属性通常用于修剪Image元素中的图像内容，但也可将Clip属性应用于任何元素
+        唯一的限制是，如果确实希望看到一些内容——而不仅是用处不大的单独曲线和线段，需要使用闭合的几何图形
+    
+    -->
     <Window.Resources>
         <GeometryGroup x:Key="clipGeometry" FillRule="Nonzero">
             <EllipseGeometry RadiusX="75" RadiusY="50" Center="100, 150"/>
@@ -22,3 +29,11 @@
         <Image Grid.Column="1" Clip="{StaticResource clipGeometry}" Stretch="None" Source="creek.jpg"/>
     </Grid>
 </Window>
+
+    <!--
+    使用剪裁存在限制。设置的剪裁不会考虑元素的尺寸。换句话说，当改变窗口尺寸时，不管显示的按钮变大还是变小，剪裁区域仍保留原样，并显示按钮的不同部分。一种可能的解决方案是在Viewbox控件中
+    封装元素，以便提供自动重新缩放功能。但这会导致所有内容都按比例地改变尺寸，包括希望改变尺寸的一些细节(剪裁区域和按钮表面)以及那些可能不希望改变的内容(按钮文本和绘制按钮边框的线条)
+    
+    
+    
+    -->

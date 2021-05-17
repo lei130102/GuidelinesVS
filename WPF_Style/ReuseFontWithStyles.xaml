@@ -7,20 +7,100 @@
         mc:Ignorable="d"
         Title="ReuseFontWithStyles" Height="350" Width="380">
     <Window.Resources>
+    <!--创建了一个System.Windows.Style对象。这个样式对象包含了一个设置器集合，该集合具有三个Setter对象，每个Setter对象用于一个希望设置的属性。每个Setter对象由两部分信息组成：
+        1.希望进行设置的属性的名称
+        2.希望为该属性应用的值
+        与所有资源一样，样式对象都有一个键名，从而当需要时可以从集合中提取他。在本例中，键名是BigFontButtonStyle(根据约定，用于样式的键名通常以Style结尾)
+        -->
+
         <Style x:Key="BigFontButtonStyle">
+        <!--
+        Setter(属性设置器)
+        1.设置器只能改变依赖项属性——不能修改其他属性
+        2.值(Value)对象如果不能用字符串创建，那么需要使用Setter.Value，比如ImageBrush对象
+        
+        -->
             <Setter Property="Control.FontFamily" Value="Times New Roman"/>
             <Setter Property="Control.FontSize" Value="18"/>
             <Setter Property="Control.FontWeight" Value="Bold"/>
+
+            <!--
+
+            使用的类名未必是定义属性的类名，也可以是继承了属性的派生类
+
+            <Setter Property="Button.FontFamily" Value="Times New Roman"/>
+            <Setter Property="Button.FontSize" Value="18"/>
+            <Setter Property="Button.FontWeight" Value="Bold"/>
+
+            如果Label控件使用这个版本的样式，就没有效果，WPF简单地忽略这三个属性，因为不会应用他们。但如果使用原样式，字体属性就会影响Label控件，因为Label类继承自Control类
+            
+            WPF忽略属性而不应用他们的这一事实意味着，使用样式设置的属性未必是在应用样式的元素中定义的属性。例如，如果设置ButtonBase.IsCancel属性，只有当为按钮设置样式时才会生效
+            -->
+
+
+            <Setter Property="Control.Background">
+                <Setter.Value>
+                    <ImageBrush TileMode="Tile"
+                                ViewportUnits="Absolute" Viewport="0 0 32 32" ImageSource="happyface.jpg" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+            <!--如果希望在多个样式中(或在同一样式的多个设置器中)重用相同的图像画刷，可将其定义为资源，然后在样式中使用资源-->
         </Style>
     </Window.Resources>
+    <!--
+    如果希望创建目标更加精细的样式，可使用容器的Resources集合定义样式，如StackPanel面板或Grid面板。如果希望在应用程序中重用样式，可使用应用程序的Resources集合定义样式
+    -->
 
     <StackPanel Margin="5">
+    <!--
+    每个WPF元素都可使用一个样式(或者没有样式)，样式通过元素的Style属性(该属性是在FrameworkElement基类中定义的)插入到元素中
+
+        也可以通过代码设置样式。需要做的全部工作就是使用大家熟悉的FindResource()方法，从最近的资源集合中提取样式
+        例如：
+        cmdButton.Style = (Style)cmd.FindResource("BigFontButtonStyle");
+
+        注意：样式设置元素的初始外观，但可以随意覆盖他们设置的这些特性。例如，如果应用了BigFontButtonStyle样式，并且明确设置了FontSize属性，那么按钮标签中的FontSize设置
+        会覆盖样式。理想情况下，不应当依赖这种行为——而应当创建更多样式，从而可在样式级别设置尽可能多的细节。这样在将来调整用户界面时可有更大的灵活性，并使干扰程度降到最低。
+        -->
         <Button Padding="5" Margin="5"
                 Style="{StaticResource BigFontButtonStyle}"
                 Content="A Customized Button"/>
         <TextBlock Margin="5" Text="Normal Content."/>
         <Button Padding="5" Margin="5" Content="A Normal Button"/>
         <TextBlock Margin="5" Text="More normal Content."/>
-        <Button Padding="5" Margin="5" Style="{StaticResource BigFontButtonStyle}" Content="Another Customized Button"/>
+        
+        <Button Padding="5" Margin="5" Content="Another Customized Button">
+            <Button.Style>
+                <Style>
+                    <Setter Property="Control.FontFamily" Value="Times New Roman"/>
+                    <Setter Property="Control.FontSize" Value="18"/>
+                    <Setter Property="Control.FontWeight" Value="Bold"/>
+                </Style>
+            </Button.Style>
+        </Button>
+        <!--
+        造成的问题：
+        1.无法与其他元素共享该样式
+        2.直接设置属性比这样更方便
+
+        然而，如果正在使用样式的其他特性，并且只希望将他应用到单个元素，那么这种写法有时会有用。例如，可使用该方法为元素关联触发器，还可以通过该方法修改元素控件模板的
+        一部分(对于这种情况，需要使用Setter.TargetName属性，为元素内部的特定组件应用设置器，例如列表框中的滚动条按钮)
+        
+        -->
     </StackPanel>
 </Window>
+
+    <!--
+    Style类的属性
+    Setters           设置属性值以及自动关联事件处理程序的Setter对象或EventSetter对象的集合
+    Triggers          继承自TriggerBase类并能自动改变样式设置的对象集合。例如，当另一个属性改变时，或者当发生某个事件时，可以修改样式
+    Resources         希望用于样式的资源集合。例如，可能需要使用一个对象设置多个属性。这时，更高效的做法时作为资源创建对象，然后在Setter对象中使用该资源
+                      (而不是使用嵌套的标签作为每个Setter对象的一部分创建对象)
+    BasedOn           通过该属性可创建继承自(并且可以有选择地进行重写)其他样式设置的更具体样式
+    TargetType        该属性标识应用样式的元素的类型。通过该属性可创建只影响特定类型元素的设置器，还可以创建能够为恰当的元素类型自动起作用的设置器
+    
+    
+    
+    
+    
+    -->

@@ -9,6 +9,16 @@
     <Window.Resources>
         <Style x:Key="MouseOverHighlightStyle">
             <Setter Property="TextBlock.Padding" Value="5"/>
+            <!--
+            Setter(属性设置器)
+
+            EventSetter(事件设置器)
+            为事件关联特定处理程序
+
+            MouseEnter和MouseLeave事件使用直接事件路由，这意味着他们不在元素树中冒泡和隧道移动。如果希望为大量元素应用鼠标悬停其上的效果(例如，当鼠标移动到元素上时，希望改变元素的背景色)
+            需要为每个元素添加MouseEnter和MouseLeave事件处理程序。基于样式的事件处理程序简化了这项任务。
+            
+            -->
             <EventSetter Event="FrameworkElement.MouseEnter" Handler="element_MouseEnter"/>
             <EventSetter Event="FrameworkElement.MouseLeave" Handler="element_MouseLeave"/>
         </Style>
@@ -20,3 +30,14 @@
         <TextBlock Style="{StaticResource MouseOverHighlightStyle}" Text="Hover over me."/>
     </StackPanel>
 </Window>
+
+    <!--
+    
+    WPF极少使用事件设置器这种技术，更多的是使用事件触发器，他以声明方式定义了所希望的行为（并且不需要任何代码）。事件触发器是专为实现动画而设计的，当创建鼠标悬停效果时他更有用
+
+    当处理使用冒泡路由策略的事件时，事件设置器并非好的选择。对于这种情况，在高层次的元素上处理希望处理的事件通常更容易。例如，如果希望将
+    工具栏上的所有按钮连接到同一个Click事件处理程序，最好为包含所有按钮的Toolbar元素关联单个事件处理程序。对于这种情况，没必要使用事件设置器
+
+    在许多情况下，明确地定义所有事件并完全避免使用事件设置器会更加清晰。如果需要为几个元素连接同一个事件处理程序，可手动进行。还可以使用在容器级别关联事件处理程序以及通过命令集中逻辑等技巧
+    
+    -->

@@ -5,7 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPF_Shape.View"
         mc:Ignorable="d"
-        Title="MiniLanguage" Height="380" Width="336">
+        Title="MiniLanguage" Height="500" Width="336">
+        <!--
+
+        图形微语言(geometry mini-language)
+        
+        复杂曲线可能由设计工具生成，而不是通过手工编写，所以保持标记的清晰性并不是最重要的。为此，WPF创作人员为定义几何图形增加了一种更简明的替换语法
+
+        他本质上是包含一系列命令的长字符串。这些命令由类型转换器读取，然后创建相应的几何图形。每个命令都是单独的字母，后面可选地跟随一些由空格分隔的数字信息(如X和Y坐标)，每个命名也使用空格
+        与前面的命令隔开
+    
+    -->
     <StackPanel>
         <Path Stroke="Blue">
             <Path.Data>
@@ -18,13 +28,46 @@
             </Path.Data>
         </Path>
 
+
+        <Path Stroke="Blue" Data="M 10,100 L 100,100 L 100,50 Z"/>
+        <!--
+        这个路径使用一个包含4个命令的命令序列。第一个命令(M)创建PathFigure，并将起点设置为(10,100)。接下来的两个命令(L)创建线段。最后一个命令(Z)结束PathFigure，并将IsClosed属性设置为true。
+        -->
+
+        <!--
+        上面字符串中的逗号是可选地，同样，命令及其参数之间的空格也是可选的，但在相邻的两个参数之间以及命令之间至少要保留一个空格，这意味着可以进一步精简语法，形成下面这种更难读的形式：
+        -->
+        <Path Stroke="Blue" Data="M10 100 L100 100 L100 50 Z"/>
+
+        <!--
+        当使用图形微语言时，实际上创建了StreamGeometry对象而不是PathGeometry对象。因此以后在代码中不能修改图形。如果这是不能接受的，可显式地创建PathGeometry对象，但使用相同的语法定义其
+        PathFigure对象集合
+        -->
         <Path Stroke="Blue">
             <Path.Data>
                 <PathGeometry Figures="M 10,100 L 100,100 L 100,50 Z"/>
             </Path.Data>
         </Path>
 
-        <Path Stroke="Blue" Data="M 10,100 L 100,100 L 100,50 Z"/>
-
     </StackPanel>
 </Window>
+<!--
+    图形微语言命令
+    
+    F value                                                         设置Geometry.FillRule属性。0表示EvenOdd，1表示NonZero。如果决定使用该命令，就必须将该命令放在字符串的开头 
+    M x,y                                                           为几何图形创建新的PathFigure对象，并设置其起点。该命令必须在其他命令之前使用，F命令除外。然而，也可在绘制序列
+                                                                    期间使用该命令移动坐标系统的原点(M代表move)
+    L x,y                                                           创建一条到指定点的LineSegment几何图形
+    H x                                                             使用指定的X值创建一条水平的LineSegment几何图形，并保持Y值不变
+    V y                                                             使用指定的Y值创建一条垂直的LineSegment几何图形，并保持X值不变
+    A radiusX,RadiusY degrees isLargeArc,isClockwise x,y            创建一条到指定点的ArgSegment线段。指定描述弧线的椭圆半径、弧线旋转的度数，以及用于设置前面介绍的IsLargeArc和SweepDirection属性的布尔标志
+    C x1,y1,x2,y2 x,y                                               创建到指定点的贝塞尔曲线，使用点(x1,y1)和(x2,y2)作为控制点
+    Q x1,y1 x,y                                                     创建到指定点的二次贝塞尔曲线，使用一个控制点(x1,y1)
+    S x2,y2 x,y                                                     通过将前一条贝塞尔曲线的第二个控制点作为新建贝塞尔曲线的第一个控制点，从而创建一条光滑的贝塞尔曲线
+    Z                                                               结束当前PathFigure对象，并将IsClosed属性设置为true。如果不希望将IsClosed属性设置为true，就不必使用该命令——如果希望开始一个新的PathFigure对象或
+                                                                    结束字符串，只需使用M命令
+
+    如果希望命令的参数值相对于前一个点，而不是使用绝对坐标进行计算，可使用小写的命令
+    
+    
+    -->

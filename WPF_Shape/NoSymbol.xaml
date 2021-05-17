@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:WPF_Shape"
         mc:Ignorable="d"
         Title="NoSymbol" Height="300" Width="300">
+        <!--
+    CombinedGeometry类只能合并两个形状，这看起来可能是一个重大的局限，但实际上并非如此，可构建包含许多不同几何图形的形状——只需要使用嵌套的CombinedGeometry对象即可
+    -->
     <StackPanel Margin="5">
         <Path Fill="Yellow" Stroke="Blue">
             <Path.Data>
@@ -25,6 +28,7 @@
                             <RectangleGeometry.Transform>
                                 <RotateTransform Angle="45" CenterX="50" CenterY="50"></RotateTransform>
                             </RectangleGeometry.Transform>
+                            <!--注意：当为几何图形应用变换时，使用Transform属性(而不是RenderTransform或LayoutTransform属性)。这是因为几何图形定义了形状，而且所有变换总在布局中使用路径之前被应用-->
                         </RectangleGeometry>
                     </CombinedGeometry.Geometry2>
                 </CombinedGeometry>
@@ -32,3 +36,7 @@
         </Path>
     </StackPanel>
 </Window>
+
+    <!--
+    注意：CombinedGeometry对象不会影响用于为形状着色的填充画刷或笔画画刷，这些细节由路径设置，因此，如果希望为路径的各部分使用不同的颜色，就需要创建彼此独立的Path对象
+    -->

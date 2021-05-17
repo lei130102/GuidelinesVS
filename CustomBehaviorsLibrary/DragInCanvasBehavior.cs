@@ -11,6 +11,16 @@ using System.Windows.Media;
 
 namespace CustomBehaviorsLibrary
 {
+    //创建行为
+
+    //提供使用鼠标在Canvas面板上拖动元素的功能(将该功能转为可重用的行为，可为Canvas面板上的所有元素提供拖动支持)
+    //原理：代码监听鼠标事件并修改设置相应Canvas坐标的附加属性
+
+    //创建行为步骤:(注意，在理想情况下，不必自己创建行为，而是使用其他人已经创建好的行为)
+    //1.创建一个WPF类库程序集(CustomBehaviorsLibrary)，添加对System.Windows.Interactivity.dll程序集的引用
+    //2.然后创建一个继承自Behavior<T>基类的类DragInCanvasBehavior。并将行为限制到特定的元素(T)(或使用UIElement或者FrameworkElement将他们都包含进来)
+    //3.覆盖OnAttached()和OnDetaching()方法。当调用OnAttached()方法时，可通过AssociatedObject属性访问放置行为的元素，并可关联事件处理程序。当调用OnDetaching()方法时，移除事件处理程序
+
     public class DragInCanvasBehavior : Behavior<UIElement>
     {
         private Canvas canvas;

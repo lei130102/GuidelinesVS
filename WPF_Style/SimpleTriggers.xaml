@@ -6,6 +6,24 @@
         xmlns:local="clr-namespace:WPF_Style"
         mc:Ignorable="d"
         Title="SimpleTriggers" Height="300" Width="300">
+        <!--
+    TriggerBase(触发器)
+    
+    使用触发器，可自动完成简单的样式改变，而这通常需要使用样板事件处理逻辑
+    
+    触发器通过Style.Triggers集合链接到样式。每个样式都可以有任意多个触发器，而且每个触发器都是System.Windows.TriggerBase的派生类的实例
+
+    继承自TriggerBase的类
+    Trigger            这是一种最简单的触发器。可以监测依赖项属性的变化，然后使用设置器改变样式
+    MultiTrigger       与Trigger类似，但这种触发器联合了多个条件。只有满足了所有这些条件，才会启动触发器
+    DataTrigger        这种触发器使用数据绑定。与Trigger类似，只不过监视的是任意绑定数据的变化
+    MultiDataTrigger   联合多个数据触发器
+    EventTrigger       这是最复杂的触发器。当事件发生时，这种触发器应用动画
+
+    通过使用FrameworkElement.Triggers集合，可直接为元素应用触发器，而不需要创建样式。但这存在一个相当大的缺陷。这个Triggers集合只支持事件触发器(并非技术上的原因造成了该限制，只是因为
+    WPF团队没时间实现该特性，将来的版本中可能包含该特性)
+    
+    -->
     <Window.Resources>
         <Style x:Key="BigFontButton">
             <Style.Setters>
@@ -13,6 +31,14 @@
                 <Setter Property="Control.FontSize" Value="18"/>
             </Style.Setters>
             <Style.Triggers>
+
+                <!--
+                Trigger(简单触发器)
+                可为任何依赖项属性关联简单触发器
+
+                每个简单触发器都指定了正在监视的属性，以及正在等待的属性值。当该属性值出现时，将应用存储在Trigger.Setters集合中的设置器(但不能使用更复杂的触发器逻辑。例如，比较某个值以查看
+                其是否处于某个范围，或执行某种计算等。对于这些情况，最好使用事件处理程序)
+                -->
                 <Trigger Property="Control.IsFocused" Value="True">
                     <Setter Property="ItemsControl.Foreground" Value="DarkRed"/>
                 </Trigger>
@@ -23,6 +49,35 @@
                 <Trigger Property="Button.IsPressed" Value="True">
                     <Setter Property="Control.Foreground" Value="Red"/>
                 </Trigger>
+
+                <!--
+                触发器的优点是不需要为翻转他们而编写任何逻辑。只要停止应用触发器，元素就会恢复到正常外观。在本例中，这意味着只要用户使用Tab键让按钮失去焦点，按钮就会恢复为通常的灰色背景。
+                
+                本质上，触发器是众多覆盖从依赖项属性返回的值得属性提供者之一，但原始的属性值(不管是在本地设置的还是通过样式设置的)仍会保留。只要触发器被禁用，触发器之前的属性值就会再次可用
+
+                可创建一次应用于同一元素的多个触发器。如果这些触发器设置不同的属性，这种情况就不会出现混乱。然而，如果多个触发器修改同一属性，那么最后的触发器将有效(触发器在标记中的排列顺序
+                完全决定了最终结果)
+                -->
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="BigFontButton2">
+            <Style.Triggers>
+            <!--
+                MultiTrigger
+
+                如果希望创建只有当几个条件都为真时才激活的触发器，可使用MultiTrigger。这种触发器提供了一个Conditions集合，可通过该集合定义一系列属性和值的组合
+
+                下面只有当按钮具有焦点而且鼠标悬停在该按钮上时，才会应用格式化信息
+                -->
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="Control.IsFocused" Value="True"/>
+                        <Condition Property="Control.IsMouseOver" Value="True"/>
+                    </MultiTrigger.Conditions>
+                    <MultiTrigger.Setters>
+                        <Setter Property="Control.Foreground" Value="DarkRed"/>
+                    </MultiTrigger.Setters>
+                </MultiTrigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>

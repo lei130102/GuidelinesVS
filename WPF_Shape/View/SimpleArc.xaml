@@ -6,6 +6,95 @@
         xmlns:local="clr-namespace:WPF_Shape.View"
         mc:Ignorable="d"
         Title="SimpleArc" Height="300" Width="300">
+        <!--
+    
+    PathGeometry
+    绘制曲线和直线
+
+    PathGeometry是功能超级强大的图形，他能绘制其他所有几何图形能够绘制的内容，也能绘制其他所有几何图形所不能绘制的内容。他的唯一缺点是语法比较长（并且在某种程度上更加复杂）
+
+    每个PathGeometry对象都是由一个或多个PathFigure对象构建的(存储在PathGeometry.Figures集合中)。每个PathFigure对象是一系列相互连接的直线和曲线，可闭合也可不闭合。如果
+    图形中最后一条直线的的终点连接到了第一条直线的起点，那么图形就是闭合的
+
+    PathFigure属性
+    StartPoint                 指示从何处开始绘制图形线条的Point对象
+    Segments                   用于绘制图形的PathSegment对象的集合
+    IsClosed                   如果为true，WPF添加直线来连接起点和终点(假设他们不是同一个点)
+    IsFilled                   如果为true，就使用Path.Fill画刷填充图形内部的区域
+    
+    PathFigure的派生类
+    LineSegment                在两点之间创建直线
+    ArcSegment                 在两点之间创建椭圆形弧线
+    BezierSegment              在两点之间创建贝塞尔曲线
+    QuadraticBezierSegment     创建形式更简单的贝塞尔曲线，只有一个控制点而不是两个控制点，并且计算速度更快
+    PolyLineSegment            创建一系列直线。可使用多个LineSegment对象得到相同的效果，但使用单个PolyLineSegment对象更简明
+    PolyBezierSegment          创建一系列贝塞尔曲线
+    PolyQuadraticBezierSegment 创建一系列更简单的二次贝塞尔曲线
+
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    LineSegument 直线
+
+    <Path Stroke="Blue">
+        <Path.Data>
+            <PathGeometry>
+                <PathFigure IsClosed="True" StartPoint="10,100">
+                    <LineSegment Point="100,100"/>
+                    <LineSegment Point="100,50"/>
+                </PathFigure>
+            </PathGeometry>
+        </Path.Data>
+    </Path>
+    从点(10,100)开始，绘制一条dao点(100,100)的直线，然后从点(100,100)开始绘制到点(100,50)的直线。因为PathFigure.IsClosed属性设置为true，所以添加的最后一条
+    线段将点(100,50)连接到点(0,0)，最后的结果是个直角三角形
+
+    注意，每个PathGeometry可包含任意数量的PathFigure对象。这意味着可创建几个相互独立的闭合或不闭合图形，作为同一路径的一部分
+
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    ArcSegment 弧线
+
+    PathFigure从起点(或前一条线段的终点)向弧线的终点绘制一条曲线。这条弯曲的连接线实际是椭圆边缘的一部分
+    显然，为了绘制弧线，只有终点是不够的，因为有许多曲线能够连接这两点。还需要指定用于绘制弧线的假想椭圆的尺寸。可使用ArcSegment.Size属性完成该工作，该属性提供了
+    椭圆的X半径和Y半径。假想的椭圆越大，边缘曲线就越缓和
+
+    注意，对于任意两点，实际上存在最大尺寸和最小尺寸的椭圆，当创建的椭圆足够大，以至于绘制的线段看起来像直线时，这时的椭圆就具有最大尺寸。再增大尺寸就没有效果了，当
+    椭圆足够小，以至于使用整个半圆连接两点，这时椭圆的尺寸就最小。再缩小尺寸也没有效果
+
+    <Path Stroke="Blue" StrokeThickness="3">
+        <Path.Data>
+            <PathGeometry>
+                <PathFigure IsClosed="False" StartPoint="10,100">
+                    <ArgSegment Point="250,150" Size="200,300"/>
+                </PathFigure>
+            </PathGeometry>
+        </Path.Data>
+    </Path>
+
+    然而，即使提供了起点、终点以及椭圆的尺寸，也仍不具备明确绘制弧线所需的全部信息。上面的示例还依赖于两个默认值，如果喜欢的话，也可以使用其他值
+    1.如果绘制椭圆上的两个点，显然可以由两种方法连接他们——通过沿着短边连接两点，或沿着长边连接两点。
+    可用ArcSegment.IsLargeArc属性设置弧线的方向，可将该属性设置为true或者false。默认值是false，这意味着使用两条弧线中较短的一条
+    2.即使设置了方向，也还有一点需要明确——椭圆位于何处。设想绘制一条弧线连接左边的一点和右边的一点，并使用尽可能短的弧线。连接这两个点的曲线可被
+    向下拉伸，然后向上拉伸；也可以翻转该弧线，从而先向上弯曲，然后向下弯曲。得到的弧线依赖于定义弧线的两点的顺序以及ArcSegment.SweepDirection属性，
+    该属性可以是Counterclockwise(默认值)或Clockwise
+    
+    -->
     <Grid>
         <Path Stroke="Blue" StrokeThickness="3">
             <Path.Data>
