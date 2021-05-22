@@ -6,12 +6,28 @@
         xmlns:local="clr-namespace:WPF_Animation"
         mc:Ignorable="d"
         Title="BlurringButtons" Height="300" Width="300">
+
+        <!--
+    动态改变像素着色器   
+
+    之前已经了解了像素着色器(可为任意元素应用位图风格效果的低级例程，如模糊、辉光以及弯曲效果)的相关内容。
+    
+    就自身而言，像素着色器是一些有趣并且偶尔有用的工具。但通过结合使用动画，他们可变得更通用。可使用他们设计吸引眼球的
+    过渡效果(例如，通过模糊控件使其淡出、隐藏，然后模糊另一个控件使其淡入)。也可使用像素着色器创建给人留下深刻印象的
+    用户交互效果(例如，当用户将鼠标移动到按钮上时增加按钮上的辉光)。最好为像素着色器的属性应用动画，就像为其他内容应用
+    动画一样容易
+
+    本例包含一系列按钮，并且当用户将鼠标移动到其中某个按钮上时，关联并开始动画。区别在于这个示例中的动画不是旋转按钮，
+    而将模糊半径减少至0。结果是移动鼠标时，最近的控件突然间轻快地变得清晰
+    -->
+
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
             <Setter Property="Padding" Value="20,15"/>
             <Setter Property="Margin" Value="2"/>
+            <!--跟之前的例子类似，只是需要为每个按钮提供BlurEffect对象而不是RotateTransform对象-->
             <Setter Property="Effect">
                 <Setter.Value>
                     <BlurEffect Radius="10"/>
@@ -23,6 +39,7 @@
                     <EventTrigger.Actions>
                         <BeginStoryboard>
                             <Storyboard>
+                            <!--还需要相应的修改动画-->
                                 <DoubleAnimation Storyboard.TargetProperty="Effect.Radius" To="0" Duration="0:0:0.4"/>
                             </Storyboard>
                         </BeginStoryboard>
@@ -33,12 +50,18 @@
                     <EventTrigger.Actions>
                         <BeginStoryboard>
                             <Storyboard>
+                            <!--还需要相应的修改动画-->
                                 <DoubleAnimation Storyboard.TargetProperty="Effect.Radius" To="10"
                                                  Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </EventTrigger.Actions>
                 </EventTrigger>
+                <!--
+                可反向使用相同的方法来突出显示按钮。例如，可使用应用辉光效果的像素着色器突出显示鼠标在其上悬停的按钮。
+                如果对使用像素着色器为页面过渡应用动画感兴趣的话，可查看位于http://codeplex.com/wpffx网址上的WPF
+                像素着色器效果库。该库包含许多吸引眼球的像素着色器，以及一系列用于为他们执行过渡的辅助类
+                -->
 
             </Style.Triggers>
         </Style>

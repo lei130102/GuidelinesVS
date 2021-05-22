@@ -6,6 +6,69 @@
         xmlns:local="clr-namespace:WPF_Shape.View"
         mc:Ignorable="d"
         Title="VisualLayer" Height="350" Width="496">
+        <!--
+
+    之前讨论了WPF中2D绘图的核心概念，现在可深入地分析WPF的低级图形功能了
+    
+    通常，当基本性能成为问题和/或需要访问单个像素时，将使用这些低级功能
+    下面将分析为此提供帮助的三种WPF技术：
+    1.可视化对象(Visual)
+    如果希望构建用于绘制矢量图形的程序，或计划创建包含数千个形状并可以分别操作这些形状的画布，那么使用WPF的元素系统和形状类会使
+    速度过慢，不能满足要求。相反，需要更简洁的方法，使用低级的Visual类手动执行渲染
+    2.效果(Effect)
+    如果希望为元素应用复杂的可视化效果(如模糊和颜色调整)，最简便的方法是使用像素着色器(pixel shader)这个专用工具修改单个像素。为
+    提高性能，像素着色器是硬件加速的，并且有许多已经制作好的效果，您付出很少的努力就可以将这些效果应用到自己的应用程序中
+    3.WriteableBitmap类
+    虽然需要做很多工作，但通过WriteableBitmap类可以完全拥有一幅位图——这意味着可以设置并检查位图的任何像素。对于复杂的数据可视化
+    情形(例如，当图形化科学计算数据时)可以使用该特性，也可以使用该特性从头开始实现一个赏心悦目的效果
+    
+
+    
+    
+    可视化对象
+
+    之前已经学习了处理数量适中的图形内容的最佳方法。通过使用几何图形、图画和路径，可以降低2D图形的开销。即使正在使用复杂的具有分层
+    效果的组合形状和渐变画刷，这种方法也仍然能够工作得很好
+    然而，这种设计不适合需要渲染大量图形元素的绘制密集型应用程序。例如绘图程序、演示粒子碰撞的物理模型程序或横向卷轴形式的游戏。这些
+    应用程序面临的不是图形复杂程度的问题，而纯粹是单独的图形元素数量的问题。即使使用量级更轻的Geometry对象代替Path元素，需要的开销
+    也仍会较大地影响应用程序的性能
+
+    WPF针对此类问题的解决方案是，使用低级的可视化层(visual layer)模型。基本思想是将每个图形元素定义为一个Visual对象，Visual对象是
+    极轻量级的要素，比Geometry对象或Path对象需要的开销更小。然后可使用单个元素在窗口中渲染所有可视化对象
+
+
+    
+    绘制可视化对象
+
+    Visual抽象类的派生类
+    UIElement类(该类是WPF元素模型的根)
+    Viewport3DVisual类(通过该类可显示3D内容)
+    ContainerVisual类(包含其他可视化对象的基本容器)
+
+    最有用的派生类是DrawingVisual类，继承自ContainerVisual类，并增加了支持“绘制”希望放置到可视化对象中的图形内容的功能
+
+    
+    
+    
+    
+    在元素中封装可视化对象
+    
+    最重要的是定义可视化对象(比如定义DrawingVisual对象)，但为了在屏幕上实际显示可视内容，这还不够。为显示可视化对象，
+    还需要借助功能完备的WPF元素，WPF元素将可视化对象添加到可视化树中，单个元素具有显示任意数量可视化对象的能力。因此，
+    可以很容易地创建只包含一两个元素，但却驻留了几千个可视化对象的窗口
+    
+    为在元素中驻留可视化对象，需要执行以下任务：
+    1.为元素调用AddVisualChild()和AddLogicalChild()方法来注册可视化对象。从技术角度看，为了显示可视化对象，不需要
+    执行这些任务，但为了确保正确跟踪可视化对象、在可视化树和逻辑树中显示可视化对象以及使用其他WPF特性(如命中测试)，需要
+    执行这些操作
+    2.重写VisualChildrenCount属性并返回已经增加了的可视化对象的数量
+    3.重写GetVisualChild()方法，当通过索引号请求可视化对象时，添加返回可视化对象所需的代码
+    
+    当重写VisualChildrenCount属性和GetVisualChild()方法时，本质上是劫持了那个元素。如果使用的是能够包含嵌套元素的内容控件、
+    装饰元素或者面板，这些元素将不再被渲染。例如，如果在自定义窗口中重写了这两个方法，就看不到窗口的其他内容。只会看到添加的
+    可视化对象。因此，通常创建专用的自定义类来封装希望显示的可视化对象，例如在本例中，窗口允许用户为自定义的Canvas面板添加正方形
+    (每个正方形是可视化对象)
+    -->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -54,6 +117,11 @@
         </ToolBarTray>
 
         <Border Grid.Column="1" Margin="3" BorderBrush="SteelBlue" BorderThickness="1">
+        <!--
+            在窗口的XAML标记中声明自定义的DrawingCanvas对象
+
+            提示：通过将背景设置成白色(而不是透明)，可拦截画布表面上的所有鼠标单击事件
+            -->
             <local:DrawingCanvas x:Name="drawingSurface" Background="White" ClipToBounds="True"
                                  MouseLeftButtonDown="drawingSurface_MouseLeftButtonDown"
                                  MouseLeftButtonUp="drawingSurface_MouseLeftButtonUp"

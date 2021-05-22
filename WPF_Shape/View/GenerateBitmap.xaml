@@ -6,6 +6,66 @@
         xmlns:local="clr-namespace:WPF_Shape.View"
         mc:Ignorable="d"
         Title="GenerateBitmap" d:DesignHeight="460" d:DesignWidth="472" SizeToContent="WidthAndHeight">
+        <!--
+    WriteableBitmap类
+
+    WPF允许使用Image元素显示位图。然而，按这种方式显示图片的方式完全是单向的。应用程序使用现成的位图，读取位图，并在窗口中显示位图。就其本身而言，
+    Image元素没有提供创建或编辑位图信息的方法
+
+    这正是WriteableBitmap类的用武之地。该类继承自BitmapSource，BitmapSource类是当设置Image.Source属性时使用的类(不管是在代码中直接设置图像，还是在
+    XAML中隐式地设置图像)。但BitmapSource是只读的位图数据映射，而WritableBitmap类是可修改的像素数组，为实现许多有趣的效果提供了可能
+
+    注意：对于大多数应用程序而言，WriteableBitmap类不是绘制图形内容的最佳方式，认识到这一点很重要。如果需要针对WPF元素系统的低级替换方法，应当首先查看
+    在本章前面演示的Visual类。例如，Visual类是创建制图工具和简单动画游戏的完美工具。WriteableBitmap类更适合于需要操作单个像素的应用程序——例如分形生成器、
+    声音分析器、科学数据可视化工具，或处理来自外部硬件设备(如网络摄像机)的原始图像数据的应用程序。尽管WriteableBitmap类提供了精细的控制，但比较复杂而且
+    比使用其他方法需要更多的代码
+
+    
+    
+    生成位图
+    
+    为使用WriteableBitmap类生成一幅位图，必须提供几部分重要信息：以像素为单位的宽度和高度、两个方向上的DPI分辨率以及图像格式
+    例如，创建一幅与当前窗口尺寸相同的位图的示例：
+    WriteableBitmap wb = new WriteableBitmap((int)this.ActualWidth, (int)this.ActualHeight, 96, 96, PixelFormats.Bgra32, null);
+
+    PixelFormats枚举提供了许多像素格式，但只有一半格式被认为是可写入的并且得到了WriteableBitmap类的支持
+    下面是可供使用的像素格式：
+    Bgra32
+    这种格式使用32位的sRGB颜色。这意味着每个像素由32位(或者4个字节)表示。第1个字节表示蓝色通道的贡献(作为从0到255之间的数字)。第2个字节用于绿色通道，
+    第3个字节用于红色通道，第4个字节用于alpha值(0表示完全透明，255表示完全不透明)。正如可能看到的，颜色的顺序(蓝、绿、红和alpha)与名称Bgra32中字母的顺序是匹配的
+    Bgr32
+    这种格式为每个像素使用4个字节，就像Bgra32格式一样。区别是忽略了alpha通道。当不需要透明度时可使用这种格式
+    Pbgra32
+    就像Bgra32格式一样，该格式为每个像素使用4个字节。区别在于处理半透明像素的方式。为了提供透明度计算的性能，每个颜色字节是预先相乘的(因此在Pbgra32中有字母P)
+    这意味着每个颜色字节被乘上了alpha值并除以255。在Bgra32格式中具有B、G、R、A值(255, 100, 0, 200)的半透明像素，在Pbgra32格式中变成了(200, 78, 0, 200)
+    BlackWhite、Gray2、Gray4、Gray8
+    这些格式是黑白和灰度格式。单词Gray后面的数字和每像素的位数相对应。因此，这些格式是压缩的，但他们不支持颜色
+    Indexed1、Indexed2、Indexed4、Indexed8
+    这些是索引格式，这意味着每个像素指向颜色调色板中的一个值。当使用这些格式中的某种格式时，必须作为WriteableBitmap构造函数的最后一个参数传递相应的ColorPalette
+    对象。单词Indexed后面的数字和每像素的位数相对应。索引格式是压缩的，使用这些格式稍微复杂一些，并且分别支持更少的颜色——2、4、16以及256中颜色
+
+    其中，Bgra32、Bgr32以及Pbgra32——是最常见的选择
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    读写WriteableBitmap对象
+
+    开始时，WriteableBitmap对象中所有字节的值都是0。本质上，就是一个大的黑色矩形。
+
+    为使用内容填充WriteableBitmap对象，需要使用WritePixels()方法。WritePixels()方法将字节数组复制到指定位置的位图中。可调用WritePixels()方法设置单个像素、
+    整幅位图或选择的某块矩形区域
+
+    为从WriteableBitmap对象中获取像素，需要使用CopyPixels()方法，该方法将您希望获取的多个字节转换成字节数组。
+    
+    总之，WritePixels()和CopyPixels()方法没有为您提供可供使用的最方便编程模型，但这是低级像素访问需要付出的代价
+    -->
     <Grid x:Name="LayoutRoot" Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

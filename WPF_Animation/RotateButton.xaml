@@ -6,12 +6,72 @@
         xmlns:local="clr-namespace:WPF_Animation"
         mc:Ignorable="d"
         Title="RotateButton" Height="300" Width="300">
+        <!--
+    
+    如何为动画选择正确的属性？
+    
+    期望的结果(例如，在窗口中和移动元素)与需要使用的属性(在这种情况下是Canvas.Left和Canvas.Top属性)之间的关系并不总是很直观
+    
+    指导原则：
+    1.如果希望使用动画来使元素显示和消失，不要使用Visibility属性(该属性只能在完全可见和完全不可见之间进行切换)。应改用Opacity属性淡入或者淡出元素
+    2.如果希望动态改变元素的位置，可考虑使用Canvas面板。他提供了最直接的属性(Canvas.Left以及Canvas.Top)，而且开销最小。此外，也可使用动画属性在其
+    他布局容器中获得类似效果
+    例如，可通过使用ThicknessAnimation类动态改变Margin和Padding等属性，还可动态改变Grid控件中的MinWidth或者MinHeight属性、一列或者一行
+    (许多动画效果被设计成递进地“呈现”某个元素。常用的选择包括使元素淡出、滑入到视图中或从一个小点进行扩展。然而，还有许多其他选择，例如使用BlurEffect
+    类来模糊元素，并动态改变Radius属性来降低模糊度从而使元素逐渐变得清晰)
+    3.动画最常用的属性是渲染变换。可使用变换移动或者翻转元素(TranslateTransform)、旋转元素(RotateTransform)、缩放或者扭曲元素(ScaleTransform)等。通过
+    仔细地使用变换，有时可避免在动画中硬编码尺寸和位置。他们也绕过了WPF布局系统，比直接作用于元素大小或者位置的其他方法速度更快
+    4.动态改变元素表面的较好方法是修改画刷属性。可使用ColorAnimation改变颜色或者其他动画对象来变换更复杂画刷的属性，如渐变中的偏移
+
+    
+    
+    
+    
+    
+    
+    动态变换
+
+    变换提供了自定义元素的最强大方式之一。当使用变换时，不只是改变元素的边界，而且会移动、翻转、扭曲、拉伸、放大、缩小或旋转元素的整个可视化外观
+
+    例如，可通过ScaleTransform动态改变按钮的尺寸，这会改变整个按钮的尺寸，包括按钮的边框及其内部的内容。这种效果比动态改变Width和Height属性或改变
+    文本的Fontsize属性给人的印象更深刻
+    
+    每个元素都能以两种不同的方式使用变换：
+    RenderTransform属性和LayoutTransform属性
+    RenderTransform效率更高，因为是在布局之后应用变换并且用于变换最终的渲染输出
+    LayoutTransform在布局前应用，从而其他控件需要重新排列以适应变换，改变LayoutTransform属性会引发新的布局操作(除非在Canvas面板上使用元素，
+    在这种情况下，RenderTransform和LayoutTransform的效果相同)
+    
+    
+    //定义变换
+    //(动画可改变已经存在的变换，但不能创建新的变换)
+
+    //例如，假设希望使按钮旋转
+    <Button Content="A Button">
+        <RenderTransform>
+            <RotateTransform></RotateTransform>
+        </RenderTransform>
+    </Button>
+    
+    -->
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="HorizontalAlignment" Value="Center"/>
+            <!--
+            为确保按钮绕其中心旋转(而不是绕左上角旋转，需要按如下方式设置
+            RenderTransformOrigin属性)
+
+            <Button RenderTransformOrigin="0.5,0.5">
+
+            RenderTransformOrigin属性使用0~1的相对单位，所以0.5表示中点
+            
+            -->
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
             <Setter Property="Padding" Value="20,15"/>
             <Setter Property="Margin" Value="2"/>
+            <!--
+            使用的是RenderTransform
+            -->
             <Setter Property="RenderTransform">
                 <Setter.Value>
                     <RotateTransform/>
@@ -19,6 +79,15 @@
             </Setter>
             <Style.Triggers>
 
+<!--
+                现在当将鼠标移动到按钮上时，下面的事件触发器就会旋转按钮。使用的目标属性是RenderTransform.Angle——换句话说，读取按钮的
+                RenderTransform属性并修改在其中定义的RotateTransform对象的Angle属性。
+                
+                事实上，RenderTransform属性可包含各种不同的变换对象，每种变换对象的属性各不相同，这不会引起问题。只要使用的变换具有Angle属性，
+                这个触发器就能工作
+
+                下面的按钮在0.8秒的时间内旋转一周并且持续旋转。当按钮旋转时仍完全可用——例如，可单击按钮并处理Click事件
+                -->
                 <EventTrigger RoutedEvent="Button.MouseEnter">
                     <EventTrigger.Actions>
                         <BeginStoryboard Name="rotateStoryboardBegin">
@@ -30,6 +99,11 @@
                     </EventTrigger.Actions>
                 </EventTrigger>
 
+<!--
+                为停止旋转，可使用第二个触发器响应MouseLeave事件。这时，可删除执行旋转的故事板，但这会导致按钮一步跳回他原来的位置。
+                更好的方法是开始第二个动画，用他替代第一个动画。这个动画忽略To和From属性，这意味着他无缝地在0.2秒的时间内将按钮旋转
+                回原始方向
+                -->
                 <EventTrigger RoutedEvent="Button.MouseLeave">
                     <EventTrigger.Actions>
                         <BeginStoryboard>

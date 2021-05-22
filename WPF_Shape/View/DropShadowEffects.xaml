@@ -6,6 +6,30 @@
         xmlns:local="clr-namespace:WPF_Shape.View"
         mc:Ignorable="d"
         Title="DropShadowEffects" Height="318" Width="344">
+        <!--
+    DropShadowEffect类
+
+    该类在元素背后添加了轻微的偏移阴影
+
+    DropShadowEffect类的属性
+    名称                                                     说明
+    Color                                            设置阴影的颜色(默认为黑色)
+    ShadowDepth                                      确定阴影离开内容多远，单位为像素(默认值为5)。将该属性设置为0会创建外侧
+                                                     辉光(outer-glow)效果，该效果会在内容周围添加晕彩(halo of color)
+    BlurRadius                                       模糊阴影，该属性和BlurEffect类的Radius属性非常类似(默认值是5)
+    Opacity                                          使用从1(完全不透明，默认值)到0(完全透明)之间的小数，使阴影部分透明
+    Direction                                        使用从0到360之间的角度值指定阴影相对于内容的位置。将该属性设置为0会
+                                                     将阴影放置到右边，增加该属性的值时会逆时针移动阴影。默认值是315，该值
+                                                     会将阴影放置到元素的右下方
+
+    没有提供用来组合效果的类，这意味着一次只能为一个元素应用一个效果。然而，有时可通过将元素添加到高层的容器中来模拟多个效果
+    (例如，为TextBlock元素使用阴影效果，然后将其放入使用模糊效果的StackPanel面板中)。大多数情况下，应避免这种变通方法，因为
+    这种方法会成倍地增加渲染工作量并会降低性能。相反，应当查找能够完成所有内容地单个效果
+    
+    
+    
+    
+    -->
     <StackPanel>
 
         <TextBlock FontSize="20" Margin="5" Text="Basic dropshadom">

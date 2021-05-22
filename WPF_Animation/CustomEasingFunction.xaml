@@ -6,6 +6,14 @@
         xmlns:local="clr-namespace:WPF_Animation"
         mc:Ignorable="d"
         Title="CustomEasingFunction" Height="276" Width="600">
+ 
+ <!--
+ 创建自定义缓动函数
+
+    通过从EasingFunctionBase继承自己的类，并重载EaseInCore()和CreateInstanceCore()方法，可创建自定义缓动效果
+    
+    -->
+
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
             <EventTrigger.Actions>

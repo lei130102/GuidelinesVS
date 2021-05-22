@@ -15,6 +15,22 @@
             <EventTrigger RoutedEvent="Button.Click">
                 <EventTrigger.Actions>
                     <BeginStoryboard>
+                <!--
+                Storyboard.TargetProperty属性指定了希望改变的属性。如果没有提供类的名称，故事板使用其父元素，在此使用的是希望扩展的按钮。如果希望
+                    设置附加属性(如Canvas.Left或Canvas.Top)，需要在括号中封装整个属性，如
+                    <DoubleAnimation Storyboard.TargetProperty="(Canvas.Left)" .../>
+                    在本例中不需要使用Storyboard.TargetName属性。当忽略该属性时，故事板使用父元素，在此是按钮
+
+                        
+                        如果希望To值使用窗口宽度，需要使用数据绑定表达式
+                        <DoubleAnimation Storyboard.TargetProperty="Width" To="{Binding ElementName=window, Path=Width}" Duration="0:0:5">
+                        </DoubleAnimation>
+                        这仍不能准确地得到所希望的结果。在此，按钮从当前尺寸增大到窗口的完整宽度。只使用代码的方法使用一种简单地计算，将按钮扩大到比整个窗口宽度小
+                        30个单位的值。但XAML不支持内联计算。一种解决方法是构建能够自动完成工作的IValueConverter接口。幸运的是，这个奇怪的方式较容易实现
+                        (许多开发人员都会使用)
+
+                        注意，另一种选择是在窗口类中创建自定义的依赖项属性以执行计算。然后可将动画绑定到自定义的依赖项属性
+                    -->
                         <Storyboard>
                             <DoubleAnimation Storyboard.TargetProperty="Width"
                 To="{Binding ElementName=window,Path=Width,Converter={StaticResource converter},ConverterParameter=-30}"

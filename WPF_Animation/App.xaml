@@ -2,7 +2,79 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WPF_Animation"
-             StartupUri="FrameBasedAnimation.xaml">
+             StartupUri="CachingTest.xaml">
+             <!--
+    在许多用户框架中(特别是WPF之前的框架，如Windows窗体和MFC)。开发人员必须从头构建自己的动画系统。最常用的技术是结合使用
+    计时器和一些自定义的绘图逻辑。WPF通过自带的基于属性的动画系统，改变了这种情况。
+    
+    两者之前的区别
+    1.基于时间的动画
+    创建周期性触发的计时器，当触发计时器时，使用事件处理程序计算一些与动画相关的细节。不久后，Windows将要求窗口重新绘制自身，
+    触发自定义的绘图代码，在自定义的绘图代码中，渲染效果
+    缺点：
+    a.需要低级的GDI+绘图支持，但他却不能与普通的窗口元素(如按钮、文本框和标签等)很好地相互协调。所以需要将动画内容和控件相互分离
+    并且不能在动画中包含任何用户交互元素
+    b.如果决定希望同时运行两个动画，就需要重新编写所有动画代码
+    c.计时器设置完全决定了帧频。如果改变时间间隔，可能需要修改动画代码(取决于执行计算的方式)。而且，选择的固定帧频对于特定的
+    计算机显卡硬件不一定理想
+    d.复杂动画需要指数级增长的更复杂的代码
+    2.基于属性的动画
+    基于依赖项属性基础架构。本质上，WPF动画只不过是在一段时间间隔内修改依赖项属性值的一种方式
+    如果希望实现不能通过修改属性实现的其他变化，那么就行不通了。只能为依赖项属性应用动画，因为只有依赖项属性使用动态地属性识别系统，
+    而该系统将动画考虑在内
+    基于属性的动画系统是为普通Windows应用程序添加动态效果的极佳方式。然而，如果需要作为应用程序的核心目标部分使用动画，并且希望
+    动画在应用程序的整个生命周期中持续运行，可能需要更灵活、更强大的技术，对于这些情况，必须通过WPF低级的基于帧的渲染支持
+
+    WP动画的规则：
+    1.每个动画依赖于一个依赖项属性
+    对于没有相应动画类的依赖项属性，为了为该属性应用动画，可以针对相应的数据类型创建自己的动画类(不过System.Windows.Media.Animation命名空间
+    已经为希望使用的大多数数据类型提供了动画类)
+    2.为了实现属性的动态变化(即，使用基于时间的方式改变属性的值)，需要有支持相应数据类型的动画类
+    Button.Width属性使用双精度数据类型，为实现属性的动态化，需要使用DoubleAnimation类
+    Button.Padding属性使用的是Thickness结构，所有需要使用ThicknessAnimation类
+
+    引用类型通常不能应用动画，但他们的子属性可以。例如，所有内容控件都支持Background属性，从而可以设置Brush对象用于绘制背景。使用动画从
+    一个画刷切换到另一个画刷的效率通常不高，但可以使用动画改变画刷的属性。例如，可改变SolidColorBrush画刷的Color属性(使用ColorAnimation类)
+    或改变LinearGradientBrush画刷中GradientStop对象的Offset属性(使用DoubleAnimation类)。这扩展了WPF动画的应用范围，允许用户为元素
+    外观的特定方面应用动画
+
+    
+    
+    
+    
+    Animation类
+    
+    有两种类型的动画
+    1.在开始值和结束值之间以逐步增加的方式(线性插值过程)改变属性的动画
+    所有关键帧动画类都使用“类型名+Animation”的形式进行命名
+    比如DoubleAnimation ColorAnimation
+    2.从一个值突然变成另一个值的动画(当改变特定的数据类型时，如String和引用类型的对象，插值是没有意义的)
+    这些数据类型使用一种称为“关键帧动画”的技术在特定时刻从一个值突然改变到另一个值
+    所有关键帧动画类都使用“类型名+AnimationUsingKeyFrames”的形式进行命名
+    比如StringAnimationUsingKeyFrames和ObjectAnimationUsingKeyFrames
+
+    所有具有(使用插值的)常规动画类(例如DoubleAnimation和ColorAnimation)的数据类型，也都有相应的用于关键帧动画的动画类型
+    (例如DoubleAnimationUsingKeyFrames和ColorAnimationUsingKeyFrames)
+    反之不成立
+
+    3.实际上，还有一种类型称为 基于路径的动画，而且他们比使用插值或关键帧的动画更加专业。基于路径的动画修改数值使其符合由PathGeometry
+    对象描述的形式，并且主要用于沿路径移动元素。基于路径的动画类使用“类型名+AnimationUsingPath”的形式进行命名，如DoubleAnimationUsingPath和PointAnimationUsingPath
+    
+    注意，尽管目前WPF可为动画使用三种方式（线性插值、关键帧以及路径），但完全也可以创建更多的使用完全不同的方式来修改值的动画类。唯一要求
+    是自定义的动画类必须根据时间修改值
+
+    综上，在System.Windows.Media.Animation命名空间中将发现以下内容：
+    17个“类型名+Animation”类，这些类使用插值
+    22个“类型名+AnimationUsingKeyFrames”类，这些类使用关键帧动画
+    3个“类型名+AnimationUsingPath”类，这些类使用基于路径的动画
+    (这42个类并不是System.Windows.Media.Animation命名空间中的唯一内容。每个关键帧动画还使用自己的关键帧类和关键帧集合类，这两部分类会
+    导致一些混乱。总之，在System.Windows.Media.Animation命名空间中有100多个类)
+
+    所有这些动画类都继承自抽象的“类型名+AnimationBase”类，这些基类实现了一些基本功能，从而为创建自定义动画类提供了快捷方式。如果某个
+    数据类型支持多种类型的动画，那么所有的动画类都继承自抽象的动画基类。
+    例如，DoubleAnimation和DoubleAnimationUsingKeyFrames都继承自DoubleAnimationBase基类
+
+    -->
     <Application.Resources>
          
     </Application.Resources>

@@ -6,8 +6,52 @@
         xmlns:local="clr-namespace:WPF_Shape.View"
         mc:Ignorable="d"
         Title="Drawings" Height="300" Width="300">
+        <!--
+    Geometry抽象类表示形状或路径
+    Drawing抽象类表示2D图画，包含了显示矢量图或位图需要的所有信息
+
+    Drawing抽象类的派生类：
+    GeometryDrawing              封装一个几何图形，该几何图形具有填充他的画刷和绘制其边框的画笔                                            Geometry Brush Pen
+    ImageDrawing                 封装一幅图像(通常是基于文件的位图图像)，该图像具有定义图像边界的矩形                                      ImageSource Rect
+    VideoDrawing                 结合用于播放视频文件的媒体播放器和定义其边界的矩形                                                       Player Rect
+    GlyphRunDrawing              封装低级文本对象，即所谓的具有绘制用画刷的GlyphRun对象                                                   GlyphRun  ForegroundBrush
+    DrawingGroup                 组合各种类型的Drawing对象的几何。可使用DrawingGroup创建混合图画，并可使用他的一个属性一次为整个集合应用效果  BitmapEffect BitmapEffectInput Children ClipGeometry GuidelineSet Opacity OpacityMask Transform
+
+    (只有GeometryDrawing类能使用已经学习过的几何图形。可将GeometryDrawing对象视为矢量插图中的形状)
+    
+    
+    
+        对比：
+Geometry抽象类的派生类：
+LineGeometry
+RectangleGeometry
+EllipseGeometry
+GeometryGroup
+CombinedGeometry
+PathGeometry
+StreamGeometry
+
+Path类提供了Data属性，该属性接受一个Geometry对象(抽象类)，该对象定义路径包含的一个或多个图形 
+    -->
     <Window.Resources>
+    <!--
+        使用PathGeometry对象创建GeometryDrawing对象
+        
+        PathGeometry对象定义了形状(三角形)。GeometryDrawing对象定义了形状的外观(具有
+        蓝色边界的黄色三角形)
+
+        PathGeometry对象和GeometryDrawing对象都不是元素，所以不能直接使用这两个对象中的任何一个为
+        窗口添加自己绘制的内容，而需要使用另一个支持图画的类
+        
+        -->
         <GeometryDrawing x:Key="Drawing" Brush="Yellow">
+        <!--
+        注意，GeometryDrawing类引入了一个新的细节：System.Windows.Media.Pen类。除了前面学过的用于形状的所有与
+        笔画相关的属性(StartLine、EndLineCap、DashStyle、DashCap、LineJoin以及MiterLimit)之外，Pen类还提供了
+        在上面的示例中使用的Brush和Thickness属性。实际上，大多数继承自Shape的类在他们内部的绘图代码中使用的都是
+        Pen对象，但为了方便使用而直接提供了与画笔相关的属性
+            
+            -->
             <GeometryDrawing.Pen>
                 <Pen Brush="Blue" Thickness="3"/>
             </GeometryDrawing.Pen>
@@ -33,9 +77,154 @@
         </Button>
         <Button Width="30" Height="30">
             <Button.Background>
+            <!--
+                显示图画
+                
+                因为继承自Drawing的类不是元素，所以不能将他们放置在用户界面中
+                
+                为了显示图画，需要使用下面的类
+
+                类                      父类                                     说明
+                DrawingImage            ImageSource                             允许在Image元素中驻留图画
+                DrawingBrush            Brush                                   允许使用画刷封装图画，之后就可以用画刷绘制任何表面
+                DrawingVisual           Visual                                  允许在低级的可视化对象中放置图画。可视化对象并不具有真正元素的开销，
+                                                                                但是如果实现了需要的基础结构，那么仍可以显示可视化对象                                                                                 
+
+                所有这些类中都存在通用主题。他们提供了使用更少系统资源显示2D内容的方法
+                
+                -->
+                <!--DrawingBrush画刷使用GeometryDrawing对象-->
                 <DrawingBrush Stretch="Uniform" Viewport="0,0 0.9,1" Drawing="{StaticResource Drawing}">
                 </DrawingBrush>
             </Button.Background>
         </Button>
     </StackPanel>
 </Window>
+
+    <!--
+    假如希望使用矢量图形为按钮创建图标。最简便的方法(也是占用资源最多的方法)是在按钮中放置Canvas控件，并在Canvas控件中放置一系列继承自Shape类的元素
+    <Button ...>
+        <Canvas ...>
+            <Polyline .../>
+            <Polyline .../>
+            <Rectangle .../>
+            <Ellipse .../>
+            <Polygon .../>
+            ...
+        </Canvas>
+    </Button>
+    如果使用这种方法，每个元素都是完全独立的，具有自己的内存区域和事件处理程序
+
+    一种更好的减少元素数量的方法是使用Path元素。因为每个路径具有单独的笔画和填充，所以仍需大量Path对象，不过这还是能够在一定程度山减少元素数量
+    <Button ...>
+        <Canvas ...>
+            <Path .../>
+            <Path .../>
+            ...
+        </Canvas>
+    </Button>
+
+    一旦开始使用Path元素，就将独立形状变换为不同的几何图形。可从路径中提取几何图形、画笔以及填充信息并将他们转换为图画，从而再增加一个抽象层。
+    然后可在DrawingGroup对象中将这些图画融合在一起，并将DrawingGroup对象放置到DrawingImage对象中，DrawingImage对象又可被放入到Image元素中
+    <Button ...>
+        <Image ...>
+            <Image.Source>
+                <DrawingImage>
+                    <DrawingImage.Drawing>
+                        <DrawingGroup>
+                            <GeometryDrawing .../>
+                            <GeometryDrawing .../>
+                            <GeometryDrawing .../>
+                            ...
+                        </DrawingGroup>
+                    </DrawingImage.Drawing>
+                </DrawingImage>
+            </Image.Source>
+        </Image>
+    </Button>
+    这是一次意义重大的改变。该例并没有简化标记，只是用GeometryDrawing对象代替了每个Path对象。然而，由于减少了元素的数量，因此降低了所需的开销。
+    在前面的示例中创建了包含在按钮中的Canvas控件，并为每个路径添加了单独的元素。但该例只需要一个嵌套的元素：位于按钮中的Image元素。付出的代价是
+    不能再为每个不同的路径处理事件(例如，不能探测鼠标在图画中独立区域的单击操作)。但在用于按钮的静态图像中，未必需要使用这种功能
+
+
+    注意，很容易混淆DrawingImage和ImageDrawing
+    DrawingImage类用于在Image元素中放置一幅图画。通常，使用该类在Image元素中放置矢量内容
+    ImageDrawing则完全不同——他是Drawing的派生类并接受位图内容。可在DrawingGroup中组合GeometryDrawing对象和ImageDrawing对象，从而创建具有
+               矢量内容和位图内容的图画，可以随意使用该图画
+
+    尽管使用DrawingImage对象已经节省了大量资源，但仍可进一步提高效率，借助于DrawingBrush删除另一个元素。基本思想是在DrawingBrush对象中封装DrawingImage对象
+    <Button ...>    
+        <Button.Background>
+            <DrawingBrush>
+                <DrawingBrush.Drawing>
+                    <DrawingGroup>
+                        <GeometryDrawing .../>
+                        <GeometryDrawing .../>
+                        <GeometryDrawing .../>
+                    </DrawingGroup>
+                </DrawingBrush.Drawing>
+            </DrawingBrush>
+        </Button.Background>
+    </Button>
+
+    DrawingBrush方法和前面介绍的DrawingImage方法不完全相同。因为Image元素改变其内容大小的默认方式是不同的。Image.Stretch属性的默认值是Uniform，
+    该设置会为了适应可用空间而放大或缩小图像。DrawingBrush.Stretch属性的默认值是Fill，该设置可能会扭曲图像
+
+    当改变DrawingBrush的Stretch属性时，为明确扭曲填充区域中图画的位置和尺寸，您也可能希望调整Viewport设置
+    例如，下面的标记缩放由图画画刷使用的图画，以占用填充区域的90%
+    <DrawingBrush Stretch="Fill" Viewport="0,0 0.9,0.9">
+    对于按钮示例这是非常有用的，因为可为按钮周围的边框留出一定的空间。因为DrawingBrush并非元素，所以不能使用WPF布局过程。这意味着和Image
+    元素不同，DrawingBrush中的内容放置不会考虑Button.Padding属性的值
+
+    (还可以使用DrawingBrush对象来创建使用其他对象所不能创建的一些效果，如平铺。因为DrawingBrush类继承自TileBrush类，所以可使用TileMode属性
+    以某种模式在填充区域中重复绘图)
+
+    使用DrawingBrush方式的一个古怪问题是，将鼠标移到按钮上时内容会消失，并且会使用一个新画刷绘制按钮表面。但当使用Image方式时，图片就不受影响。
+    为了解决这个问题，需要为按钮创建自定义控件模板，该模板使用不同的方式绘制按钮的背景
+
+    无论是在DrawingImage本身中使用图形，还是使用DrawingBrush封装图形，都应当考虑使用资源分解标记。基本思想是作为不同资源定义每个DrawingImage
+    或DrawingBrush对象，从而当需要时就可以引用定义的对象。如果希望在多个元素或窗口中显示相同的内容，这是特别好的思想，因为你只需要重用资源，而
+    不必复制整块标记
+
+    
+
+    
+    
+    
+    
+    导出图画
+    
+    尽管所有这些示例都内联地声明他们的图画，但更常用的方法是将该内容的某些部分放到资源字典中，从而可在整个应用程序中重用(并在一个地方进行修改)。
+    由您来确定如何将这些标记分割到资源中，但两种常用的方法是：
+    1.存储一个充满DrawingImage对象的字典
+    2.存储一个保存DrawingBrush对象的字典
+    此外，也可以分离出Geometry对象，并将他们存储为独立的资源(如果在多个图画中使用具有不同颜色的相同图形，这是非常方便的)
+
+    
+    
+    很少有开发人员会手工编写大量图形。会使用专门的设计工具导出所需的XAML内容
+
+    大多数设计工具目前还不支持XAML导出功能，不过有许多插件和转换工具可弥补这一缺陷
+    1.http://www.mikeswanson.com/XAMLExport   用于Adobe Illustrator工具的免费XAML插件
+    2.http://www.mikeswanson.com/swf2xaml     用于Adobe Flash文件的免费XAML转换工具
+    3.Expression Design是Microsoft公司的插图和图形设计程序，内置了XAML导出功能。该程序能够读取各种矢量图形文件格式，包括.wmf(Windows元文件格式)文件，
+      还可以导入已经存在的插图并将其导出为XAML格式
+
+    然而，即使使用其中某个工具，前面学习的有关图形和图画的知识依然十分重要，主要原因有以下几点：
+    首先，许多程序允许您选择是希望作为Canvas控件中的独立元素的组合导出图画，还是希望作为DrawingBrush或DrawingImage资源的集合导出图画。通常，第一种选择
+    是默认选择，因为他保留了许多特性。然而，如果使用大量图画，并且图画很复杂，或者只是希望为了尽可能减少内存需求而使用静态图形，如按钮图标，使用DrawingBrush
+    或DrawingImage资源更好得多。而且，这些格式和用户界面的其他部分是相互独立的，所以在以后很容易更新他们(实际上，甚至可以将DrawingBrush或者DrawingImage
+    资源编译成独立的DLL程序集)
+
+    在Expression Design中为了节省资源，在Document Format列表框中，必须显式地选择Resource Dictionary选项而不是默认的Canvas选项
+
+    之所以说理解2D图形基础知识是很重要的，另一个原因是这样可以更容易地控制他们。例如，可通过以下方式替换标准的2D图形：修改用于绘制各种形状的画刷、为单个几何图形
+    应用变换、改变不透明度或者变换整个形状层(通过DrawingGroup对象)。更富有戏剧性的是，可添加、删除或者替换单个几何图形。可以很容易地将这些技术和将在后面
+    介绍的动画技巧结合起来。例如，通过修改RotateTransform对象的Angle属性，可以很容易地旋转一个几何图形对象；使用DrawingGroup.Opacity属性逐渐隐藏一层形状；
+    或者通过为填充GeometryDrawing对象地LinearGradientBrush对象应用动画，创建旋转地渐变效果
+
+    (可搜索其他WPF应用程序使用地资源。基本技术是使用工具，如Reflector，打开具有资源的程序集。然后提取BAML资源并将之反编译成XAML。当然，大多数公司不允许开发人员
+    盗取手工制作的图形并将图形应用到他们的应用程序中)
+    
+    
+        -->

@@ -6,6 +6,59 @@
         xmlns:local="clr-namespace:WPF_Animation"
         mc:Ignorable="d"
         Title="AnimationInStyle" Height="300" Width="300">
+        <!--
+    使用样式关联触发器
+
+    FrameworkElement.Triggers集合有点奇怪，他仅仅支持事件触发器。其他触发器集合(Style.Triggers、DataTemplate.Triggers与ControlTemplate.Triggers)
+    的功能更加强大，他们支持三种基本类型的WPF触发器：
+    1.属性触发器
+    2.数据触发器
+    3.事件触发器
+    (注意，为什么FrameworkElement.Triggers集合不支持其他触发器类型？这不是技术方面的原因，但WPF的第一个版本最终没有实现这个功能)
+    
+    使用事件触发器是关联动画的最常用方式，但并不是唯一的选择。如果使用位于样式、数据模板或控件模板中的Triggers集合，还可创建当属性值
+    发生变化时进行响应的属性触发器。
+
+    可使用两种方式为属性触发器关联动作
+    1.可使用Trigger.EnterActions设置当属性改变到指定的数值时希望执行的动作(例如，当IsPressed属性值变为true时)
+    2.可使用Trigger.ExitActions设置当属性改变回原来的数值时执行的动作(当IsPressed属性的值变回false时)
+
+    注意：
+    不见得在样式中使用属性触发器，也可以使用事件触发器，就像在前面介绍的那样
+    不见得以与使用样式的按钮相分离的方式定义样式(也可使用内联样式设置Button.Style属性)，但是这种两部分相分离的方式更常用，并且提供了为多个元素应用相同动画的灵活性
+
+    
+    
+    
+   
+    重叠动画
+    故事板提供了改变处理重叠动画方式的能力——换句话说，决定第二个动画何时被应用到已经具有一个正在运行的动画的属性上。可使用BeginStoryboard.HandoffBehavior属性改变处理
+    重叠动画的方式
+    通常，当两个动画相互重叠时，第二个动画会立即覆盖第一个动画。这种行为就是所谓的“快照并替换”(由HandoffBehavior枚举中的SnapshotAndReplace值表示)。当第二个动画开始时，
+    第二个动画获取属性当前值(基于第一个动画)的快照，停止动画，并用新动画替换第一个动画
+    另一个HandoffBehavior选项是Compose，这种方式会将第二个动画融合到第一个动画的时间线中
+
+    例如，分析ListBox示例的修改版本，当缩小按钮时使用HandoffBehavior.Compose：
+    <EventTrigger RoutedEvent="ListBoxItem.MouseLeave">
+        <EventTrigger.Actions>
+            <BeginStoryboard HandoffBehavior="Compose">
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="FontSize" BeginTime="0:0:0.5" Duration="0:0:0.2"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger.Actions>
+    </EventTrigger>
+    现在，如果将鼠标移到ListBoxItem对象上，然后再移开，将看到不同的行为。当将鼠标移开项时，项会继续扩展，这种行为非常明显，直到第二个动画到达其0.5秒的开始时间延迟。
+    然后，第二个动画会缩小按钮。如果不使用Compose行为，在第二个动画开始之前的0.5秒的时间间隔内，按钮会处于等待状态，并固定为当前尺寸
+    使用组合的HandoffBehavior行为需要更大开销。这是因为当第二个动画开始时，用于运行原来动画的时钟不能被释放。相反，这个时钟会继续保持存活，直到ListBoxItem对象被垃
+    圾回收或为相同的属性应用新的动画为止
+
+    提示，如果非常关注性能，WPF团队推荐一旦动画完成，就手动为动画释放动画时钟(而不是等垃圾回收器回收他们)。为此，需要处理一个事件，如Storyboard.Completed事件。然后，为
+    刚结束动画的元素调用BeginAnimation()方法，提供恰当的属性和null引用以替代动画
+    
+    
+    
+    -->
     <Window.Resources>
         <Style x:Key="GrowButtonStyle">
             <Style.Triggers>

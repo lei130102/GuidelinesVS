@@ -6,6 +6,39 @@
         xmlns:local="clr-namespace:WPF_Animation"
         mc:Ignorable="d"
         Title="AnimateVisual" Height="300" Width="300" Background="LightGoldenrodYellow">
+
+    <!--
+    VisualBrush画刷
+
+    VisualBrush画刷可获取任意元素的外观，使用该外观可填充另一个表面。其他表面可以是任何内容，从普通的矩形到文本框中的字母
+
+    本例中，顶部是一个真实的活动按钮。下面通过VisualBrush画刷使用按钮图片填充一个矩形，并通过各种变换效果拉伸并旋转按钮图片
+
+    VisualBrush画刷还未实现一些有趣的动画效果提供了可能。例如，不仅可动态显示活动的真实元素，还可动态显示具有相同填充内容的
+    简单矩形
+
+
+    
+    
+    
+    
+    
+    
+    使用VisualBrush画刷可轻易地代替这种效果。首先，需要创建另一个元素，使用VisualBrush画刷填充该元素，VisualBrush画刷必须
+    根据希望包含动画的元素绘制可视化内容
+
+    为将矩形放到与原始元素相同的位置，可将他们同时放到Grid面板的同一个单元格中。改变单元格的尺寸，使其适合原始元素(边框)，并拉伸
+    矩形使其相匹配。另一个选择是在真实应用程序容器上覆盖Canvas面板(然后可将动画属性绑定到下面真实元素的ActualWidth和ActualHeight
+    属性，从而确保对齐)
+
+    添加矩形后，只需要调整动画来执行动态变换。最后，当动画完成时隐藏矩形
+    private void storyboardCompleted(object sender, EventArgs e)
+    {
+        rectangle.Visibility = Visibility.Collapsed;
+    }
+    
+    -->
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>

@@ -12,6 +12,10 @@
             <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
             <Setter Property="Padding" Value="20,15"/>
             <Setter Property="Margin" Value="2"/>
+            <!--
+            使用的是LayoutTransform，相比于RenderTransform，本例中，当旋转其中一个按钮时，其他按钮会被推离
+            原来的位置
+            -->
             <Setter Property="LayoutTransform">
                 <Setter.Value>
                     <RotateTransform/>

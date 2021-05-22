@@ -6,6 +6,97 @@
         xmlns:local="clr-namespace:WPF_Animation"
         mc:Ignorable="d"
         Title="Easing" Height="371" Width="499">
+
+    <!--
+
+    动画缓动
+
+    线性动画的一个缺点是，他通常让人觉得很机械而且不够自然。相比而言，高级的用户界面具有模拟真实世界系统的动画效果。
+    例如，可能使用具有触觉的下压按钮，当单击时按钮快速地弹回，但是当没有进行操作时他们会慢慢地停下来，创建真正移动的错觉。或者，可能使用类似
+    Windows操作系统的最大化和最小化效果，当窗口接近最终尺寸时窗口扩展或收缩的速度会加速。这些细节十分细微，当他们的实现比较完美时您可能不会注意到他们。然而，
+    几乎总会注意到，粗糙的缺少这些更细微特征的动画会给人留下笨拙的印象
+    
+    改进动画并创建更趋自然的动画的秘诀是改变变化速率。不是创建以固定不变的速率改变属性的动画，而是需要设计根据某种方式加速或减速的动画。
+    
+    WPF提供了几种选择
+    最简单的方法：
+        使用预置的缓动函数(easing function)
+        (当使用缓动函数时，仍可通过制定开始和结束属性值以常规的方式定义动画。但为了附加这些细节，需要添加预先编写好的修改动画过程的数学
+        函数，使动画在不同的点加速或减速)
+    复杂的方法：
+        基于帧的动画和关键帧动画
+    
+    动画缓动的最大优点是，相对于其他方法，如基于帧的动画和关键帧动画，这种方法需要的工作量少很多。为使用动画缓动，使用某个缓动函数类(继承自
+    EasingFunctionBase的类)的实例设置动画对象的EasingFunction属性。通常需要设置缓动函数的几个属性，并且为了得到您所希望的效果，可能必须使用
+    不同的设置，但不需要编写代码并且只需很少的XAML
+
+
+    
+    
+    
+    
+    下面的示例添加了名为ElasticEase的缓动函数，最终结果是按钮弹跳出其完整宽度，然后迅速弹回一点，接着再次摆动超出其完整尺寸(但比上次稍少一点)，再次
+    以稍小的幅度迅速弹回，等等，随着运动的减弱不断地重复这一跳动模式。之后逐渐进入缓和的10次振荡。
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    在动画开始时应用缓动与在动画结束时应用缓动
+    所有缓动函数类都继承自EasingFunctionBase类，并且继承了EasingMode属性。该属性具有三个可能值：
+    EaseIn(该值意味着在动画开始时应用缓动效果)
+    EaseOut(该值意味着在动画结束时应用缓动效果)
+    EaseInOut(该值意味着在动画开始和结束时应用缓动效果——将EaseIn用于动画的前半部分，将EaseOut用于动画的后半部分)
+
+    注意，当应用缓动函数时不会改变动画的持续时间。本实例中，ElasticEase函数并非仅修改动画结束的方式——他还使动画的初始部分(当按钮正常扩展时)运行得更快，
+    从而为动画结束时的振荡留下更多时间
+
+    
+    
+    
+    
+    
+    缓动函数类
+    WPF提供了11个缓动函数类，所有这些类都位于熟悉的System.Windows.Media.Animation命名空间中
+    (注意每个缓动函数类还提供了EasingMode属性，这里省略)
+    名称                                        说明                                                                                   属性
+    BackEase                        当使用EaseIn模式应用该缓动函数时，在动画开始之前拉回动画。                            Amplitude属性决定了拉回和超越的量。
+                                    当使用EaseOut模式应用该缓动函数时，允许动画稍微超越然后拉回                           默认值是1，可以减少该属性值(大于0的任何值)
+                                                                                                                     以缩减效果，或增加该属性值以放大效果
+    ElasticEase                     当使用EaseOut模式应用该缓动函数时，使动画超越其最大值并前后摆动，逐渐减慢              Oscillations属性控制动画前后摆动的次数(默认值是3)，
+                                    当使用EaseIn模式应用该缓动函数时，动画在其开始值周围前后摆动，逐渐增加                 Springiness属性控制振荡增加或减弱的速度(默认值是3)
+    BounceEase                      执行与ElasticEase缓动函数类似的效果，只是弹跳永远不会超越初始值或最终值                Bounce属性控制动画回跳的次数(默认值是2)
+                                                                                                                      Bounciness属性决定弹跳增加或减弱的速度(默认值是2)
+    CircleEase                      使用圆函数加速(使用EaseIn模式)或减速(使用EaseOut模式)动画                             无
+    CubicEase                       使用基于时间立方的函数加速(使用EaseIn模式)或减速(使用EaseOut模式)动画。其效果           无
+                                    与CircleEase类似，但是加速过程更缓和
+    QuadraticEase                   使用基于时间平方的函数加速(使用EaseIn模式)或减速(使用EaseOut模式)动画。效果             无
+                                    与CubicEase类似，但加速过程更缓和
+    QuarticEase                     使用基于时间4次方的函数加速(使用EaseIn模式)或减速(使用EaseOut模式)动画。效果            无
+                                    和CubicEase以及QuadraticEase类似，但加速过程更明显
+    QuinticEase                     使用基于时间5次方的函数加速(使用EaseIn模式)或减速(使用EaseOut模式)动画。效果和          无
+                                    CubicEase、QuadraticEase以及QuarticEase类似，但是加速过程更明显
+    SineEase                        使用包含正弦计算的函数加速(使用EaseIn模式)或减速(使用EaseOut模式)动画。加速非常         无
+                                    缓和，并且相对于其他各种缓动函数更接近线性插值
+    PowerEase                       使用幂函数f(t) = t^p加速(使用EaseIn模式)或减速(使用EaseOut模式)动画。根据为指数        Power属性用于设置公式中的指数。将该属性
+                                    p使用的值，可复制Cubic、QuadraticEase、QuarticEase以及QuinticEase函数的效果           设置为2会复制QuadraticEase的效果
+                                                                                                                       设置为3会复制CubicEase的效果
+                                                                                                                       设置为4会复制QuarticEase的效果
+                                                                                                                       设置为5会复制QuinticEase的效果
+                                                                                                                       或选择其他不同值，默认值是2
+    ExponentialEase                 使用指数函数(e(at) - 1)/(e(a) - 1)加速(使用EaseIn模式)或减速(使用EaseOut模式)动画      Exponent属性用于设置指数(默认值是2)
+
+    
+    
+    许多缓动函数提供了类似但隐约不同的结果。为成功地使用动画缓动，需要决定使用哪个缓动函数，以及如何进行配置。通常，这个过程需要一点试错的体验
+    -->
+
+
     <Grid Background="White">
         <Button x:Name="cmdGrow" Width="300" Height="60" Content="This button grows">
             <Button.Triggers>
@@ -16,7 +107,14 @@
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetName="cmdGrow" Storyboard.TargetProperty="Width" To="400" Duration="0:0:1.5">
                                     <DoubleAnimation.EasingFunction>
+                                    <!--
+                                    Oscillations属性控制最终跳动的次数
+
+                                    Springiness属性值越大，后续的每个振荡静止得越快(默认值是3)
+                                        -->
                                         <ElasticEase EasingMode="EaseOut" Oscillations="10"/>
+                                        <!--仅使用一行XAML，就将一个简单的动画从业余的效果修改为精致美观的效果，在专业的应用程序中您会感觉到这种精致效果-->
+                                        <!--注意，因为EasingFunction属性只能接受单个缓动函数对象，所以不能为同一动画结合不同的缓动函数-->
                                     </DoubleAnimation.EasingFunction>
                                 </DoubleAnimation>
                             </Storyboard>

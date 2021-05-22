@@ -28,6 +28,8 @@ namespace WPF_Shape.View
             UpdateShaderValue(InputProperty);
         }
 
+        //如果使用采用特定输入参数的像素着色器，需要做的工作比上面的示例要更复杂一点。对于这种情况，需要通过调用RegisterPixelShaderSamplerProperty()
+        //静态方法创建相应的依赖项属性
         public static readonly DependencyProperty InputProperty =
             ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(GrayscaleEffect), 0 /* assigned to sampler register S0 */);
 

@@ -6,15 +6,205 @@
         xmlns:local="clr-namespace:WPF_Animation"
         mc:Ignorable="d"
         Title="FrameRates" Height="410" Width="405">
+        <!--
+        Timeline类
+
+    下面是继承自Timeline抽象类的三个主要分支
+
+    DispatcherObject
+            |
+    DependencyObject
+            |
+        Freezable
+            |
+        Animatable
+            |
+         Timeline
+            |
+            +————————————————————————————————————————————————————————————
+            |                              |                             |
+         Media Timeline              TimelineGroup                 AnimationTimeline
+                                           |                              |
+                                    ParallelTimeline                      +————————————————————————————————————————————————————
+                                           |                              |                             |                      |
+                                      Storyboard                    DoubleAnimationBase       ColorAnimationBase    StringAnimationBase
+                                                                          |
+                                                                 DoubleAnimation/DoubleAnimationUsingKeyFrames/DoubleAnimationUsingPath
+
+    1.当播放音频或者视频文件时使用MediaTimeline类
+    2.AnimationTimeline分支用于到目前为止分析过的基于属性的动画系统
+    3.TimelineGroup分支则允许同步时间线并控制他们的播放
+
+    Timeline类的属性
+    BeginTime                            设置将被添加到动画开始之前的延迟时间(TimeSpan类型)。这一延迟时间被加到总时间，所以
+                                         具有5秒延迟的5秒动画，总时间是10秒。当同步在同一时间开始，但按顺序应用效果的不同动画时，
+                                         BeginTime属性是很有用的
+    Duration                             使用Duration对象设置动画从开始到结束的运行时间
+    SpeedRatio                           提高或减慢动画速度。通常，SpeedRatio属性值是1。如果增加该属性值，动画会加快(例如，如果
+                                         SpeedRatio属性的值为5，动画的速度会变成原来的5倍)；如果减小该属性值，动画会变慢(例如，
+                                         如果SpeedRatio属性的值为0.5，动画时间将变为原来的两倍)。可通过改变动画的Duration属性值
+                                         得到相同结果。当应用BeginTime延迟时，不考虑SpeedRatio属性的值
+    AccelerationRatio                    使动画不是线性的，从而开始时较慢，然后增速(通过增加AccelerationRatio属性值)；或者结束时
+    DecelerationRatio                    降低速度(通过增加DecelerationRatio属性值)。这两个属性的值都在0~1之间，并且开始时都设置为0
+                                         此外，这两个属性值之和不能超过1
+    AutoReverse                          如果为true，当动画完成时会自动反向播放，返回到原始值。这也会使动画的运行时间加倍。如果增加
+                                         SpeedRatio属性值，就会应用到最初的动画播放以及反向的动画播放。BeginTime属性值只应用于动画的
+                                         开始——不延迟反向动画
+    FillBehavior                         决定当动画结束时如何操作。通常，可将属性值保持为固定的结束值(FillBehavior.HoldEnd)，但是
+                                         也可选择将属性值返回为原来的数值(FillBehavior.Stop)
+    RepeatBehavior                       通过该属性，可以使用指定的次数或时间间隔重复动画。用于设置这个属性的RepeatBehavior对象决定了确切地行为
+    
+    1.AccelerationRatio和DecelerationRatio属性
+    可通过AccelerationRatio和DecelerationRatio属性压缩部分时间线，使动画运行得更快，并将拉伸其他时间线进行补偿，使总时间保持不变
+    例如，将AccelerationRatio属性设置为0.3表示希望使用动画持续时间中前30%的时间进行加速，例如，在一个持续10秒的动画中，前3秒会加速运行，而剩余的7秒
+    会以恒定不变的速度运行(显然，在最后7秒钟的速度比没有加速的动画要快，因为需要补偿前3秒中的缓慢启动)。如果将AccelerationRatio属性设置为0.3，并将
+    DecelerationRatio属性也设置为0.3，那么在前3秒会加速，在中间4秒保持固定的最大速度，在最后3秒减速
+    显然，AccelerationRatio和DecelerationRatio属性值之和不能超过1，否则就需要超过100%的可用时间来执行所需的加速和减速。当然，可将AccelerationRatio属性
+    设置为1(对于这种情况，动画速度从开始到结束一直在增加)，或将DecelerationRatio属性设置为1(对于这种情况，动画速度从开始到结束一直在降低)
+    这两个属性值提供了相对简单地控制。例如，他们不能改变加速度或者将其设置为指定的值。如果希望得到试用可变加速度的动画，需要定义一系列的动画，逐个进行播放，
+    并且为每个动画设置AccelerationRatio和DecelerationRatio属性，或者需要使用具有关键样条曲线帧的关键帧动画。尽管这种技术提供了很大的灵活性，但一直跟踪所有
+    细节是一件令人头痛的事情，并且对于构建动画来说，完美的情况是使用设计工具
+
+    2.RepeatBehavior属性
+    使用RepeatBehavior属性可控制如何重复运行动画
+    例如动画重复两次
+    DoubleAnimation widthAnimation = new DoubleAnimation();
+    widthAnimation.To = this.Width - 30;
+    widthAnimation.Duration = TimeSpan.FromSeconds(5);
+    widthAnimation.RepeatBehavior = new RepeatBehavior(2);
+    cmdGrow.BeginAnimation(Button.WidthProperty, widthAnimation);
+    当运行这个动画时，按钮会增加尺寸(经过5秒)，跳回原来的值，然后再次增加尺寸(经过5秒)，在按钮的宽度为整个窗口的宽度时结束。如果将AutoReverse属性设置为true，
+    行为稍有不同——整个动画完成向前和向后运行(意味着先展开按钮，然后收缩)，之后再重复一次
+
+    注意，使用插值的动画提供了一个IsCumulative属性，该属性告诉WPF如何处理每次重复。如果IsCumulative属性为true，动画就不会从头到尾重复。相反，每个后续动画
+    增加到前面的动画，例如，如果将前面动画的IsCumulative属性设置为true，按钮将在两倍多的时间内扩展两倍宽。从另一个角度看，正常地处理第一次动画，但对于之后的
+    每次重复动画，就像是将IsAdditive属性设置为true。
+    
+    还可以用RepeatBehavior属性设置重复的时间间隔。为此，只需要为RepeatBehavior对象的构造函数传递一个TimeSpan对象
+    例如，下面的动画重复13秒：
+    DoubleAnimation widthAnimation = new DoubleAnimation();
+    widthAnimation.To = this.Width - 30;
+    widthAnimation.Duration = TimeSpan.FromSeconds(5);
+    widthAnimation.RepeatBehavior = new RepeatBehavior(TimeSpan.FromSeconds(13));
+    cmdGrow.BeginAnimation(Button.WidthProperty, widthAnimation);
+    在本例中，Duration属性指定整个动画历经5秒，因此，将RepeatBehavior属性设置为13秒将会引起两次重复，然后通过第三次重复动画，使按钮的宽度处于中间位置(在3秒位置)
+    (提示，可通过使用RepeatBehavior属性只执行部分动画，为此，使用小数的重复次数，或者使用小于持续时间的TimeSpan对象)
+
+    也可以使用RepeatBehavior.Forever值使动画不断重复自身
+    widthAnimation.RepeatBehavior = RepeatBehavior.Forever;
+    
+
+    
+    
+    
+    
+    
+    
+    在所有声明式动画中都会用到如下两个要素：
+    1.故事板
+    故事板是BeginAnimation()方法的XAML等价物。通过故事板将动画指定到合适的元素和属性
+    2.事件触发器
+    事件触发器响应属性变化或事件(如按钮的Click事件)，并控制故事板。例如，为了开始动画，事件触发器必须开始故事板
+    
+
+    
+    故事板
+    故事板是增强的时间线，可用来分组多个动画，而且具有控制动画播放的能力——暂停、停止以及改变播放位置。然而，Storyboard类提供的最基本功能是，能够使用
+    TargetProperty和TargetName属性指向某个特定属性和特定元素。换句话说，故事板在动画和希望应用动画的属性之间架起了一座桥梁
+    
+    定义用于管理DoubleAnimation的故事板：
+    <Storyboard TargetName="cmdGrow" TargetProperty="Width">
+        <DoubleAnimation From="160" To="300" Duration="0:0:5"/>
+    </Storyboard>
+    TargetName和TargetProperty都是附加属性。这意味着可直接将他们应用于动画，如下所示：
+    <Storyboard>
+        <DoubleAnimation Storyboard.TargetName="cmdGrow" Storyboard.TargetProperty="Width" From="160" To="300" Duration="0:0:5"/>
+    </Storyboard>
+    这样的语法更常用，因为通过这种语法可以在同一个故事板中放置几个动画，并且每个动画可用于不同的元素和属性
+    
+    (定义故事板是创建动画的第一步。为了让故事板实际运行起来，还需要有事件触发器)
+
+    
+    事件触发器
+    可以在如下4个位置定义事件触发器
+    1.在样式中(Styles.Triggers集合)
+    样式提供了一种将事件触发器关联到元素的方法
+    2.在数据模板中(DataTemplate.Triggers集合)
+    3.在控件模板中(ControlTemplate.Triggers集合)
+    4.直接在元素中定义事件触发器(FrameworkElement.Triggers集合)
+    
+    当创建事件触发器时，需要指定开始触发器的路由事件和由触发器执行的一个或多个动作。
+    对于动画，最常用的动作是BeginStoryboard，该动作相当于调用BeginAnimation()方法
+
+    
+    -->
     <Window.Resources>
         <BeginStoryboard x:Key="beginStoryboard">
+        <!--
+        同步的的动画
+
+        Storyboard类间接地继承自TimelineGroup类，所以Storyboard类能包含多个动画。最令人高兴的是，这些动画可以作为一组进行管理——这意味着他们在同一时间开始
+           
+            比在代码中通过简单地多次调用BeginAnimation()方法得到的效果更趋于同步的效果
+
+            每个动画不要求必须有相同的持续时间，对于不同时间结束的动画，唯一需要考虑的是他们的FillBehavior行为。如果一个动画的FillBehavior属性被设置为
+            HoldEnd，他会保持值直到故事板中所有的动画都结束。如果故事板的FillBehavior属性是HoldEnd，最后那个动画的值将被永久保存(直到使用新的动画替换这个动画或手动删除了这个动画)
+
+            这里有关Timeline类的属性开始变得特别有用。例如，可通过SpeedRatio属性使故事板中的某个动画比其他动画更快，也可以使用BeginTime属性相对于一个动画来偏移另一个动画的开始时间，
+            使该动画在特定的时间点开始
+
+            注意，因为Storyboard类继承自Timeline类，所以可使用之前描述的所有属性来配置其速度、使用加速或减速、引入延迟时间等。这些属性将影响故事板包含的所有动画，而且他们是累加的
+            例如，如果将Storyboard.SpeedRatio属性设置为2，并将DoubleAnimation.SpeedRatio属性设置为2，那么动画就会以4倍于正常速度的速度运行
+            
+            
+            -->
+
+            <!--
+            动画性能
+
+            通常，为用户界面应用动画只不过是创建并配置正确的动画和故事板对象。但在其他情况下，特别是同时发生多个动画时，可能需要更加关注
+            性能。特定的效果更可能导致这些问题——例如，那些涉及视频、大位图以及多层透明等的效果通常需要占用更多CPU开销。如果不谨慎地实现
+            这类效果，运行他们时可能造成明显抖动，或者会从其他同时运行的应用程序抢占CPU时间
+
+            常见的解决方式是：
+            降低最大帧频
+            缓存计算机显卡中的位图
+            
+
+            期望的帧率
+            
+            之前已知，WPF视图保持以60帧/秒的速度运行动画。这样可确保从开始到结束得到平滑流畅的动画。当然，WPF可能达不到这个目标。如果
+            同时运行多个复杂的动画，并且CPU或显卡不能承受的话，整个帧率可能会下降(最好的情形)，甚至可能会跳跃以进行补偿(最坏的情形)
+
+            尽管很少提高帧率，但可能会选择降低帧率，这可能是因为以下两个原因之一：
+            1.动画使用更低的帧率看起来也很好，所以不希望浪费额外的CPU周期
+            2.应用程序运行在性能较差的CPU或显卡上，并知道使用高的帧率时整个动画的渲染效果还不如使用更低的帧频的渲染效果好
+            (注意，开发人员有时认为WPF提供了用于根据显卡硬件降低帧率的代码，但事实并非总是如此。相反，WPF总是试图保持60帧/秒，除非明确地告诉他使用
+            其他帧率。为了评估动画的执行情况以及在特定的计算机上WPF是否能够达到60帧/秒，可使用Perforator工具，该工具是作为Microsoft Windows SDK v7.0
+            的一部分而提供的。)
+            
+            调整帧率很容易。只需要为包含动画的故事板使用Timeline.DesiredFrameRate附加属性
+            例如下面的示例将帧率减半
+            <Storyboard Timeline.DesiredFrameRate="30">
+
+            也可以使用代码调整Timeline.DesiredFrame属性。例如，可能希望读取静态属性RenderCapability.Tier以确定显卡支持的渲染级别
+            
+            -->
             <Storyboard Timeline.DesiredFrameRate="{Binding ElementName=txtFrameRate, Path=Text}">
+            <!--
+            注意，Canvas.Left和Canvas.Top属性都括在括号中——从而指示不能在目标元素(椭圆)中找到他们，反而他们是附加属性
+                -->
                 <DoubleAnimation Storyboard.TargetName="ellipse" Storyboard.TargetProperty="(Canvas.Left)" From="0" To="300" Duration="0:0:5"/>
                 <DoubleAnimation Storyboard.TargetName="ellipse" Storyboard.TargetProperty="(Canvas.Top)" From="300" To="0" AutoReverse="True" Duration="0:0:2.5" DecelerationRatio="1"/>
             </Storyboard>
         </BeginStoryboard>
     </Window.Resources>
 
+<!--
+    为创建当第一次加载窗口时引发的动画，需要在Window.Triggers集合中添加事件触发器以响应Window.Loaded事件
+
+    所有事件触发器都可启动动作。所有动作都由继承自System.Windows.TriggerAction的类表示。目前，WPF只提供了很少的针对与故事板进行交互以及控制媒体播放而设计的动作
+    -->
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
             <EventTrigger.Actions>

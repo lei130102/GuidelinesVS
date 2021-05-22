@@ -6,8 +6,22 @@
         xmlns:local="clr-namespace:WPF_Animation"
         mc:Ignorable="d"
         Title="PathBasedAnimation" Height="381" Width="521">
+        <!--
+    基于路径的动画
+
+    基于路径的动画使用PathGeometry对象设置属性。尽管原则上基于路径的动画也用于修改任何适当数据类型的属性，但当动态改变与位置
+    相关的属性时最有用。实际上，基于路径的动画类主要用于帮助沿着一条路径移动可视化对象
+    
+    PathGeometry对象描述可包含直线、弧线以及曲线的图形。
+    
+    下面的示例具有一个PathGeometry对象，该对象包含两条弧线以及一条将最后定义的定连接到起点的直线段。这样就创建了一条闭合的路线，
+    一个小的矢量图像以恒定不变的速度在这条路径上运动
+    -->
 
     <Window.Resources>
+    <!--
+    构建希望使用的路径，在本例中，路径被定义为资源
+        -->
         <PathGeometry x:Key="path">
             <PathFigure IsClosed="True">
                 <ArcSegment Point="100,200" Size="15,10" SweepDirection="Clockwise"></ArcSegment>
@@ -19,6 +33,24 @@
         <EventTrigger RoutedEvent="Window.Loaded">
             <EventTrigger.Actions>
                 <BeginStoryboard>
+                <!--
+                    创建移动图像的动画
+                    
+                    
+                    为移动图像，需要调整Canvas.Left和Canvas.Top属性
+                    DoubleAnimationUsingPath动画类可完成该任务，但需要两个动画——一个用于处理Canvas.Left属性，
+                    另一个用于处理Canvas.Top属性
+
+                    当创建基于路径的动画时，不是提供开始值和结束值，而是通过PathGeometry属性指定希望使用的PathGeometry对象。
+                    一些基于路径的动画类，如PointAnimationUsingPath类，可同时为目标属性应用X和Y组件。但DoubleAnimationUsingPath类
+                    不具备这一能力，因为他只能设置双精度值。结果，还需要将Source属性设置为X或Y，以指示是使用路径的X坐标还是Y坐标
+
+                    尽管基于路径的动画可使用包含贝塞尔曲线的路径，但他与之前介绍的关键样条动画区别很大。在关键样条动画中，内塞尔曲线
+                    描述动画进度和时间之间的关系，从而可以创建变速动画。但在基于路径的动画中，由直线和曲线的集合构成的路径决定了将用于
+                    动画属性的值
+
+                    注意：基于路径的动画始终以恒定的速度运行。WPF通过分析路径的总长度和指定的持续时间来确定速度
+                    -->
                     <Storyboard>
                         <DoubleAnimationUsingPath Storyboard.TargetName="image"
                                       Storyboard.TargetProperty="(Canvas.Left)"
@@ -34,6 +66,12 @@
         </EventTrigger>
     </Window.Triggers>
     <Canvas Margin="10">
+    <!--本示例显示了路径，当然这不是必须的，这样您可以清晰地看到图像沿着定义的路径运动。为显示路径，只需要添加一个使用
+        上面定义的几何图形的Path元素：
+        
+        Path元素被放置到Canvas面板上，另外，希望沿着该路径运动的Image元素也被放在Canvas面板上
+        
+        -->
         <Path Stroke="Red" StrokeThickness="1" Data="{StaticResource path}" Canvas.Top="10" Canvas.Left="10">
         </Path>
         <Image Name="image">

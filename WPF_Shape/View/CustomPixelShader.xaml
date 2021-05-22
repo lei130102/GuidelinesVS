@@ -6,6 +6,32 @@
         xmlns:local="clr-namespace:WPF_Shape.View"
         mc:Ignorable="d"
         Title="CustomPixelShader" Height="386" Width="268">
+        <!--
+    ShaderEffect类
+
+    该类没有提供就绪的效果。相反，他是一个抽象类，可继承该类以创建自己的自定义像素着色器
+
+    通过使用ShaderEffect类(或从该类派生的自定义效果)，可实现更多的效果，而不仅局限于模糊和阴影
+
+    实现像素着色器的逻辑不是直接在效果类中使用C#代码编写的。相反，像素着色器是用高级着色语言(High Level Shader Language, HLSL)编写的，
+    该语言是Microsoft DirectX的一部分(使用这种语言的优点是很明显的——因为DirectX和HLSL已经存在许多年了，图形开发人员已经创建了许多可在代码中使用的
+    像素着色器例程)
+
+    为创建像素着色器，需要编写和编译HLSL代码。要执行编译，可使用Windows SDK for Windows8 中的fxc.exe命令行工具(http://tinyurl.com/8ea7r43)；注意，
+    Windows SDK for Windows 8也支持Windows 7，这从名称中是看不出来的，但更简便的选项是使用免费的Shazzam工具(http://shazzam-tool.com)。Shazzam提供
+    了用于HLSL文件的编辑器，可使用该工具在示例图像上尝试效果。该工具还提供了几个像素着色器的示例，可将他们作为自定义效果的基础
+
+    尽管制作自己的HLSL文件超出了讨论范围，但下面将使用一个已有的HLSL文件。一旦将HLSL文件编译成.ps文件，就可以在项目中使用他了。只需要将文件添加到已有的
+    WPF项目中，在Solution Explorer中选择该文件，并将他的Build Action属性设置为Resource。最后，必须创建一个继承自ShaderEffect的自定义类并使用该资源
+
+    灵活的像素着色器就像在诸如Adobe Photoshop这样的图形软件中使用的插件一样强大。他可以执行任何工作，从添加基本的阴影乃至更富有挑战性的效果，如
+    模糊、辉光、水波、浮雕和锐化等。当结合使用动画实时改变像素着色器的参数时，像素着色器还可以创建赏心悦目的效果
+
+    提示：除非是非常专业的图形开发人员，否则获取更高级像素着色器的最好方法不是自己编写HLSL代码。相反，应当查找现成的HLSL例子，甚至更好的是使用已经提供了
+    自定义效果类的第三方WPF组件。位于http://codeplex.com/wpffx上的免费Windows Presentation Foundation Pixel Shader Effects Library 堪称黄金标准.
+    该库提供了许多绚丽的效果，如旋转、颜色翻转以及像素化(pixelation)。甚至更有用的是，该库提供了结合像素着色器和动画功能的过渡效果
+    
+    -->
     <StackPanel>
         <Image Name="img" Margin="5" Source="harpsichord.jpg">
             <Image.Effect>

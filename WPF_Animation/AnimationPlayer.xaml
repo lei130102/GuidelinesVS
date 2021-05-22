@@ -6,15 +6,53 @@
         xmlns:local="clr-namespace:WPF_Animation"
         mc:Ignorable="d"
         Title="AnimationPlayer" Height="396" Width="360">
+        <!--
+    控制播放
+    
+    一旦创建故事板，就可以用其他动作控制故事板。这些动作类都继承自ControllableStoryboardAction类
+
+    控制故事板的动作类
+    PauseStoryboard                 停止播放动画并且保持其当前位置
+    ResumeStoryboard                恢复播放暂停的动画
+    StopStoryboard                  停止播放动画，并将动画时钟重新设置到开始位置
+    SeekStoryboard                  跳到动画时间线中的特定位置。如果动画当前正在播放，就继续从新位置播放。如果动画当前是暂停的，就继续保持暂停
+    SetStoryboardSpeedRatio         改变整个故事板(而不仅是改变某个内部动画)的SpeedRatio属性值
+    SkipStoryboardToFill            将故事板移到时间线的终点。从技术角度看，这个时期就是所谓的填充区域(Fill region)，对于标准动画，FillBehavior属性设置为HoldEnd，动画继续保持最后的值
+    RemoveStoryboard                移除故事板，停止所有正在运行的动画并将属性返回为原来的、最后一次设置的数值。这和对适当的元素使用null动画对象调用BeginAnimation()方法的效果相同
+
+    注意：停止动画不等于完成动画(除非将FillBehavior属性设置为Stop)，这是因为即使动画到达时间线的终点，也仍然应用最后的值。类似地，当动画暂停时，会继续应用最近的中间值。
+    然而，当动画停止时，不再应用任何数值，并且属性值会恢复为动画之前的值
+
+    为成功执行这些动作，必须在同一个Triggers集合中定义所有触发器，如果将BeginStoryboard动作的触发器和PauseStoryboard动作的触发器放置到不同集合中，
+    PauseStoryboard动作就无法工作
+    
+    -->
     <Window.Triggers>
 
         <EventTrigger SourceName="cmdStart" RoutedEvent="Button.Click">
+        <!--
+            必须为BeginStoryboard动作指定名称，其他触发器通过为BeginStoryboardName属性指定这个名称，连接到相同的故事板
+
+            当使用故事板动作时将遇到限制。他们提供的属性(如SeekStoryboard.Offset和SetStoryboardSpeedRatio.SpeedRatio属性)不是依赖项属性，
+            这会限制使用数据绑定表达式。例如，不能自动读取Slider.Value属性值并将其应用到SetStoryboardSpeedRatio.SpeedRatio动作，因为SpeedRatio
+            属性不接受数据绑定表达式。您可能认为可通过使用Storyboard对象的SpeedRatio属性来解决这个问题，但这是行不通的。当动画开始时，读取SpeedRatio值并
+            创建一个动画时钟。此后，即使改变了SpeedRatio属性的值，动画也仍会保持正常地速度
+
+            如果希望动态调整速度或位置，唯一的解决方法是使用代码
+            Storyboard类中的方法提供了之前描述的触发器相同的功能，包括Begin()、Pause()、Resume()、Seek()、Stop()、SkipToFill()、SetSpeedRatio()以及Remove()方法
+            要访问Storyboard对象，必须在标记中设置其Name属性：
+            <Storyboard Name="fadeStoryboard">
+            -->
             <BeginStoryboard Name="fadeStoryboardBegin">
                 <!--The SpeedRatio binding makes sure the initial speed matches the slider.
                     The Slider's event handling code makes sure the speed is updated when the
                     slider is moved.-->
                 <Storyboard Name="fadeStoryboard" CurrentTimeInvalidated="fadeStoryboard_CurrentTimeInvalidated"
                             SpeedRatio="{Binding ElementName=sldSpeed, Path=Value}">
+                            <!--
+                            注意，勿将Storyboard对象的名称和BeginStoryboard动作的名称混为一谈。为防止混淆，您可能希望采用某种约定，例如，在
+                    BeginStoryboard名称的结尾处添加单词Begin
+                    -->
                     <DoubleAnimation
                         Storyboard.TargetName="imgDay"
                         Storyboard.TargetProperty="Opacity"
@@ -59,6 +97,11 @@
         </Grid>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+        <!--
+        通常，可选择在每个按钮的Triggers集合中放置事件触发器。然而，在前面已经解释过，对于动画这种方式不能工作。最简单的解决方法是
+            在一个地方定义所有事件触发器，例如，在包含元素的Triggers集合中，使用EventTrigger.SourceName属性关联这些事件触发器。
+            只要SourceName属性和为按钮设置的Name属性相匹配，触发器就会应用到恰当的按钮上
+            -->
             <Button Name="cmdStart" Content="Start"/>
             <Button Name="cmdPause" Content="Pause"/>
             <Button Name="cmdResume" Content="Resume"/>
@@ -83,3 +126,38 @@
     </Grid>
 
 </Window>
+
+   <!--
+    擦除效果
+    
+    在本例中，通过改变顶部图像的透明度，在两幅图像之间实现了渐变过渡效果。另一种在图像之间进行过渡的常用方式是“擦除”，新图像显示
+    在原图像的上面
+
+    使用这种技术的技巧在于为顶部图像创建透明掩码
+    <Image Source="day.jpg" Name="imgDay">
+        <Image.OpacityMask>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                <GradientStop Offset="0" Color="Transparent" x:Name="transparentStop"/>
+                <GradientStop Offset="0" Color="Black" x:Name="visibleStop"/>
+            </LinearGradientBrush>
+        </Image.OpacityMask>
+    </Image>
+    透明掩码使用定义了两个渐变过渡点的渐变：Black(图像会完全显示)和Transparent(图像会完全透明)。最初，两个渐变过渡点都被定位在
+    图像的左边。因为可见的渐变过渡点是在后面声明的，所以他具有优先权，并且图像是完全不透明的。注意，为这两个渐变过渡点都提供了名称，
+    从而在动画中可以很容易地访问他们
+    接下来需要为LinearGradientBrush画刷的偏移执行动画。在这个示例中，两个偏移都是从左向右移动，使下面的图像能够显示出来。为使这个示例
+    更加华丽，当移动偏移位置时，这两个偏移值没有使用相同的位置。相反，可见的偏移在前，透明的偏移在后，延迟了0.2秒。从而当动画运行时，
+    在擦除边缘创建了混合图形
+    <Storyboard>
+        <DoubleAnimation Storyboard.TargetName="visibleStop" Storyboard.TargetProperty="Offset"
+        From="0" To="1.2" Duration="0:0:1.2"/>
+        <DoubleAnimation Storyboard.TargetName="transparentStop" Storyboard.TargetProperty="Offset" BeginTime="0:0:0.2"
+        From="0" To="1" Duration="0:0:1"/>
+    </Storyboard>
+    此处有一个古怪的细节。可见的渐变过渡点移动到1.2而不是简单地移动到1，1表示图像的右侧边缘。这样可确保两个偏移动作以相同的速度移动，
+    因为每一个偏移动作的总距离和他的动画持续时间成比例
+
+    擦除效果通常从左向右或从上向下进行，但通过使用不同的不透明掩码也能创建出更富有创意的效果。例如，可为不透明掩码使用DrawingBrush
+    画刷并修改画刷的几何图形，使后面的内容通过平铺模式显示
+        
+        -->

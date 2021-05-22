@@ -6,6 +6,36 @@
         xmlns:local="clr-namespace:WPF_Shape.View"
         mc:Ignorable="d"
         Title="BlurEffects" Height="300" Width="300">
+        <!--
+    效果
+    
+    WPF提供了可应用于任何元素的可视化效果。效果的目标是提供一种简便的声明式方法，从而改进文本、图像、按钮以及
+    其他控件的外观。不是编写自己的绘图代码，而是使用某个继承自Effect的类(位于System.Windows.Media.Effects命名空间中)以立即获得诸如模糊、辉光以及阴影等效果
+
+    效果类                          说明                                                                  属性
+    BlurEffect                 模糊元素中的内容                                            Radius、KernelType、RenderingBias
+    DropShadowEffect           在元素背后添加矩形阴影                                       BlurRadius、Color、Direction、Opacity、ShadowDepth、RenderingBias
+    ShaderEffect               应用像素着色器，像素着色器是使用高级着色语言(Hight Level       PixelShader
+                               Shading Language, HLSL)事先制作好的并且已经编译过的效果
+
+    注意不要将这些效果类与位图效果类(BitmapEffect)相混淆，位图效果类派生自BitmapEffect类，该类和Effect类位于相同的命名空间中。尽管位图效果具有类似的编程模型，但他们存在
+    几个严重的局限性：
+    1.位图效果不支持像素着色器，像素着色器是创建可重用效果的最强大、最灵活的方式
+    2.位图效果是用非托管的代码实现的，从而需要完全信任的应用程序。所以，在基于浏览器的XBAP应用程序中不能使用位图效果
+    3.位图效果总使用软件进行渲染，不使用显卡资源。这使得他们的速度较慢，当处理大量元素或具有较大可视化表面的元素时尤其如此
+
+    BitmapEffect类是在WPF的第一个版本中引入的，该版本没有提供Effect类。为了向后兼容，仍保留了位图效果
+
+    三个继承自Effect的类：
+    BlurEffect
+    DropShadowEffect
+    ShaderEffect
+    
+    BlurEffect类
+    模糊元素的内容，就像通过失焦透镜观察到的效果。通过增加Radius属性的值(默认值是5)可增加模糊程度
+    
+    
+    -->
     <StackPanel Margin="5">
         <Button Content="Blurred (Radius=2)" Padding="5" Margin="3">
             <Button.Effect>

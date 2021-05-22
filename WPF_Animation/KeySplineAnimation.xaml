@@ -6,6 +6,109 @@
         xmlns:local="clr-namespace:WPF_Animation"
         mc:Ignorable="d"
         Title="KeySplineAnimation" Height="250" Width="624">
+        <!--
+    关键帧动画
+    
+    到此看到的所有动画都使用线性插值从起点移到终点。但如果需要创建具有多个分段的动画和不规则移动的动画，比如可能希望创建一个动画，快速地将一个
+    元素滑入到视图中，然后慢慢地将它移到正确位置。可通过创建两个连续的动画，并使用BeginTime属性在第一个动画之后开始第二个动画来实现这种效果。
+    然而，还有更简单的方法——可使用关键帧动画
+
+    关键帧动画是由许多较短的段构成的动画。每段表示动画中的初始值、最终值或中间值。当运行动画时，他平滑地从一个值移到另一个值
+
+    例如，分析下面的将RadialGradientBrush画刷的中心点从一个位置移到另一个位置的Point动画:
+    <PointAnimation Storyboard.TargetName="ellipse" Storyboard.TargetProperty="Fill.GradientOrigin" From="0.7,0.3" To="0.3,0.7" Duration="0:0:10" AutoReverse="True" RepeatBehavior="Forever">
+    </PointAnimation>
+    可使用一个效果相同的PointAnimationUsingKeyFrames对象代替这个PointAnimatino对象
+    <PointAnimationUsingKeyFrames Storyboard.TargetName="ellipse" Storyboard.TargetProperty="Fill.GradientOrigin" AutoReverse="True" RepeatBehavior="Forever">
+        <LinearPointKeyFrame Value="0.7,0.3" KeyTime="0:0:0"/>
+        <LinearPointKeyFrame Value="0.3,0.7" KeyTime="0:0:10"/>
+    </PointAnimationUsingKeyFrames>
+    这个动画包含两个关键帧。当动画首次启动时第一个关键帧设置Point值(如果希望使用在RadialGradientBrush画刷中设置的当前值，可省略这个关键帧)。第二个关键帧定义结束值，
+    这是10秒之后达到的数值。PointAnimationUsingKeyFrames对象执行线性插值，从第一个关键帧平滑地移到第二个关键帧，就像PointAnimation对象对From和To值执行的操作一样
+    (注意，每个关键帧动画都使用各自的关键帧对象(如LinearPointKeyFrame)。对于大部分内容，这些类是相同的——他们包含用于存储目标值的Value属性和用于指示帧何时到达目标值
+    的KeyTime属性。唯一的区别在于Value属性的数据类型，在LinearPointKeyFrame类中是Point类型，在DoubleKeyFrame类中是double类型)
+
+    可使用一系列关键帧创建更有趣的示例。下面的动画通过在不同的时刻到达的一系列位置经历中心点。中心点的移动速度根据关键帧之间的持续时间以及需要移动的距离而改变
+    <PointAnimationUsingKeyFrames Storyboard.TargetName="ellipse" Storyboard.TargetProperty="Fill.GradientOrigin" RepeatBehavior="Forever">
+        <LinearPointKeyFrame Value="0.7,0.3" KeyTime="0:0:0"/>
+        <LinearPointKeyFrame Value="0.3,0.7" KeyTime="0:0:5"/>
+        <LinearPointKeyFrame Value="0.5,0.9" KeyTime="0:0:8"/>
+        <LinearPointKeyFrame Value="0.9,0.6" KeyTime="0:0:10"/>
+        <LinearPointKeyFrame Value="0.8,0.2" KeyTime="0:0:12"/>
+        <LinearPointKeyFrame Value="0.7,0.3" KeyTime="0:0:14"/>
+    </PointAnimationUsingKeyFrames>
+    这个动画不是可反转的，但可以重复。为确保在一次迭代的最后数值和下一次迭代的开始数值之间不会出现跳跃，应使动画的结束点和开始点位于相同的中心点
+
+    注意，使用关键帧动画不如使用多个连续的动画功能强大。最重要的区别是不能为每个关键帧应用不同的AccelerationRatio和DecelerationRatio值，而只能为整个动画应用单个值
+
+    
+    
+    
+    
+    离散的关键帧动画
+    上面的示例中，关键帧使用线性关键帧。所以，他在关键帧值之间平滑地过渡。另一种选择是使用离散的关键帧。对于这种情况，不进行插值。当到达关键时间时，属性突然改变为新值
+
+    线性关键帧类使用“Linear+数据类型+KeyFrame”的形式进行命名。离散关键帧类使用“Discrete+数据类型+KeyFrame”的形式命名
+    下面是RadialGradientBrush画刷示例的修改版本，在该修改版本中使用的是离散关键帧
+    <PointAnimationUsingKeyFrames Storyboard.TargetName="ellipse" Storyboard.TargetProperty="Fill.GradientOrigin" RepeatBehavior="Forever">
+        <DiscretePointKeyFrame Value="0.7,0.3" KeyTime="0:0:0"/>
+        <DiscretePointKeyFrame Value="0.3,0.7" KeyTime="0:0:5"/>
+        <DiscretePointKeyFrame Value="0.5,0.9" KeyTime="0:0:8"/>
+        <DiscretePointKeyFrame Value="0.9,0.6" KeyTime="0:0:10"/>
+        <DiscretePointKeyFrame Value="0.8,0.2" KeyTime="0:0:12"/>
+        <DiscretePointKeyFrame Value="0.7,0.3" KeyTime="0:0:14"/>
+    </PointAnimationUsingKeyFrames>
+    当运行这个动画时，中心点会在适当的时间从一个位置跳到下一个位置。这是戏剧性(但不是平稳的)的效果
+
+    所有关键帧动画类都支持离散关键帧。但只有一部分关键帧动画类支持线性关键帧。这完全取决于数据类型。支持线性关键帧的数据类型也支持线性插值，并提供了相应的
+    DataTypeAnimation类，如Point、Color以及double。不支持线性插值的数据类型包括字符串和对象
+
+    可在同一个关键帧动画中组合使用两种类型的关键帧——线性关键帧和离散关键帧
+    
+    
+    
+    
+    
+    
+    缓动关键帧
+    之前已经看到了如何使用缓动函数改进普通的动画。尽管关键帧动画被分割成多段，但每段仍使用普通的、令人厌烦的线性插值
+    如果这不是您希望的效果，可使用动画缓动为每个关键帧添加加速或者减速效果。然而，普通的线性插值关键帧类和离散关键帧类不支持该特征。相反，需要使用缓动关键帧，
+    如EasingDoubleKeyFrame、EasingColorKeyFrame或者EasingPointKeyFrame。每个缓动关键帧类和对应的线性插值关键帧类的工作方式相同，但是额外提供了EasingFunction属性
+    
+    下面的示例使用动画缓动为前5秒的关键帧动画应用加速效果：
+    <PointAnimationUsingKeyFrames Storyboard.TargetName="ellipseBrush" Storyboard.TargetProperty="GradientOrigin" RepeatBehavior="Forever">
+        <LinearPointKeyFrame Value="0.7,0.3" KeyTime="0:0:0"/>
+        <EasingPointKeyFrame Value="0.3,0.7" keyTime="0:0:5">
+            <EasingPointKeyFrame.EasingFunction>
+                <CircleEase/>
+            </EasingPointKeyFrame.EasingFunction>
+        </EasingPointKeyFrame>
+        <LinearPointKeyFrame Value="0.5,0.9" KeyTime="0:0:8"/>
+        <LinearPointKeyFrame Value="0.9,0.6" KeyTime="0:0:10"/>
+        <LinearPointKeyFrame Value="0.8,0.2" KeyTime="0:0:12"/>
+        <LinearPointKeyFrame Value="0.7,0.3" KeyTime="0:0:14"/>
+    </PointAnimationUsingKeyFrames>
+    结合使用关键帧和动画缓动是构建复杂动画模型的简便方式，但仍可能无法提供所需的控制。不使用动画缓动，可创建数学公式指示动画的进度
+    
+    
+    样条关键帧动画
+    每个支持线性关键帧的类也支持样条关键帧，他们使用“Spline+数据类型+KeyFrame”的形式进行命名
+    与线性关键帧一样，样条关键帧使用插值从一个键值平滑地移到另一个键值。区别是每个样条关键帧都有KeySpline属性，可使用该属性定义能影响插值方式的三次贝塞尔曲线。
+    尽管为了得到希望的效果这样做有些繁琐(至少还没有高级的设计工具可辅助您工作)，但这种技术能创建更加连贯的加速和减速以及更逼真的动画效果
+
+    内塞尔曲线由起点、终点以及两个控制点定义。对于关键样条，起点总是(0,0)，终点总是(1,1)。用户只需要提供两个控制点。创建的曲线描述了时间(X轴)和动画值(Y轴)之间
+    的关系
+
+    下面的示例通过对比Canvas面板上两个椭圆的移动，演示了一个关键样条动画。第一个椭圆使用DoubleAnimation动画缓慢匀速地在窗口上移动。第二个椭圆使用具有两个
+    SplineDoubleKeyFrame对象的DoubleAnimationUsingKeyFrames动画。两个椭圆同时到达目标位置(10秒后)，但第二个椭圆在运动过程中会有明显的加速和减速，加速时会
+    超过第一个椭圆，而减速时又会落后于第一个椭圆
+
+    最快的加速发生在5秒后不久，也就是当进入第二个SplineDoubleKeyFrame关键帧时，贝塞尔曲线的第一个控制点将较大的表示动画进度(0.8)的Y轴值与较小的表示时间的X轴值
+    相匹配。所以，在再次减慢速度前，椭圆在一小段距离内会增加速度
+
+    观察第一个条曲线可以发现，他相对均匀地下降，在开始处有较短的暂停，在末尾处平缓下降，然而第二条曲线快速下降，运动了一大段距离，然后对于剩余的动画部分，曲线换换下降
+    
+    -->
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
             <EventTrigger.Actions>

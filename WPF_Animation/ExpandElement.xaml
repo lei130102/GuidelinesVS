@@ -6,6 +6,26 @@
         xmlns:local="clr-namespace:WPF_Animation"
         mc:Ignorable="d"
         Title="ExpandElement" Height="423" Width="488">
+
+    <!--
+    动态改变多个变换
+    
+    可很容易地组合使用变换。实际上这很容易——只需要使用TransformGroup对象设置LayoutTransform和RenderTransform属性即可。
+    可根据需要在TransformGroup对象中嵌套任意多个变换
+
+    本例显示了一个使用两个变换创建的效果。文档窗口刚开始作为主窗口左上角的小缩略图。当文档窗口显示时，内容旋转、扩展并快速淡入到
+    视图中。从概念上讲，这与最大化窗口时Windows使用的效果类似。在WPF中，可通过变换为所有的元素应用这种技巧
+
+    为创建本例效果，在如下TransformGroup对象中定义了两个变换，并使用TransformGroup对象设置包含所有内容的Border对象的
+    RenderTransform属性
+    <Border.RenderTransform>
+        <TransformGroup>
+            <ScaleTransform/>
+            <RotateTransform/>
+        </TransformGroup>
+    </Border.RenderTransform>
+    
+    -->
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
             <EventTrigger.Actions>
@@ -14,6 +34,11 @@
                         <DoubleAnimation Storyboard.TargetName="element"
                                          Storyboard.TargetProperty="Opacity"
                                          From="0.2" To="1" Duration="0:0:2.5"/>
+                                         <!--
+                                         通过指定索引(0用于首先显示的ScaleTransform对象，1用于接下来显示的RotateTransform对象)，动画可与这两个
+                                         变换对象进行交互
+                                         -->
+                                         <!--下面的这一个动画位于相同的故事板中，用于旋转内容-->
                         <DoubleAnimation Storyboard.TargetName="element"
                                          Storyboard.TargetProperty="RenderTransform.Children[1].Angle"
                                          From="70" To="0" Duration="0:0:2"/>
@@ -30,6 +55,13 @@
                                          To="1" BeginTime="0:0:2.05" Duration="0:0:0.2" AccelerationRatio="1"/>
                         <DoubleAnimation Storyboard.TargetName="element" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
                                          To="1" BeginTime="0:0:2.05" Duration="0:0:0.2" AccelerationRatio="1"/>
+                                         <!--
+                                         这个动画中的内容比此处显示的内容还多。例如，还有一个同时增加Opacity属性的动画，并且当Border元素达到
+                        最大尺寸时，他短暂地向后“反弹”一下，创建一种更趋自然的效果。为这个动画创建时间线并修改各个动画对象属性需要耗费时间——理想
+                        情况下，可使用注入Expression Blend的设计工具执行这些任务，而不是通过手动编写代码来完成这些任务。甚至更好的情况是，只要有
+                        第三方开发者将这一逻辑分组到自定义动画中，就可以重用并根据需要将其应用到您的对象中(根据目前的情况，可通过将Storyboard对象
+                        存储为应用程序级的资源，重用这个动画)
+                        -->
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger.Actions>

@@ -6,11 +6,33 @@
         xmlns:local="clr-namespace:WPF_Animation"
         mc:Ignorable="d"
         Title="AnimateRadialGradient" Height="328" Width="302">
+    <!--
+    动态改变画刷
+
+    本例中，当动画运行时，径向渐变的中心点沿椭圆漂移
+    
+    ColorAnimation动画在两个颜色之间逐渐混合，创建一种微妙的颜色转移效果
+    PointAnimation动画可将点从一个位置移到另一个位置(本质上与使用独立的DoubleAnimation，通过线性插值同时修改
+                  X坐标和Y坐标是相同的)
+
+    -->
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
             <EventTrigger.Actions>
                 <BeginStoryboard>
                     <Storyboard>
+                    <!--
+                    移动中心点以及改变第二种颜色的两个动画
+
+                        <PointAnimation Storyboard.TargetName="ellipse"a Storyboard.TargetProperty="Fill.GradientOrigin"
+                        From="0.7,0.3" To="0.3,0.7" Duration="0:0:10" AutoReverse="True" RepeatBehavior="Forever">
+                        </PointAnimation>
+
+                        <ColorAnimation Storyboard.TargetName="ellipse" Storyboard.TargetProperty="Fill.GradientStops[1].Color"
+                        To="Black" Duration="0:0:10" AutoReverse="True" RepeatBehavior="Forever">
+                        </ColorAnimation>
+
+                        -->
                         <PointAnimationUsingKeyFrames Storyboard.TargetName="ellipse" Storyboard.TargetProperty="Fill.GradientOrigin"
                                                       RepeatBehavior="Forever">
                             <LinearPointKeyFrame Value="0.7,0.3" KeyTime="0:0:0"/>
@@ -46,3 +68,10 @@
         </Ellipse>
     </Grid>
 </Window>
+<!--
+    通过修改LinearGradientBrush和RadialGradientBrush画刷的颜色和偏移值可创建许多精彩效果。
+
+    如果还不够，渐变画刷还有自己的RelativeTransform属性，可使用该属性旋转、缩放、拉伸以及扭曲画刷
+
+    WPF团队有一个有趣的称为Gradient Obsession的工具，该工具用于构建基于渐变的动画
+    -->
