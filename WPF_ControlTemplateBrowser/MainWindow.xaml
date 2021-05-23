@@ -6,6 +6,189 @@
         xmlns:local="clr-namespace:WPF_ControlTemplateBrowser"
         mc:Ignorable="d"
         Title="MainWindow" Height="544" Width="713" Loaded="Window_Loaded">
+        <!--
+    控件如何从逻辑树表示扩展成可视化树表示？
+    每个控件都有一个内置的方法，用于确定如何渲染空控件(作为一组更基础的元素)。该方法称为控件模板(control template)，是用XAML标记块定义的
+    
+    注意，每个WPF控件都设计成无外观的(lookless)，这意味着完全可以重定义其可视化元素(外观)。但不能改变控件的行为，控件的行为被固化到控件类中(尽管经常可使用各种属性微调控件
+    的行为)。当选择使用类似Button的控件时，是希望得到类似按钮的行为(换句话说，选择的是一个元素，该元素提供了能被单击的内容，通过单击来触发动作。并且可用作窗口上的默认按钮或
+    取消按钮)。然而，可自由地改变控件的外观，以及当鼠标移动到元素上或按下鼠标时的响应方式。另外，也可以自由改变控件外观的其他方面和可视化行为
+    
+
+    
+    
+    
+    下面时普通Button类的模板
+
+    <?xml version="1.0" encoding="utf-16"?>
+  <ControlTemplate TargetType="ButtonBase" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Border BorderThickness="{TemplateBinding Border.BorderThickness}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" Name="border" SnapsToDevicePixels="True">
+    <ContentPresenter RecognizesAccessKey="True" Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" Name="contentPresenter" Margin="{TemplateBinding Control.Padding}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" Focusable="False" />
+  </Border>
+  <ControlTemplate.Triggers>
+    <Trigger Property="Button.IsDefaulted">
+      <Setter Property="Border.BorderBrush" TargetName="border">
+        <Setter.Value>
+          <DynamicResource ResourceKey="{x:Static SystemColors.HighlightBrushKey}" />
+        </Setter.Value>
+      </Setter>
+      <Trigger.Value>
+        <s:Boolean>True</s:Boolean>
+      </Trigger.Value>
+    </Trigger>
+    <Trigger Property="UIElement.IsMouseOver">
+      <Setter Property="Panel.Background" TargetName="border">
+        <Setter.Value>
+          <SolidColorBrush>#FFBEE6FD</SolidColorBrush>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="Border.BorderBrush" TargetName="border">
+        <Setter.Value>
+          <SolidColorBrush>#FF3C7FB1</SolidColorBrush>
+        </Setter.Value>
+      </Setter>
+      <Trigger.Value>
+        <s:Boolean>True</s:Boolean>
+      </Trigger.Value>
+    </Trigger>
+    <Trigger Property="ButtonBase.IsPressed">
+      <Setter Property="Panel.Background" TargetName="border">
+        <Setter.Value>
+          <SolidColorBrush>#FFC4E5F6</SolidColorBrush>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="Border.BorderBrush" TargetName="border">
+        <Setter.Value>
+          <SolidColorBrush>#FF2C628B</SolidColorBrush>
+        </Setter.Value>
+      </Setter>
+      <Trigger.Value>
+        <s:Boolean>True</s:Boolean>
+      </Trigger.Value>
+    </Trigger>
+    <Trigger Property="ToggleButton.IsChecked">
+      <Setter Property="Panel.Background" TargetName="border">
+        <Setter.Value>
+          <SolidColorBrush>#FFBCDDEE</SolidColorBrush>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="Border.BorderBrush" TargetName="border">
+        <Setter.Value>
+          <SolidColorBrush>#FF245A83</SolidColorBrush>
+        </Setter.Value>
+      </Setter>
+      <Trigger.Value>
+        <s:Boolean>True</s:Boolean>
+      </Trigger.Value>
+    </Trigger>
+    <Trigger Property="UIElement.IsEnabled">
+      <Setter Property="Panel.Background" TargetName="border">
+        <Setter.Value>
+          <SolidColorBrush>#FFF4F4F4</SolidColorBrush>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="Border.BorderBrush" TargetName="border">
+        <Setter.Value>
+          <SolidColorBrush>#FFADB2B5</SolidColorBrush>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="TextElement.Foreground">
+        <Setter.Value>
+          <SolidColorBrush>#FF838383</SolidColorBrush>
+        </Setter.Value>
+      </Setter>
+      <Trigger.Value>
+        <s:Boolean>False</s:Boolean>
+      </Trigger.Value>
+    </Trigger>
+  </ControlTemplate.Triggers>
+</ControlTemplate>
+
+    控件模板提供了在可视化树中看到的扩展内容
+    ButtonChrome类定义按钮的标准可视化外观
+    ContentPresenter类存储了提供的所有内容
+    如果希望构建全新按钮，只需要创建新的控件模板
+    
+    注意：ButtonChrome类继承自Decorator类(与Border类非常类似)。这意味着这些类是为了在其他元素周围添加图形装饰而设计的——用于在按钮内容的周围添加图形装饰
+    
+    当按钮获得焦点、被单击以及被禁用时，触发器控制按钮如何进行变化。对于这些触发器，实际上没什么特别需要介绍的内容。针对获取焦点和单击的触发器并不会修改按钮
+    本身，只是修改为按钮提供可视化外观的ButtonChrome类的属性。
+    
+    第一个触发器确保当按钮接收到焦点时，RenderDefaulted属性被设置为true。第二个触发器确保当按钮被单击时，RenderPressed属性被设置为true。对于每种情况，ButtonChrome
+    类都会相应地调整自身。由于发生的图形变化过于复杂，因此无法只通过几个属性设置器语句来表示这些变化
+
+    本例中的两个Setter对象都通过使用TargetName属性作用于控件模板的特定部分。只有当使用控件模板时，才能使用这种技术。换句话说，不能编写样式触发器以使用TargetName属性
+    访问ButtonChrome对象，因为名称Chrome超出了样式范围。这种技术只是模板提供的比单独使用样式功能更强大的方法之一
+
+    触发器未必需要使用TargetName属性。例如，针对IsEnabled属性的触发器仅调整按钮中任何文本内容的前景色。该触发器通过设置TextElement.Foreground附加属性就能工作，而不必
+    借助于ButtonChrome类
+
+    当构建自己的控件模板时将看到同样的职责分离。如果足够幸运，可直接使用触发器完成所有工作，可能不需要创建自定义类并添加代码。另一方面，如果需要提供更复杂的可视化设计，
+    可能需要继承自定义的修饰类。ButtonChrome类本身不提供定制功能——该类专门用于渲染标准按钮的特定主题外观
+    
+    
+
+    
+    
+    模板类型
+    
+    WPF有三种类型的模板，所有这些模板都继承自FrameworkTemplate基类
+    1.控件模板(ControlTemplate)  
+    用于定义构成控件的元素
+    2.数据模板(DataTemplate和HierarchicalDataTemplate)
+    用于从对象中提取数据，并在内容控件或列表控件的各个项中显示数据
+    在数据绑定中，数据模板非常有用，在一定程度上，数据模板和控件模板是相互重叠的。例如这两种类型的模板都允许插入附加元素和应用格式化等。然而，数据模板用于在已有
+    控件的内部添加元素。预先构建好的控件内容不能改变。另一方面，控件模板是一种更激进的方法，允许完全重写控件的内容模型
+    3.面板模板(ItemsPanelTemplate)   
+    用于控制列表控件(继承自ItemsControl类的控件)中各项的布局，例如可使用面板模板创建列表框，从右向左然后向下平铺各项(而不是标准的自上而下地单列显示)
+
+    完全可在同一个控件中组合使用各种类型的模板。例如，如果希望创建绑定到特定类型数据的美观列表控件，以非标准方法放置各项，并使用一些更有趣的元素替换存储边框，
+    可能就需要创建自己的数据模板、面板模板和控件模板
+    
+
+    
+    
+    
+    
+    修饰类
+
+    ButtonChrome类是在Microsoft.Windows.Themes名称空间中定义的，在该命名空间中包含了一些较少的彼此相似的类，这些类用于渲染基本的Windows细节。除ButtonChrome外，
+    这些类还包括：
+    BulletChrome(用于复选框和单选按钮)
+    ScrollChrome(用于滚动条)
+    ListBoxChrome
+    SystemDropShadowChrome等
+    这是最低级别的公有控件API。在稍高级别上，您会发现System.Windows.Controls.Primitives命名空间中包含大量可以独立使用的基本元素，但他们通常被封装到更有用的控件中。
+    这些元素包括：
+    ScrollBar
+    ResizeGrip(用于改变窗口的尺寸)
+    Thumb(滚动条上的拖动按钮)
+    TickBar(滑动条上可选的刻度设置)等
+    在本质上，System.Windows.Controls.Primitives命名空间提供了可用于各种控件中的基本要素，本身的作用不大，而Microsoft.Windows.Themes命名空间包含了用于渲染这些细节的
+    基本绘图逻辑
+
+    与大多数WPF类型一样，System.Windows.Controls.Primitives命名空间中的类型都是在PresentationFramwork.dll程序集中定义的。然而，Microsoft.Windows.Themes命名空间
+    中的类型是在三个不同的程序集中定义的：
+    PresentationFramework.Aero.dll
+    PresentationFramework.Luna.dll
+    PresentationFramework.Royale.dll
+    每个程序集都包含自己的ButtonChrome类(以及其他修饰类)版本，这些版本的渲染逻辑稍有不同。WPF使用哪个程序集取决于操作系统和主题设置
+
+    尽管控件模板经常使用修饰类进行绘图，但并非总需要这样
+
+    注意：在预先构建好的控件模板中，经常可以看到SnapToDevicePixels设置(在自己创建的模板中使用该设置也是非常有用的)，SnapToDevicePixels确保单个像素的线条不会根据
+    WPF分辨率的不同被放在两个像素的"中间"(那样会导致模糊的双像素线条)
+    
+    
+
+    
+    
+    剖析模板
+    当创建控件模板时，新建的模板完全替代了原来的模板。这样可以得到更大的灵活性，但更复杂些。大多数情况下，在创建满足自己需求的模板之前，需要查看控件使用的标准模板。
+    某些情况下，自定义的控件模板可镜像标准模板，并只进行很少的修改
+    
+    
+    -->
     <Grid Margin="10" Name="grid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>

@@ -6,6 +6,13 @@
         xmlns:local="clr-namespace:WPF_ControlTemplate"
         mc:Ignorable="d"
         Title="ButtonWithAnimations" Height="450" Width="800">
+        <!--
+    
+    使用动画的触发器
+
+    触发器并非仅局限于设置属性。当特定属性发生变化时，还可以使用事件触发器运行动画
+    
+    -->
     <Window.Resources>
         <ControlTemplate x:Key="ButtonTemplate" TargetType="{x:Type Button}">
             <Border BorderBrush="Orange" BorderThickness="3" CornerRadius="2" Background="Red" TextBlock.Foreground="White" Name="Border">

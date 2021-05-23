@@ -6,6 +6,114 @@
         xmlns:local="clr-namespace:WPF_SimpleWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="338" Width="356">
+
+
+    <!--
+    逻辑树 和 可视化树
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    逻辑树
+
+    添加的元素分类称为逻辑树。WPF编程人员需要耗费大部分时间构建逻辑树，然后使用事件处理代码支持他们
+    实际上，到目前为止介绍的所有WPF特性(如属性值继承、事件路由以及样式)都是通过逻辑树进行工作的
+
+    本窗口的逻辑树
+
+              Window
+                |
+            StackPanel
+            |        |
+          Button    Button
+            |         |
+          String    String
+    (其中Window、StackPanel、Button都是FrameworkElement)
+
+    然而，如果希望自定义元素，逻辑树起不到多大帮助作用。显然，可使用另一个元素替换整个元素（例如，可使用自定义的FancyButton类替换当前的Button类）,
+    但这需要做更多的工作，并且可能扰乱应用程序的用户界面或代码。因此，WPF通过可视化树进入更深层次
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    可视化树
+
+    可视化树是逻辑树的扩展版本。他将元素分成更小的部分。换句话说，他并不查看被精心封装到一起的黑色方框，如按钮，而是查看按钮的可视化元素——使按钮具有
+    阴影背景特性的边框(由ButtonChrome类表示)、内部的容器(ContentPresenter对象)以及存储按钮文本的块(由大家熟悉的TextBlock表示)
+
+    本窗口的可视化树
+            
+                    Window
+                      |
+                 StackPanel
+               |             |
+            Button         Button
+               |             |
+        ButtonChrome     ButtonChrome
+               |             |
+       ContentPresenter ContentPresenter
+               |             |
+          TextBlock      TextBlock
+    (其中Window、StackPanel、Button、ButtonChrome、ContentPresenter、TextBlock都是FrameworkElement)
+
+    所有这些细节本身都是元素——换句话说，控件(如按钮)中的每个单独的细节都是由FrameworkElement类的派生类表示的
+
+    注意，可采用多种方式将一颗逻辑树扩展成一颗可视化树，认识到这一点是很重要的。使用的样式和设置的属性等细节都可能影响可视化树的构成。
+    例如，在前面的示例中，按钮包含了文本内容，因此会自动创建嵌套的TextBlock元素，但正如您所知道的，Button是内容控件，所以能够包含其他
+    任何希望使用的元素，只要将他们嵌套到按钮中即可
+
+    通过可视化树可以完成以下两项非常有用的工作：
+    1.可使用样式改变可视化树中的元素，可使用Style.TargetType属性选择希望修改的特定元素。甚至当控件属性发生变化时，可使用触发器自动完成更改。
+    不过，某些特定的细节很难甚至无法修改
+    2.可为控件创建新模板。对于这种情况，控件模板将被用于按期望的方式构建可视化树
+
+    WPF提供了用于浏览逻辑树和可视化树的两个类：
+    System.Windows.LogicalTreeHelper
+    System.Windows.Media.VisualTreeHelper
+    
+    LogicalTreeHelper类允许通过动态加载的XAML文档在WPF应用程序中关联事件处理程序。
+
+    LogicalTreeHelper类的方法
+    FindLogicalNode()                       根据名称查找特定元素，从指定的元素开始并向下查找逻辑树
+    BringInfoView()                         如果元素在可滚动的容器中，并且当前不可见，就将元素滚动到视图中。FrameworkElement.BringInfoView()方法执行相同的工作
+    GetParent()                             获取指定元素的父元素
+    GetChildren()                           获取指定元素的子元素。不同元素支持不同的内容模型。例如面板支持多个子元素，而内容控件只支持一个子元素。
+                                            然而，GetChildren()方法抽象了这一区别，并且可使用任何类型的元素进行工作
+    (尽管这些方法偶尔很有用，但大多数情况下会改用特定的FrameworkElement类中方法)
+
+    除了专门用来执行低级绘图操作的一些方法外，VisualTreeHelper类提供的方法与LogicalTreeHelper类提供的方法类似，也提供了GetChildrenCount()、
+    GetChild()以及GetParent()方法
+
+    VisualTreeHelper类还提供了一种研究应用程序中可视化树的有趣方法。使用GetChild()方法，可以遍历任意窗口的可视化树，并且为了进行分析可以将他们
+    显示出来
+    
+    
+    在本例中，名为Window1的窗口包含一个Border元素，这个Border元素又包含一个AdornerDecorator元素(AdornerDecorator类在装饰层中添加对绘制内容
+    的支持，装饰层是特殊的不可见区域，该区域覆盖在元素内容之上。WPF使用装饰层绘制一些细节，如焦点提示以及拖放指示器)。AdornerDecorator元素内是
+    一个ContentPresenter元素，该元素承载了窗口内容。窗口内容包含的StackPanel面板具有两个Button控件，每个Button控件包含了一个ButtonChrome元素
+    (该元素绘制按钮的标准化可视外观)和一个ContentPresenter元素(该元素包含了按钮的内容)。最后，在每个按钮的ContentPresenter元素中是一个TextBlock
+    元素，TextBlock元素封装了在窗口中可见的文本
+
+    可使用著名的Snoop实用工具深入研究其他应用程序的可视化树，可从http://snoopwpf.codeplex.com网址上找到该工具。使用Snoop工具，可检查任何当前
+    正在运行的WPF应用程序的可视化树。还可放大任意元素，当执行路由事件时检查路由事件，以及分析甚至修改元素的属性
+    
+    -->
+
+
     <StackPanel Margin="5">
         <Button Padding="5" Margin="5" Click="Button_Click" Content="First Button"/>
         <Button Padding="5" Margin="5" Click="Button_Click" Content="Second Button"/>

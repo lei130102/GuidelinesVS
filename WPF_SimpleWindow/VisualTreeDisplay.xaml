@@ -6,5 +6,6 @@
         xmlns:local="clr-namespace:WPF_SimpleWindow"
         mc:Ignorable="d"
         Title="VisualTreeDisplay" Height="412" Width="431">
+
     <TreeView Name="treeElements" Margin="10"/>
 </Window>

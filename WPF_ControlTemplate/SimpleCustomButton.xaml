@@ -6,15 +6,120 @@
         xmlns:local="clr-namespace:WPF_ControlTemplate"
         mc:Ignorable="d"
         Title="SimpleCustomButton" Height="450" Width="800">
+        <!--
+        创建控件模板
+
+    基本Button控件使用ButtonChrome类绘制其特殊的背景和边框。Button类使用ButtonChrome类而不使用WPF绘图图元的一个原因是，标准按钮的外观依赖于几个明显的特征
+    (是否被禁用、是否具有焦点以及是否正在被单击)和其他一些更微妙的因素(如当前Windows主题)。只使用触发器实现这类逻辑是笨拙的
+
+    然而，当构建自定义控件时，可以不用担心标准化和主题集成(实际上，WPF不像以前的用户界面技术那样强调用户界面标准化)。反而更需要关注如何创建富有吸引力的新颖控件，
+    并将他们混合到用户界面的 其他部分。因此，可能不需要创建诸如ButtonChrome的类，而可使用已经学过的元素，设计自给自足的不使用代码的控件模板
+
+    
+    
+    
+    为应用自定义控件模板，只需要设置控件的Template属性。尽管可定义内联模板，但这种方法基本没有意义。这是因为几乎总是希望为同一控件的多个皮肤实例重用模板。为
+    适应这种设计，需要将控件模板定义为资源，并使用StaticResource引用该资源
+    通过这种方法，不仅可以较容易地创建许多自定义按钮，在以后还可以很灵活地修改控件模板，而不会扰乱应用程序用户界面的其余部分
+    -->
     <Window.Resources>
+    <!--
+    在本例中，ButtonTemplate资源放在包含窗口的Resources集合中。然而，在实际应用程序中，可能更喜欢使用应用程序资源
+
+        在控件模板中设置了TargetType属性，以明确指示该模板是为按钮设计的。与样式类似，这总是一个可以遵循的好约定。在内容控件(如按钮)中也需要使用该约定，否则
+        ContentPresenter元素就不能工作
+
+        要为基本按钮创建模板，需要自己绘制边框和背景，然后在按钮中设置内容。绘制边框的两种可能的候选方法是使用Rectangle类和Border类
+        -->
         <ControlTemplate x:Key="ButtonTemplate" TargetType="{x:Type Button}">
-            <Border BorderBrush="Orange" BorderThickness="3" CornerRadius="2" Background="Red" TextBlock.Foreground="White" Name="Border">
+            <Border BorderBrush="Orange" BorderThickness="3" CornerRadius="2" Background="Red" TextBlock.Foreground="White" Name="Border"><!--注意这里为Border对象指定了名称“Border”-->
                 <Grid>
+
+                <!--
+
+                名为“FocusCue”的焦点指示器
+
+                    在所有按钮(以及其他大部分控件)中还需要另一个元素——焦点指示器。虽然无法改变现有的边框以添加焦点效果，但是可以很容易地添加另一个元素以显示是否具有焦点，并且可以简单地使用
+                    触发器根据Button.IsKeyboardFocused属性显示或隐藏该元素。尽管可使用许多方法创建焦点效果，但下面的示例只添加了一个具有虚线边框的透明的Rectangle元素。Rectangle元素不能
+                    包含子内容，从而需要确保Rectangle元素和其余内容相互重叠。完成该操作最容易的方法是，使用只有一个单元格的Grid控件来封装Rectangle元素和ContentPresenter元素，这两个元素
+                    位于同一个单元格中
+
+                    
+                    -->
                     <Rectangle Name="FocusCue" Visibility="Hidden" Stroke="Black" StrokeThickness="1" StrokeDashArray="1 2"
                                SnapsToDevicePixels="True"/>
+                               <!--
+                               所有内容控件都需要ContentPresenter元素——他是表示“在此插入内容”的标记器，告诉WPF在何处保存内容
+
+                    该ContentPresenter元素将RecognizesAccessKey属性设置为true。尽管这不是必需的，但可确保按钮支持访问键——具有下划线的字母，可以使用该字母快速
+                    触发按钮。对于这种情况，如果按钮具有文本Click_Me，那么当用户按下Alt+M组合键时会触发按钮(在标准的Windows设置中，下划线是隐藏的，并且只要按下了
+                    Alt键，访问键(在此是M键)就会具有下划线)。如果未将RecognizesAccessKey属性设置为true，就会忽略该细节，并且任何下划线都将被视为普通的下划线，
+                    并作为按钮内容的一部分进行显示
+
+                    提示：
+                    如果控件继承自ContentControl类，其模板将包含一个ContentPresenter元素，指示将在何处放置内容。
+                    如果控件继承自ItemsControl类，其模板将包含一个ItemsPresenter元素，指示在何处放置包含列表项的面板。
+                    在极少数情况下，控件可能使用这些类的派生版本——例如，ScrollViewer的控件模板使用继承自ContentPresenter类的ScrollContentPresenter类
+
+                    
+                    
+
+                    
+
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    模板绑定
+
+                    见下面的标签：
+                    <Button Margin="10" Padding="5" Template="{StaticResource ButtonTemplate}" Click="Clicked" Name="cmdOne">
+                    他将Margin属性的值指定为10，并将Padding属性的值指定为5。StackPanel控件关注的是按钮的Margin属性，但忽略了Padding属性，使按钮的内容
+                    和侧边挤压在一起。此处的问题是Padding属性不起作用，除非在模板中特别注意他。换句话说，模板负责检索内边距值并使用该值在内容周围插入额外
+                    的空白
+
+                    通过使用模板绑定，模板可从应用模板的控件中提取一个值。在本例中，可使用模板绑定检索Padding属性的值，并使用该属性值在ContentPresenter元素
+                    周围创建外边框
+                    Margin="{TemplateBinding Padding}"
+
+                    模板绑定和普通的数据绑定类似，但他们的量级更轻，因为他们是专门针对在控件模板中使用而设计的。他们只支持单向数据绑定(换句话说，他们可从控件向
+                    模板传递消息，但不能从模板向控件传递信息)，并且不能用于从Freezable类的派生类的属性中提取信息。如果遇到模板绑定不生效的情形，可改用具有完整
+                    功能的数据绑定(在自定义控件中的颜色拾取器示例就遇到这种情况，并且结合使用模板绑定和常规的数据绑定解决了该问题)
+
+                    注意：模板绑定支持WPF的变化监测基础结构，所有依赖项属性都包含该基础结构。这意味着如果修改了控件的属性，模板会自动考虑该变化，当使用在一小段
+                    时间内重复改变属性值的动画时，该细节尤为有用
+                    
+                    预计需要哪些模板绑定的唯一方法时检查默认控件模板。如果查看Button类的控件模板，就会发现在模板绑定的使用方法上，与自定义模板是完全相同的——获取为
+                    按钮指定的内边距，并将它转换成ContentPresenter元素周围的外边距。还会发现标准按钮模板包含另外几个模板绑定，如HorizontalAlignment、VerticalAlignment
+                    以及Background，这个简单的自定义模板中没有使用这些模板绑定。这意味着如果为按钮设置了这些属性，对于这个简单的自定义模板来说，这些设置没有效果
+                    (注意，从技术角度看，ContentPresenter元素之所以能够工作，是因为他有一个模板绑定——用于将ContentPresenter.Content属性设置为Button.Content属性。然而
+                    该绑定是隐式地，所以不必自行添加)
+
+                    在许多情况下，可不考虑模板绑定。实际上，如果不准备使用属性或者不希望修改模板，就不必绑定属性。例如，当前的简单按钮将用于文本的Foreground属性设置为白色
+                    并忽略为Background属性设置的任何值是合理的，因为前景色和背景色是该按钮可视化外观的固有部分
+
+                    可能选择避免模板绑定的另一个原因是——您的控件不能很好地支持他们。例如，如果为按钮设置了Background属性，可能注意到当按钮被按下时不会连贯地处理该背景色
+                    (实际上，这时该背景色消失了，并且被按下按钮的默认外观替换了)。该例中的自定义模板与此类似，尽管还没有任何鼠标悬停和鼠标单击行为，但一旦添加这些细节，就
+                    会希望完全控制按钮的颜色以及在不同状态下他们的变化方式
+                    
+                    -->
                     <ContentPresenter RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"/>
                 </Grid>
             </Border>
+            <!--
+
+            改变属性的触发器
+
+            已为Border元素指定一个名称，并且该名称被用于设置每个设置器的TargetName属性。通过这种方法，设置器能更新在模板中指定的Border元素的Background和BorderBrush属性。
+            使用名称是确保更新模板特定部分的最容易方法。可创建一条元素类型规则来影响所有Border元素(原因是已经知道在按钮模板中只有一个边框)，但如果在以后改变模板，这种方法
+            更清晰，也更灵活
+            -->
             <ControlTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter TargetName="Border" Property="Background" Value="DarkRed"/>
@@ -25,11 +130,25 @@
                 </Trigger>
                 <Trigger Property="IsKeyboardFocused" Value="True">
                     <Setter TargetName="FocusCue" Property="Visibility" Value="Visible"/>
+                    <!--
+                    
+                    注意，许多模板通过使用隐藏或者显示元素这种技术来响应触发器。当状态变化时，可通过该技术用完全不同的内容替换控件的外观(例如，被单击的按钮可从矩形变成椭圆，这可通过隐藏前者
+                    并显示后者来实现)
+                    -->
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
                     <Setter TargetName="Border" Property="TextBlock.Foreground" Value="Gray"/>
                     <Setter TargetName="Border" Property="Background" Value="MistyRose"/>
                 </Trigger>
+                <!--
+
+                为确保
+               <Trigger Property="IsEnabled" Value="False">
+                    <Setter TargetName="Border" Property="TextBlock.Foreground" Value="Gray"/>
+                    <Setter TargetName="Border" Property="Background" Value="MistyRose"/>
+                </Trigger> 
+                优先于其他相冲突的触发器设置，应当在触发器列表的末尾定义它。这样，不管IsMouseOver属性是否为true，IsEnabled属性触发器都具有优先权，并且按钮保持未激活状态的外观
+                -->
             </ControlTemplate.Triggers>
         </ControlTemplate>
     </Window.Resources>
@@ -48,3 +167,20 @@
         </Button>
     </StackPanel>
 </Window>
+
+    <!--
+
+    模板与样式
+    
+    模板和样式有类似之处。通常，在整个应用程序中，这两个特性都可以改变元素的外观。然而，样式被限制在一个小得多的范围之内。他们可调整控件的属性，但不能使用全新的由不同元素组成的可视化树替代控件原来的
+    外观
+
+    在本例的按钮包含了一些仅凭样式无法实现的特性。尽管可使用样式设置按钮的背景色，但当按下按钮时调整按钮的背景色会遇到更多麻烦，因此按钮的内置模板已经针对该目的提供了一个触发器。另外，也不能
+    很方便地添加焦点矩形
+
+    还可以通过控件模板实现许多特殊类型的按钮，如果使用样式，是无法获得此类效果的。例如，不是使用矩形边框，而是创建类似椭圆形状的按钮，或使用路径绘制更复杂的形状。
+        
+        
+        
+        
+        -->
