@@ -1,0 +1,50 @@
+﻿<Window x:Class="WPF_DataBinding.AdvancedListView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_DataBinding"
+        mc:Ignorable="d"
+        Title="AdvancedListView" Height="600" Width="600">
+    <Window.Resources>
+        <local:ImagePathConverter x:Key="ImagePathConverter"/>
+        <local:AdvancedPriceToBackgroundConverter x:Key="PriceToBackgroundConverter"
+                                          HighlightBrush="PaleGoldenrod"
+                                          MinPrice="100"/>
+    </Window.Resources>
+    <Grid>
+        <ListView Margin="5" Name="lstProducts" GridViewColumnHeader.Click="lstProducts_Click">
+            <!--
+            <ListView.ItemContainerStyle>
+                <Style>
+                    <Setter Property="ListViewItem.Background"
+                            Value="{Binding Converter={StaticResource PriceToBackgroundConverter}}"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            -->
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=ModelName}"/>
+                        <GridViewColumn Header="Model" DisplayMemberBinding="{Binding Path=ModelNumber}"/>
+                        <GridViewColumn Header="Description" Width="300">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=Description}" TextWrapping="Wrap"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Picture">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding Path=ProductImagePath, Converter={StaticResource ImagePathConverter}}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Price" DisplayMemberBinding="{Binding Path=UnitCost, StringFormat={}{0:C}}"/>
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>

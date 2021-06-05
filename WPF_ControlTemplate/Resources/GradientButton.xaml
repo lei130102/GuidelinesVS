@@ -1,5 +1,33 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="WPF_ControlTemplate.Resources.GradientButton">
+
+    <!--
+    
+    分解按钮控件模板
+
+    当完善或扩展控件模板时，可发现其中封装了大量的不同细节，包括特定的形状、几何图形和画刷。从您的控件模板中提取这些细节并将他们定义为单独
+    的资源是一个好主意。一个原因是通过该步骤，可以更方便地在一组相关的控件中重用这些画刷。例如，您可能会决定创建使用相同颜色的自定义Button、
+    CheckBox和RadioButton控件。为使该工作更加容易，可为画刷(名为Brushes.xaml)创建一个单独的资源字典，并将该资源字典合并到每个控件(如
+    Button.xaml、CheckBox.xaml和RadioButton.xaml)的资源字典中
+
+    注意下面资源的顺序，因为资源需要在使用之前先定义(如果在模板之后定义画刷，将收到错误信息，因为模板找不到所需的画刷)
+
+    
+    
+
+    
+    
+    
+    
+    
+    通过样式应用模板
+
+    
+    
+    
+    
+    -->
 
     <!--Resources used by the template.-->
 

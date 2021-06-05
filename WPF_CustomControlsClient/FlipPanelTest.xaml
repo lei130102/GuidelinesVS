@@ -7,6 +7,20 @@
         xmlns:lib="clr-namespace:CustomControls;assembly=CustomControls"
         mc:Ignorable="d"
         Title="FlipPanelTest" Height="300" Width="300">
+        <!--
+    使用FlipPanel控件
+
+    添加必备的程序集引用，然后将XML前缀映射到包含自定义控件的命名空间，接下来，为页面添加FlipPanel实例
+
+    在本例中，为前面的内容区域使用布满元素的StackPanel面板，并为后面的内容区域使用Grid面板，当单击FlipPanel背面的按钮时，
+    通过编程翻转面板：
+    private void cmdFlip_Click(object sender, RoutedEventArgs e)
+    {
+        panel.IsFlipped = !panel.IsFlipped;
+    }
+    上述代码的结果与单击具有箭头的ToggleButton按钮的结果相同，该按钮是作为默认控件模板的一部分定义的
+    
+    -->
     <Grid x:Name="LayoutRoot" Background="White">
         <lib:FlipPanel x:Name="panel" BorderBrush="DarkOrange" BorderThickness="3" IsFlipped="True"
          CornerRadius="4" Margin="10">

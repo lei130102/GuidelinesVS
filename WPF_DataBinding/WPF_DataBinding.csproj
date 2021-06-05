@@ -1,0 +1,396 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{66F73997-B651-4AC7-9992-38885020F4D0}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>WPF_DataBinding</RootNamespace>
+    <AssemblyName>WPF_DataBinding</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="AdvancedListView.xaml.cs">
+      <DependentUpon>AdvancedListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AdvancedPriceToBackgroundConverter.cs" />
+    <Compile Include="BasicListView.xaml.cs">
+      <DependentUpon>BasicListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BindingGroupValidation.xaml.cs">
+      <DependentUpon>BindingGroupValidation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BindToObjectDataProvider.xaml.cs">
+      <DependentUpon>BindToObjectDataProvider.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BindToXmlDataProvider.xaml.cs">
+      <DependentUpon>BindToXmlDataProvider.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BoundTreeView.xaml.cs">
+      <DependentUpon>BoundTreeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BoundTreeViewDataSet.xaml.cs">
+      <DependentUpon>BoundTreeViewDataSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CheckBoxList.xaml.cs">
+      <DependentUpon>CheckBoxList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ComboBoxSelectionBox.xaml.cs">
+      <DependentUpon>ComboBoxSelectionBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomListViewTest.xaml.cs">
+      <DependentUpon>CustomListViewTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataGridEditing.xaml.cs">
+      <DependentUpon>DataGridEditing.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataGridGrouping.xaml.cs">
+      <DependentUpon>DataGridGrouping.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataGridRowDetails.xaml.cs">
+      <DependentUpon>DataGridRowDetails.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataGridTest.xaml.cs">
+      <DependentUpon>DataGridTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataTemplateByType.xaml.cs">
+      <DependentUpon>DataTemplateByType.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataTemplateControls.xaml.cs">
+      <DependentUpon>DataTemplateControls.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataTemplateImages.xaml.cs">
+      <DependentUpon>DataTemplateImages.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataTemplateList.xaml.cs">
+      <DependentUpon>DataTemplateList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DirectoryTreeView.xaml.cs">
+      <DependentUpon>DirectoryTreeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExpandingDataTemplate.xaml.cs">
+      <DependentUpon>ExpandingDataTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FilterCollection.xaml.cs">
+      <DependentUpon>FilterCollection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FilterDataSet.xaml.cs">
+      <DependentUpon>FilterDataSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GroupInRanges.xaml.cs">
+      <DependentUpon>GroupInRanges.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GroupList.xaml.cs">
+      <DependentUpon>GroupList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ImagePathConverter.cs" />
+    <Compile Include="ListStyles.xaml.cs">
+      <DependentUpon>ListStyles.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MoreValueConverters.xaml.cs">
+      <DependentUpon>MoreValueConverters.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NavigateCollection.xaml.cs">
+      <DependentUpon>NavigateCollection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PriceToBackgroundConverter.cs" />
+    <Compile Include="RadioButtonList.xaml.cs">
+      <DependentUpon>RadioButtonList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TileView.cs" />
+    <Compile Include="ValidationTest.xaml.cs">
+      <DependentUpon>ValidationTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ValueConverter.xaml.cs">
+      <DependentUpon>ValueConverter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VariedStyles.xaml.cs">
+      <DependentUpon>VariedStyles.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VariedTemplates.xaml.cs">
+      <DependentUpon>VariedTemplates.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VirtualizationTest.xaml.cs">
+      <DependentUpon>VirtualizationTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WrappedList.xaml.cs">
+      <DependentUpon>WrappedList.xaml</DependentUpon>
+    </Compile>
+    <Page Include="AdvancedListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BasicListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BindingGroupValidation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BindProductObject.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BindProductObject.xaml.cs">
+      <DependentUpon>BindProductObject.xaml</DependentUpon>
+    </Compile>
+    <Page Include="BindToCollection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BindToDataSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BindToLinqFilteredCollection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BindToObjectDataProvider.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BindToXmlDataProvider.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BoundTreeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BoundTreeViewDataSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CheckBoxList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ComboBoxSelectionBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomListViewTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataGridEditing.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataGridGrouping.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataGridRowDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataGridTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataTemplateByType.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataTemplateControls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataTemplateImages.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataTemplateList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DirectoryTreeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EditProductObject.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ExpandingDataTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FilterCollection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FilterDataSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GroupInRanges.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GroupList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ListStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MoreValueConverters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NavigateCollection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RadioButtonList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ValidationTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ValueConverter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VariedStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VariedTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VirtualizationTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WrappedList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BindToCollection.xaml.cs">
+      <DependentUpon>BindToCollection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BindToDataSet.xaml.cs">
+      <DependentUpon>BindToDataSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BindToLinqFilteredCollection.xaml.cs">
+      <DependentUpon>BindToLinqFilteredCollection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EditProductObject.xaml.cs">
+      <DependentUpon>EditProductObject.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\StoreDatabase\StoreDatabase.csproj">
+      <Project>{49824eab-b55d-4475-9476-4df274d3a885}</Project>
+      <Name>StoreDatabase</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="store.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="360.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="362.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="397.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="401.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="404.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="image.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

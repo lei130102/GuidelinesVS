@@ -5,7 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPF_ControlTemplate"
         mc:Ignorable="d"
-        Title="MultiPartTemplates" Height="450" Width="800">
+        Title="MultiPartTemplates" Height="239" Width="248">
+
+        <!--
+    构建更复杂的模板
+
+    在控件模板和为其提供支持的代码之间有一个隐含约定：
+    如果使用自定义控件模板替代控件的标准模板，就需要确保新模板能够满足控件的实现代码的所有需要
+    
+    在简单控件中，这个过程比较容易，因为对模板几乎没有(或完全没有)什么真正的要求。对于复杂控件，问题就显得有些微妙了，因为控件的
+    外观和实现不可能是完全相互独立的。对于这种情况，控件需要对其可视化显示做出一些假设，而不管曾经被设计得多么好
+
+    在前面已经看到了控件模板的这种需求的两个例子，占位元素(如ContentPresenter和ItemsPresenter)和模板绑定。接下来将列举另外两个例子：
+    具有特定名称(以PART_开头)的的元素和专门设计的用于特定控件模板的元素(如ScrollBar控件中的Track元素)。为成功地创建控件模板，需要仔细查看
+    相关控件地标准模板，并注意分析这4种技术的用法，然后将他们复制到自己的模板中
+
+    注意：还有一种方法可简化控件和控件模板之间的交互。可创建自己的自定义控件。对于这种情况会遇到相反的挑战——创建的代码要能够以标准方式使用模板，
+    而且要能同样很好地使用其他开发人员提供的模板
+    -->
 
     <ListBox Margin="5" ScrollViewer.CanContentScroll="False">
         <ListBox.Resources>

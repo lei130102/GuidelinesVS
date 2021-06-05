@@ -38,6 +38,44 @@
         </GradientBrush.GradientStops>
     </LinearGradientBrush>
 
+<!--
+    修改滚动条
+
+    滚动条是ScrollViewer元素的一部分，ScrollViewer元素是ListBox模板的一部分。尽管该例重新定义了ListBox模板，但没有替换ScrollBar的
+    ScrollViewer
+
+    为自定义该细节，可为ListBox控件创建一个新的ScrollViewer模板。然后可将ScrollViewer模板指向自定义的ScrollBar模板。然而，还有更
+    简单的选择。可创建一个改变所有ScrollBar控件模板的特定与元素类型的样式。这样就避免了创建ScrollViewer模板所需的额外工作
+
+    当然，还需要考虑这种设计会对应用程序的其他部分造成什么影响。如果创建元素类型样式ScrollBar，并将其添加到窗口的Resources集合中，
+    对于窗口中的所有控件，无论何时使用ScrollBar控件，都会具有新样式的滚动条，这可能正是您所希望的效果。另一方面，如果希望只改变ListBox
+    控件中的滚动条，就必须为ListBox控件本身的资源集合添加元素类型样式ScrollBar。最后，如果希望改变整个应用程序中所有滚动条的外观，可
+    将该样式添加到App.xaml文件的资源集合中
+
+    ScrollBar控件很复杂，他实际上是一个由更小部分组成的集合
+
+                    +————————————+
+                    |      ^     |      RepeatButton
+                    +————————————+
+          +——       |            |
+          |         |            |      RepeatButton(透明)
+          |         |            |
+        Track       |————————————|      Thumb
+          |         |————————————|
+          |         |            |
+          |         |            |      RepeatButton(透明)
+          +——       |            |
+                    +————————————+
+                    |      v     |      RepeatButton
+                    +————————————+
+
+    滚动条的背景由Track类表示——实际上是一个具有阴影并且被拉伸占满整个滚动条长度的矩形。滚动条的末尾处是按钮，通过这些按钮可以向上或向下(或向左或向右)滚动一个步长
+    这些按钮是RepeatButton类的实例，该类继承自ButtonBase类。RepeatButton类和普通Button类之间的重要区别在于，如果在RepeatButton按钮上保持鼠标为按下状态，就会
+    反复触发Click事件(对于滚动这是非常方便的)
+    在滚动条的中间是代表滚动内容中当前位置的Thumb元素。并且最有趣的是，滑块两侧的空白实际上由另外两个RepeatButton对象构成，他们是透明的，当单击这两个按钮中的一个时，
+    滚动条会滚动一整页(一页是滚动内容所在的可见窗口中的内容容量)。通过单击滑块两侧的条形区域，可快速浏览滚动内容，这一功能是大家所熟悉的
+    
+    -->
     <Style x:Key="ScrollBarLineButtonStyle" TargetType="{x:Type RepeatButton}">
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="Template">
@@ -86,6 +124,9 @@
         </Setter>
     </Style>
 
+<!--
+下面是垂直滚动条的模板
+    -->
 
     <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
         <Grid>
@@ -128,6 +169,27 @@
         </Grid>
     </ControlTemplate>
 
+<!--
+    
+    需要注意的几个要点：
+    a.垂直滚动条由一个包含三行的网格构成。顶行和底行容纳两端的按钮(并显示为箭头)。他们固定占用18个单位。中间部分容纳Track元素，占用了剩余空间
+    b.两端的RepeatButton元素使用相同的样式。唯一的区别是Content属性，该属性包含了一个用于绘制箭头的Path对象，因为顶部的按钮具有上箭头而底部的按钮具有下箭头。
+    为简明起见，这些箭头使用之前介绍的微语言路径。其他细节(如背景填充和箭头周围显示的圆圈)是在控件模板中定义的，这些定义位于标记中的ScrollBarLineButtonStyle部分
+    c.两个按钮都链接到ScrollBar类中的命令(LineUpCommand和LineDownCommand)。这正是其工作原理。只要提供链接到这个命令的按钮即可，不必考虑按钮的名称是什么，也不必
+    考虑其外观像什么或使用哪个特定的类
+    d.Track元素名为PART_Track。为使ScrollBar类能够成功地关联到他地代码，必须使用这个名称。ScrollBar类的默认模板(通过WPF_ControlTemplateBrowser项目查看的ScrollBar的模板)上可以看到这个元素
+    注意：如果使用反射(或使用诸如Reflector的工具)检查控件，可找到关联到类声明的TemplatePart特性。每个已命名的部件都有TemplatePart特性。 TemplatePart特性指明了
+    所期望元素的名称(通过Name属性)及其所属的类(通过Type属性)
+    e.Track.ViewportSize属性被设置为0。这是该模板特有的实现细节，可确保Thumb元素总有相同的尺寸(通常，滑块根据内容按比例地改变尺寸，因此如果滚动的内容在窗口中基本上
+    能够显示，这时滑块会变得较长)
+    f.Track元素封装了两个RepeatButton对象(他们的样式单独定义)和Thumb元素。同样，这些按钮通过命令连接到适当的功能
+    
+    
+    注意：模板使用了键名，明确指定将他作为垂直滚动条
+    <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
+    之前已经介绍过，当为样式设置键名时，可确保他不能被自动应用，即使同时设置了TargetType属性也是如此
+    该例使用这种方法的原因是，该模板只适用于垂直方向的滚动条，而且，如果ScrollBar.Orientation属性被设置为Vertical，元素类型样式会使用触发器自动应用控件模板
+    -->
 
     <Style TargetType="{x:Type ScrollBar}">
         <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -142,6 +204,40 @@
         </Style.Triggers>
     </Style>
 
+    <!--
+    尽管可以使用相同的基本部分很容易地创建水平滚动条，但该例没有采取该步骤(从而保留了正常样式地水平滚动条)
+    -->
+    
+    <!--
+
+    最后一项任务是填充格式化各个RepeatButton对象和Thumb元素的样式。这些样式比较简单，但他们确实改变了滚动条的标准外观。首先，Thumb元素的形状被设置成类似椭圆的形状
+
+    (见前面的<Style x:Key="ScrollBarThumbStyle" TargetType="{x:Type Thumb}">)
+
+    接下来，在美观的圆圈中绘制两端的箭头。这些圆圈是在控件模板中定义的，而箭头由RepeatButton对象的内容提供，并使用ContentPresenter元素插入到控件模板中
+
+    (见前面的<Style x:Key="ScrollBarLineButtonStyle" TargetType="{x:Type RepeatButton}">)
+
+    显示在Track元素上面的RepeatButton对象没有发生改变。他们只使用透明背景，使Track元素可透过他们显示：
+
+    (见前面的<Style x:Key="ScrollBarPageButtonStyle" TargetType="{x:Type RepeatButton}">)
+
+    与正常的滚动条不同，在该模板中没有为Track元素指定背景，所以保持原来的透明背景，这样，列表框的轻微阴影渐变可透过滚动条显示
+    
+    -->
+    
+    
+    
+
+<!--
+嵌套的模板
+
+    按钮控件的模板可分解成几个较简单的部分。然而，许多模板并非如此简单。在某些情况下，控件模板将包含每个自定义模板也需要的大量元素。
+    而在有些情况下，改变控件的外观涉及创建多个模板
+
+    比如，假设计划修改熟悉的ListBox控件。创建这个示例的第一步是为ListBox控件设计模板，并酌情添加自动应用模板的样式
+    下面的标记将这两个要素合并到一起
+    -->
 
     <Style TargetType="{x:Type ListBox}">
         <Setter Property="Template">
@@ -162,6 +258,16 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!--
+    这个样式使用两个画刷绘制边框和背景。实际模板是标准模板ListBox的简化版本，但没有使用ListBoxChrome类，而使用了较简单的Border元素。
+    在Border元素内部是为列表提供滚动功能的ScrollViewer元素以及容纳所有列表项的ItemsPresenter类
+
+    对于该模板，最值得注意之处是他未提供的功能——配置列表中各项的外观。没有该功能，被选择的元素总是使用熟悉的蓝色背景突出显示。为改变
+    这种行为，需要为ListBoxItem控件添加控件模板，ListBoxItem控件是封装列表中每个单独元素内容的内容控件
+
+    与ListBox模板一样，可使用元素类型样式应用ListBoxItem模板。下面的基本模板在一个不可见的边框中封装了每个项。因为ListBoxItem是内容控件，
+    所以需要使用ContentPresenter元素在其内部放置项的内容。除这些基本内容外，还有当鼠标移动到顶上或单击项时做出响应的触发器
+    -->
 
     <Style TargetType="{x:Type ListBoxItem}">
         <Setter Property="Template">
@@ -194,6 +300,7 @@
                                 </BeginStoryboard>
                             </EventTrigger.Actions>
                         </EventTrigger>
+                        <!--注意，缩小动画省略了From和To属性。通过这种方式，缩小动画总将文本从当前尺寸缩小到他原来的尺寸-->
 
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource HoverBorderBrush}"/>
@@ -207,8 +314,88 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!--
+    总之，可以使用这两个模板创建当将鼠标移动到当前定位的项上时使用动画放大项的列表框。因为每个ListBoxItem可具有自己的动画，所以当用户
+    在列表框中上下移动鼠标时，将看到几个项开始增大，然后再次收缩，创建了动人的“鱼眼”效果(当将鼠标悬停在项上时，使用具有动画的变换，
+    可实现更夸张的鱼眼效果，放大项并使项变形)
+
+    提示：与以前一样，习惯于这些不同约定的最好方法是使用在前面展示的模板浏览器查看基本控件的控件模板。然后可复制和编辑模板并将其用作
+    自定义模板的基础
+    -->
 
 
 
 
 </ResourceDictionary>
+
+    <!--
+    控件模板示例
+    
+    正如在前面看到的，为通用控件提供新模板是一件繁杂的任务。这是因为控件模板的所有需求并不总是很明显。例如，典型的ScrollBar控件需要组合两个RepeatButton
+    对象和一个Track对象。其他控件模板需要具有特定PART_名称的元素。在自定义窗口情形中，需要确保定义了装饰层，因为一些控件需要使用他
+
+    尽管可通过分析控件的默认模板发现这些细节，但这些默认模板通常很复杂并且包含许多无关紧要的细节，以及一些无论如何您都不会支持的绑定。幸运的是，在此有一个更好
+    的起点：
+    
+    控件模板示例
+    https://docs.microsoft.com/en-us/dotnet/desktop/wpf/controls/control-styles-and-templates?redirectedfrom=MSDN&view=netframeworkdesktop-4.8
+
+    控件模板示例项目为WPF的所有标准控件提供了一个精简模板集合，这为所有自定义控件设计人员提供了一个有用的起跳点。与默认控件模板不同，这些模板使用标准颜色，
+    以声明方式完成所有工作(没有使用任何修饰类)，并删除了可选部分，如针对不常用属性的模板绑定。控件模板示例的目标是为开发人员提供一个实用的起点，可从该起点起
+    设计自己的具有更复杂图形的控件模板
+
+    (提示：控件模板示例是隐藏的WPF宝藏，他们提供了比默认的控件模板更易于理解和增强的模板，如果需要使用自定义外观增强通用控件，应将该项目作为起点)
+    
+    
+        -->
+
+    <!--
+    可视化状态
+
+    到目前为止，已经学习了最直接、最流行的编写控件模板的方法：混合使用元素、绑定表达式以及触发器。使用元素创建控件的整个
+    可视化结构。绑定用于从控件类的属性提取信息并将其应用于元素内部。而触发器创建交互功能，当控件的状态发生变化时允许控件改变
+    其外观
+
+    这种模型的优点是极其强大和灵活。可执行希望的任何操作。在按钮示例中没有立即看到该优点，因为控件模板依赖于内置的属性，如
+    IsMouseOver和IsPressed。但即使不能使用这些属性，也仍可编写改变自身以响应鼠标移动和按钮单击的控件模板。技巧是使用应用动画
+    的事件触发器。例如，可添加事件触发器，通过启动改变边框背景颜色的动画来响应Border.MouseOver事件。该动画甚至看起来不像是动画
+    ——如果将其持续时间设置为0秒，他将立即应用自身，就像正在使用的属性触发器。实际上，这正是许多专业模板示例使用的技术。
+    
+    尽管他们的功能很强大，但基于触发器的模板有如下缺点：他们需要模板设计人员深入理解控件的工作方式。例如在按钮示例中，模板设计
+    人员需要知道IsMouseOver和IsPressed属性的存在，并且需要知道如何使用他们。而且这还不是唯一需要掌握的细节——例如，大多数
+    控件需要根据鼠标移动、被禁用、获得焦点以及许多其他状态的改变，修改其可视化外观。当结合使用这些状态时，很难准确判断控件应当
+    具有什么样的外观。此外，如果使用基于触发器的模型实现过渡效果，会显得很笨拙。例如，假设希望创建当将鼠标悬停在其上时闪烁的按钮。
+    未获得专业级别的效果，可能需要两个动画——一个动画将按钮的状态从正常状态改变为鼠标悬停状态，另一个动画在此后立即应用不停闪烁
+    的效果。使用基于触发器的模板管理所有这些细节可能是一个挑战
+
+    Microsoft在WPF 4中添加了称为可视化状态(visual state)的新特性，该特性化解了这个挑战。使用具有特定名称的部件(在前面已经看到过)
+    和可视化状态，控件能提供标准化的可视化协定。不需要理解整个控件，模板设计人员只需要理解可视化协定的规则。因此，设计简单地
+    控件模板要容易得多——当为以前从来没用过的控件设计模板时更是如此
+
+    控件可使用TemplatePart特性指示控件模板应当包含具有特定名称的元素(或部件)，与此类似，可使用TemplateVisualState特性指示他们支持的
+    可视化状态。
+    例如，普通的按钮应当提供如下所示的一组可视化状态：
+    [TemplateVisualState(Name="Normal", GroupName="CommonStates")]
+    [TemplateVisualState(Name="MouseOver", GroupName="CommonStates")]
+    [TemplateVisualState(Name="Pressed", GroupName="CommonStates")]
+    [TemplateVisualState(Name="Disabled", GroupName="CommonStates")]
+    [TemplateVisualState(Name="Unfocused", GroupName="FocusStates")]
+    [TemplateVisualState(Name="Focused", GroupName="FocusStates")]
+    public class Button : ButtonBase
+    {
+        ...
+    }
+    状态被放到各个组中。组是互相排斥的。这意味着控件具有每个组中的一个状态。例如，上面显示的按钮具有两个状态组：
+    CommonStates和FocusStates。在任意给定时刻，按钮有一个来自CommonStates组的状态并且有一个来自FocusStates组的状态
+
+    例如，如果使用Tab键将焦点移到按钮上，按钮的状态将是Normal(来自CommonStates组)和Focused(来自FocusStates组)。然后如果
+    将鼠标移动到按钮上，其状态将是MouseOver(来自CommonStates组)和Focused(来自FocusStates组)。不使用状态组，处理这种情况
+    就会遇到麻烦。要么必须使某些状态支配其他状态(这样处于MouseOver状态的按钮会丢失焦点指示器)，要么需要创建其他更多的状态
+    (例如FocusedNormal、UnfocusedNormal、FocusedMouseOver和UnfocusedMouseOver等)
+
+    至此，您可能已经体会到可视化状态模型的魅力。从模板来看，立即就能清楚地了解到控件模板需要解决6种不同的可能状态。还知道每种
+    状态的名称是唯一重要的细节。不需要知道按钮类提供了哪些属性，也不需要知道控件内部的工作原理。最令人满意的是，如果使用
+    Expression Blend，当为支持可视化状态的控件创建控件模板时可以得到增强了的设计时支持。Blend将为您显示控件支持的具有特定
+    名称的部件和可视化状态(因为在定义他们时使用了TemplatePart和TemplateVisualState特性)，然后可以添加相应的元素和故事板
+    
+    -->

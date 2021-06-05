@@ -1,0 +1,75 @@
+﻿<Window x:Class="WPF_DataBinding.ValueConverter"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_DataBinding"
+        mc:Ignorable="d"
+        Title="ValueConverter" Height="332" Width="355">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Margin="7" Text="Product ID:"/>
+            <TextBox Name="txtID" Margin="5" Grid.Column="1" Text="356"/>
+            <Button Name="cmdGetProduct" Margin="5" Padding="2" Click="cmdGetProduct_Click" Grid.Column="2" Content="Get Product"/>
+        </Grid>
+
+        <Border Grid.Row="1" Padding="7" Margin="7" Background="LightSteelBlue">
+            <Grid Name="gridProductDetails">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Margin="7" Text="Model Number:"/>
+                <TextBox Margin="5" Grid.Column="1" Text="{Binding Path=ModelNumber}"/>
+
+                <TextBlock Margin="7" Grid.Row="1" Text="Model Name:"/>
+                <TextBox Margin="5" Grid.Row="1" Grid.Column="1" Text="{Binding Path=ModelName}"/>
+
+                <TextBlock Margin="7" Grid.Row="2" Text="Unit Cost:"/>
+                <TextBox Margin="5" Grid.Row="2" Grid.Column="1">
+                    <TextBox.Text>
+                        <Binding Path="UnitCost">
+                            <Binding.Converter>
+                                <local:PriceConverter/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <TextBlock Margin="7,7,7,0" Grid.Row="3" Text="Description:"/>
+                <TextBox Margin="7" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                         VerticalScrollBarVisibility="Visible" TextWrapping="Wrap"
+                         Text="{Binding Path=Description}"/>
+
+                <StackPanel Orientation="Horizontal" Margin="3" Grid.Row="5" Grid.ColumnSpan="2"
+                            HorizontalAlignment="Right">
+                    <Button Name="cmdUpdateProduct" Click="cmdUpdateProduct_Click" IsDefault="True"
+                            Margin="2" Padding="10,2,10,2" Content="Update"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -7,12 +7,78 @@
         xmlns:lib="clr-namespace:CustomControls;assembly=CustomControls"
         mc:Ignorable="d"
         Title="ColorPickerUserControlTest" Height="300" Width="300">
+
+    <!--
+    使用用户控件(UserControl)
+
+    首先需要将程序集和.NET命名空间映射到XAML命名空间
+    <Window x:Class="WPF_CustomControlsClient.ColorPickerUserControlTest"
+        xmlns:lib="clr-namespace:CustomControls;assembly=CustomControls" ...>
+    
+    -->
     <StackPanel>
+
+<!--
+        然后使用定义的XML命名空间和用户控件类名，在XAML标记中可像创建其他类型的对象那样创建自定义的用户控件。
+        还可以在控件标记中设置他的属性，以及直接关联事件处理程序
+
+        因为Color属性使用Color数据类型，并且Color数据类型使用TypeConverter特性进行了修饰，所以在设置Color属性之前，WPF知道使用ColorConverter
+        转换器将颜色名称字符串转换成相应的Color对象
+        -->
         <lib:ColorPickerUserControl 
         Name="colorPicker" Margin="2" Padding="3" ColorChanged="colorPicker_ColorChanged" Color="Yellow"></lib:ColorPickerUserControl>
+
         <Button Click="cmdGet_Click" Margin="5,20,5,0" Padding="2">Get Color</Button>
         <Button Click="cmdSet_Click" Margin="5,0,5,0" Padding="2">Reset Color</Button>
         <Button Command="Undo" CommandTarget="{Binding ElementName=colorPicker}"  Margin="5,0,5,0" Padding="2">Undo</Button>
         <TextBlock Name="lblColor" Margin="10"></TextBlock>
     </StackPanel>
 </Window>
+
+    <!--
+    深入分析用户控件(UserControl)
+
+    用户控件提供了一种非常简单地，但是有一定限制的创建自定义控件的方法。为理解其中的原因，深入分析用户控件的工作原理是很有帮助的
+
+    在后台，UserControl类的工作方式和其父类ContentControl非常类似。实际上，只有几个重要的区别：
+    a.UserControl类改变了一些默认值。即该类将IsTabStop和Focusable属性设置为false(从而在Tab顺序中没有占据某个单独的位置)，并将
+      HorizontalAlignment和VerticalAlignment属性设置为Stretch(而非Left或者Top)，从而可以填充可用空间
+    b.UserControl类应用了一个新的控件模板，该模板由包含ContentPresenter元素的Border元素组成。ContentPresenter元素包含了用标记添加的内容
+    c.UserControl类改变了路由事件的源。当事件从用户控件内的控件向用户控件外的元素冒泡或者隧道路由时，事件源变为指向用户控件而不是原始元素。
+      这提供了更好的封装性(例如，如果在包含颜色拾取器的布局容器中处理UIElement.MouseLeftButtonDown事件，当单击内部的Rectangle元素时将接收
+      到事件。然而，这个事件的源不是Rectangle元素，而是包含Rectangle元素的ColorPicker对象。如果作为普通的内容控件创建相同的颜色拾取器，情况
+      就不同了——您需要在控件中拦截事件、处理事件并且重新引发事件)
+
+    用户控件与其他类型的自定义控件之间最重要的区别是设计用户控件的方法。与所有控件一样，用户控件有控件模板。然而，很少改变控件模板——反而，将作为
+    自定义用户控件类的一部分提供标记，并且当创建了控件后，会使用InitializeComponent()方法处理这个标记。另一方面，无外观控件是没有标记的——需要的
+    所有内容都在模板中
+
+    普通的ContentControl控件具有下面的简单模板：
+    <ControlTemplate TargetType="ContentControl">
+        <ContentPresenter ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" Content="{TemplateBinding ContentControl.Content}"/>
+    </ControlTemplate>
+    这个模板仅填充所提供的内容并应用可选的内容模板。Padding、Background、HorizontalAlignment以及VerticalAlignment等属性没有任何影响(除非显式绑定属性)
+    
+    UserControl类有一个类似的模板，并有更多的细节。最明显的是，他添加了一个Border元素，并将其属性绑定到用户控件的BorderBrush、BorderThickness、Background以及Padding属性，
+    以确保他们具有相同的含义。此外，内部的ContentPresenter元素已绑定到对齐属性
+    <ControlTemplate TargetType="UserControl">
+        <Border BorderBrush="{TemplateBinding Border.BorderBrush}"
+            BorderThickness="{TemplateBinding Border.BorderThickess}"
+            Background="{TemplateBinding Panel.Background}"
+            SnapsToDevicePixels="True"
+            Padding="{TemplateBinding Control.Padding}">
+
+            <ContentPresenter
+                HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
+                VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
+                SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
+                ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
+                Content="{TemplateBinding ContentControl.Content}"
+            />
+
+        </Border>
+    </ControlTemplate>
+    从技术角度看，可改变用户控件的模板。实际上，只需要进行很少的调整，就可以将所有标记移到模板中。但确实没有理由采取该方法——如果希望得到更灵活的控件，使
+    可视化外观和由自定义控件类定义的接口分开，创建无外观的自定义控件可能会更好一些
+        
+        -->

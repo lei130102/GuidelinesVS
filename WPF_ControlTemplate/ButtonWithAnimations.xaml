@@ -5,19 +5,42 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPF_ControlTemplate"
         mc:Ignorable="d"
-        Title="ButtonWithAnimations" Height="450" Width="800">
+        Title="ButtonWithAnimations" Height="300" Width="300">
         <!--
     
     使用动画的触发器
 
     触发器并非仅局限于设置属性。当特定属性发生变化时，还可以使用事件触发器运行动画
+
+    下面是重新设计的按钮模板，当鼠标悬停在按钮上时，该模板使用触发器实现按钮颜色脉冲效果(在红色和蓝色之间不断切换)。当
+    鼠标离开时，使用一个单独的持续1秒的动画，将按钮背景返回到其正常颜色
+
+    
+    可以使用两种等价的方法添加鼠标悬停动画
+    1.创建响应MouseEnter和MouseLeave事件的事件触发器
+    2.创建当IsMouseOver属性发生变化时添加进入和退出动作的属性触发器
+
+    本例使用两个ColorAnimation对象来改变按钮。下面是可能希望使用EventTrigger驱动的动画执行的其他一些任务：
+    a.显示或隐藏元素
+    需要改变控件模板的Opacity属性
+    b.改变形状或位置
+    可使用TranslateTransform对象调整元素的位置(例如，稍偏移元素使按钮具有已被按下的感觉)。当用户将鼠标移到元素上时，
+    可使用ScaleTransform或者RotateTransform对象稍微旋转元素的外观
+    c.改变光照或者着色
+    需使用改变绘制背景的画刷的动画。可使用ColorAnimation动画改变SolidBrush画刷中的颜色，也可动态显示更复杂的画刷以得到
+    更高级的效果。例如，可改变LinearGradientBrush画刷中的一种颜色(这是默认按钮控件模板执行的操作)，也可改变RadialGradientBrush
+    画刷的中心点
+
+    提示：有些高级光照效果使用多层透明元素。对于这种情况，可使用动画修改其中一层的透明度，从而让其他层能够透过该层显示
     
     -->
     <Window.Resources>
         <ControlTemplate x:Key="ButtonTemplate" TargetType="{x:Type Button}">
-            <Border BorderBrush="Orange" BorderThickness="3" CornerRadius="2" Background="Red" TextBlock.Foreground="White" Name="Border">
+            <Border BorderBrush="Orange" BorderThickness="3" CornerRadius="2"
+                    Background="Red" TextBlock.Foreground="White" Name="Border">
                 <Grid>
-                    <Rectangle Name="FocusCue" Visibility="Hidden" Stroke="Black" StrokeThickness="1" StrokeDashArray="1 2" SnapsToDevicePixels="True"/>
+                    <Rectangle Name="FocusCue" Visibility="Hidden" Stroke="Black" StrokeThickness="1"
+                               StrokeDashArray="1 2" SnapsToDevicePixels="True"/>
                     <ContentPresenter RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"/>
                 </Grid>
             </Border>
@@ -25,7 +48,8 @@
                 <EventTrigger RoutedEvent="MouseEnter">
                     <BeginStoryboard>
                         <Storyboard>
-                            <ColorAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Background.Color" To="Blue" Duration="0:0:1"
+                            <ColorAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Background.Color"
+                                            To="Blue" Duration="0:0:1"
                                             AutoReverse="True" RepeatBehavior="Forever"/>
                         </Storyboard>
                     </BeginStoryboard>
@@ -33,7 +57,8 @@
                 <EventTrigger RoutedEvent="MouseLeave">
                     <BeginStoryboard>
                         <Storyboard>
-                            <ColorAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Background.Color" Duration="0:0:0.5"/>
+                            <ColorAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="Background.Color"
+                                            Duration="0:0:0.5"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>

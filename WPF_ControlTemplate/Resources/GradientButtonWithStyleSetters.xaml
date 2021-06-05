@@ -1,6 +1,22 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!--
+    通过样式应用模板
+
+    之前设计存在局限性，控件模板本质上硬编码了一些细节，如颜色方案。这意味着如果希望在按钮中使用相同的元素组合(Border、Grid、Rectangle和
+    ContentPresenter)并采用相同的方式安排他们，但希望提供不同的颜色方案，就必须创建引用不同画刷资源的新模板副本
+
+    这未必是个问题(毕竟，布局和格式化细节可能紧密相关，以至于不希望以任何方式隔离他们)。但这确实限制了重用控件模板的能力。如果模板使用了元素
+    的复合排列方式，并且希望重用这些具有各种不同格式化细节(通常是颜色和字体)的元素，可从模板中将这些细节提取出来，并将他们放到样式中
+
+    为此，需要重新编写模板。这次不能使用硬编码的颜色，而需要使用模板绑定从控件属性中提取出信息。
+    下面的示例为前面看到的特殊按钮定义了一个精简模板。控件模板将一些细节作为基础的固定要素——焦点框和两个单位宽的圆角边框。背景和边框画刷是可
+    配置的。唯一需要保留的触发器是显示焦点框的那个触发器
+    
+    
+    -->
+
     <!-- Resources used by the template. -->
     <RadialGradientBrush RadiusX="1" RadiusY="5" GradientOrigin="0.5,0.3" x:Key="HighlightBackground">
         <GradientStop Color="White" Offset="0"/>
@@ -22,9 +38,11 @@
 
     <!-- The button control template. -->
     <ControlTemplate x:Key="GradientButtonTemplate" TargetType="{x:Type Button}">
-        <Border Name="Border" BorderThickness="2" CornerRadius="2" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
+        <Border Name="Border" BorderThickness="2" CornerRadius="2" Background="{TemplateBinding Background}" 
+                BorderBrush="{TemplateBinding BorderBrush}">
             <Grid>
-                <Rectangle Name="FocusCue" Visibility="Hidden" Stroke="Black" StrokeThickness="1" StrokeDashArray="1 2" SnapsToDevicePixels="True"/>
+                <Rectangle Name="FocusCue" Visibility="Hidden" Stroke="Black" StrokeThickness="1" StrokeDashArray="1 2" 
+                           SnapsToDevicePixels="True"/>
                 <ContentPresenter Margin="{TemplateBinding Padding}" RecognizesAccessKey="True"/>
             </Grid>
         </Border>
@@ -34,6 +52,14 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
+
+    <!--
+    理想情况下，应能在控件模板中保留所有触发器，因为他们代表控件的行为，并使用样式简单设置基本属性。但在此如果希望样式能够设置颜色方案，是不可能实现的
+
+    注意：如果在控件模板和样式中都设置了触发器，那么样式触发器具有优先权
+
+    <Style x:Key="CustomButtonStyle" TargetType="{x:Type Button}">
+    -->
 
     <!-- The Style that applies the button control template. -->
     <Style TargetType="{x:Type Button}">
@@ -53,5 +79,145 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <!--
+    为使用这个新模板，需要设置按钮的Style属性而不是Template属性
+
+    <Button Margin="10" Padding="5" Style="{StaticResource CustomButtonStyle}">
+    A Simple Button with a Custom Template
+    </Button>
+    
+    现在可创建一些新样式，这些样式使用相同的模板，但为了应用新的颜色方案，应将模板绑定到不同的画刷
+
+    使用这种方式存在重要限制。在该样式中不能使用Setter.TargetName属性，因为样式不包含控件模板(只是引用模板而已)。因此，样式和触发器有一定的限制。
+    他们不能深入到可视化树中来改变嵌套的元素的这个方面。反而，样式需要设置控件的属性，而且控件中的元素需要使用模板绑定来绑定属性
+
+    
+    控件模板和自定义控件
+
+    可通过创建自定义控件避开此处讨论的这两个问题——必须在样式中使用触发器定义控件的行为，以及不能定位到特定元素。例如，可构建继承自Button的类，并
+    添加HighlightBackground、DisabledBackground以及PressedBackground等属性，然后可以在控件模板中绑定这些属性，并在不需要触发器的样式中简单地
+    设置他们。然而，这种方法自身存在缺点。该方法要求必须在用户界面中使用不同地类(比如使用CustomButton类代替Button类)。在设计应用程序时这种方法
+    更麻烦
+
+    通常，在遇到某些情况时，会从自定义控件模板转到使用自定义控件
+    
+    -->
+    
+    
+    <!--
+    自动应用模板
+
+    在本例中，每个按钮负责使用Template或Style属性将自身关联到适当模板。如果使用控件模板，在应用程序中地特定位置创建特殊效果，这是合理的。但如果希望在具有自定义
+    外观的整个应用程序中改变每个按钮的皮肤，这就不是很方便了。对于这种情况，可能会更希望应用程序中的所有按钮自动请求新的模板。为实现该功能，需要通过样式应用控件模板。
+    
+    技巧是使用类型样式，这种样式会自动影响相应的元素类型并设置Template属性。
+    下面是一个样式示例，应将该样式放到您的资源字典的资源集合中，从而为按钮提供新外观：
+    <Style TargetType="{x:Type Button}">
+        <Setter Property="Control.Template" Value="{StaticResource ButtonTemplate}"/>
+    </Style>
+    上面的代码可以工作，原因是样式没有指定键名，这意味着改用元素类型(Button)
+    但仍可通过创建一个按钮并将其Style属性明确设置为null值，推出该样式：
+    <Button Style="{x:Null}" ...></Button>
+
+    提示：如果遵循正确的设计原则，并在单c独的资源字典中定义按钮，这种技术的效果更好。对于这种情况，直到添加将您的资源导入到整个应用程序或特定窗口中的ResourceDictionary标签
+    时，样式才会生效，如前面描述的那样
+
+    包含基于类型的样式的组合的资源字典通常(非正式地)被称为主题(theme)。主题能够实现非凡地效果。通过主题可为已有应用程序的所有控件重新应用皮肤，而根本不需要更改用户
+    界面标记。需要做的全部工作就是为项目添加资源字典，并将其合并到App.xaml文件的Application.Resources集合中
+
+    为使用主题，为项目添加包含资源字典的.xaml文件。例如，WPF Futures提供了一个名为ExpressionDark.xaml的主题文件。然后，需要在应用程序中激活样式。可逐个窗口
+    地完成该工作，但更快捷地方法是通过添加如下所示地标记在应用程序级别导入他们：
+    <Application ...>
+        <Application.Resources>
+            <ResourceDictionary Source="ExpressionDark.xaml"/>
+        </Application.Resources>
+    </Application>
+    现在将全面实施资源字典中基于类型地样式，并将自动改变应用程序每个窗口地每个通用控件的外观。
+    
+    -->
+
+
+    
+    
+    
+    
+    <!--
+    由用户选择的皮肤
+
+    在一些应用程序中，可能希望动态改变模板，通常是根据用户的个人爱好加以改变。这很容易实现，但文档没有对此进行详细说明。基本技术是在运行时加载新的资源字典，并使用
+    新加载的资源字典代替当前的资源字典(不需要替换所有资源，只需要替换那些用于皮肤的资源)
+
+    诀窍在于检索ResourceDictionary对象，该对象经过编译并作为资源嵌入到应用程序中。最简单的方法时使用之前介绍的ResourceManager类来加载所需资源
+
+    例如，假设已经创建用于定义同一个按钮控件模板的替代版本的两个资源。其中一个保存在GradientButton.xaml文件中，而另一个保存在GradientButtonVariant.xaml文件中。
+    为了更好地组织资源，这两个文件都位于当前项目的Resources子文件夹中
+    现在可创建一个简单窗口，通过Resources集合使用这些资源中的一个
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/GradientButton.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    现在可通过如下代码使用不同的资源字典
+    ResourceDictionary newDictionary = new ResourceDictionary();
+    newDictionary.Source = new Uri("Resources/GradientButtonVariant.xaml", UriKind.Relative);
+    this.Resources.MergedDictionaries[0] = newDictionary;
+    上面的代码加载GradientButtonVariant资源字典，并将他放置到MergedDictionaries集合的第一个位置。在此没有清空MergedDictionaries集合或其他任何窗口资源，因为
+    您可能链接到了其他希望继续使用的资源字典。也没有为MergedDictionaries集合添加新条目，因为这可能与位于不同集合中的同名资源发生冲突
+    如果正在为整个应用程序改变皮肤，可使用相同的方法，但应使用应用程序的资源字典。可使用如下代码更新这个资源字典
+    Application.Current.Resources.MergedDictionaries[0] = newDictionary;
+    还可以使用之前介绍的pack URI语法加载在另一个程序集中定义的资源字典
+    ResourceDictionary newDictionary = new ResourceDictionary();
+    newDictionary.Source = new Uri("ControlTemplateLibrary;component/GradientButtonVariant.xaml", UriKind.Relative);
+    this.Resources.MergedDictionaries[0] = newDictionary;
+    当加载新的资源字典时，会自动使用新模板更新所有按钮。如果当修改控件时不需要完全改变皮肤，还可以为皮肤提供基本样式
+
+    本例假定GradientButton.xaml和GradientButtonVariant.xaml资源使用元素类型样式自动改变按钮。如您所知，还有一种方法——可通过手动设置Button对象的Template或
+    Style属性来选用新的模板。如果使用这种方法，务必使用Dynamic Resource引用，而不能使用StaticResource。如果使用StaticResource，当切换皮肤时不会更新按钮模板
+
+    注意：当使用DynamicResourdce引用时，首先要保证需要的资源位于资源层次结构中。如果资源并不位于资源层次结构中，就会忽略资源。而且按钮会恢复为他们的标准外观，
+    而不会生成错误
+    
+    还有一种通过编写代码加载资源字典的方法。可使用与为窗口创建代码隐藏类几乎相同的方法，为资源字典创建代码隐藏类。然后就可以直接实例化这个类，而不是使用
+    ResourceDictionary.Source属性。这种方法有一个优点，他是强类型的(没有机会为Source属性输入无效的URI)，并且可为资源类添加属性、方法以及其他功能，例如，可以使用
+    这种方法，为自定义窗口模板创建具有事件处理代码的资源
+
+    尽管为资源字典创建代码隐藏类很容易，但Visual Studio不能自动完成该工作。需要为继承自ResourceDictionary的部分类添加代码文件，并在构造函数中调用InitializeComponent()方法：
+    public partial class GradientButtonVariant : ResourceDictionary
+    {
+        public GradientButtonVariant()
+        {
+            InitializeComponent();
+        }
+    }
+    这里使用的类名为GradientButtonVariant，而且该类存储在GradientButtonVariant.xaml.cs文件中。包含资源的XAML文件被命名为GradientButtonVariant.xaml。不是必须使用
+    一致的名称，但这是一个好主意，并且在创建窗口以及创建页面时也遵循了Visual Studio使用的这一约定
+    接下来将类链接到资源字典。通过为资源字典的根元素添加Class特性完成该工作，就像为窗口应用Class特性一样，并且可为任何XAML类应用Class特性。然后提供完全限定的类名。
+    在本示例中，项目名称是WPF_ControlTemplate，因此这是默认命名空间，最后的标签可能如下所示：
+    <ResourceDictionary x:Class="ControlTemplates.GradientButtonVariant" ...>
+    现在可使用该代码创建资源字典并将他应用于窗口
+    GradientButtonVariant newDictionary = new GradientButtonVariant();
+    this.Resources.MergedDictionaries[0] = newDictionary;
+    在Solution Explorer中，如果希望GradientButtonVariant.xaml.cs文件嵌套在GradientButtonVariant.xaml文件的下面，需要在文本编辑器中修改.csproj项目文件。
+    在<ItemGroup>部分，找到代码隐藏文件，并将下面的代码：
+    <Compile Include="Resources\GradientButtonVariant.xaml.cs"/>
+    修改为：
+    <Compile Include="Resources\GradientButtonVariant.xaml.cs">
+        <DependentUpon>Resources\GradientButtonVariant.xaml</DependentUpon>
+    </Compile>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    -->
 
 </ResourceDictionary>

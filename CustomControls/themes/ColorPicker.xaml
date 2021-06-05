@@ -1,6 +1,18 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:CustomControls">
+                    <!--
+                    自定义的控件样式必须使用TargetType特性将自身自动关联到颜色拾取器
+
+    可使用样式设置控件类中的任意属性(无论是继承自基类的属性还是新增属性)。但在此，样式最有用的任务是应用新模板，新模板定义了控件的默认
+    可视化外观。
+
+    很容易就能将普通标记(如颜色拾取器使用的标记)转换到控件模板中。但要注意以下几点：
+    1.当创建链接到父控件类属性的绑定表达式时，不能使用ElementName属性，而需要使用RelativeSource属性指示希望绑定到父控件。如果单向绑定
+    完全能够满足需要，通常可以使用轻量级的TemplateBinding标记表达式，而不需要使用功能完备的数据绑定
+    2.不能在控件模板中关联事件处理程序。相反，需要为元素提供能够识别的名称，并在控件构造函数中通过代码为他们关联事件处理程序
+    3.除非希望关联事件处理程序或通过代码与他进行交互，否则不要在控件模板中命令元素。当命名希望使用的元素时，使用“PART_元素名”的形式进行命名
+    -->
     <Style TargetType="{x:Type local:ColorPicker}">
         <Setter Property="Template">
             <Setter.Value>
@@ -31,6 +43,10 @@
                          Margin="{TemplateBinding Padding}"
                          Width="50" Stroke="Black" StrokeThickness="1">
                                 <Rectangle.Fill>
+                                    <!--
+                                    我认为这里应该是这样，但是有错误，不知道为什么
+                                    <SolidColorBrush x:Name="PART_PreviewBrush"></SolidColorBrush>
+                                    -->
                                     <SolidColorBrush Color="{Binding Path=Color,
                        RelativeSource={RelativeSource TemplatedParent}}"></SolidColorBrush>
                                 </Rectangle.Fill>
@@ -44,3 +60,84 @@
         </Setter>
     </Style>
 </ResourceDictionary>
+
+    <!--
+    本例已用TemplateBinding扩展替换一些绑定表达式。其他一些绑定表达式仍使用Binding扩展，但将RelativeSource设置为指向模板的父元素(自定义控件)。
+    尽管TemplateBinding和将RelativeSource属性设置为TemplatedParent值的Binding的作用相同——从自定义控件的属性中提取数据——但是使用量级更轻的
+    TemplateBinding总是合适的。如果需要双向绑定(与滑动条一样)或绑定到继承自Freezable的类(如SolidColorBrush类)的属性，TemplateBinding就不能工作了
+    -->
+
+    <!--
+    精简控件模板
+
+    正如前面所见，颜色拾取器控件模板填充了需要的全部内容，您可按与使用颜色拾取器相同的方式来使用。然而，仍可通过移除一些细节来简化模板
+
+    现在，所有希望提供自定义模板的控件使用者都必须添加大量绑定表达式，以确保控件能够继续工作，这并不难，但很繁琐。另一种选择是，在控件自身的初始化代码中
+    配置所有绑定表达式，这样，模板就不需要指定这些细节了
+    注意：当为构成自定义控件的元素关联事件处理程序时使用的是相同的技术。通过代码关联事件处理程序，而不是在模板中使用事件特性
+
+    1.添加部件名称
+    为了让这一系统能够工作，代码要能找到所需的元素。WPF控件通过名称定位他们需要的元素。所以，元素的名称变成自定义控件公有接口的一部分，而且需要恰当的描述性名称。
+    根据约定，这些名称以PART_开头，后跟元素名称。元素名称的首字母要大写，就像属性名称。对于需要的元素名称，PART_RedSlider是合适的选择，而PART_sldRed、
+    PART_redSilder以及RedSlider等名称都不合适
+
+   <Slider Name="PART_RedSlider" Minimum="0" Maximum="255" 
+Margin="{TemplateBinding Padding}"></Slider>
+   <Slider Grid.Row="1" Name="PART_GreenSlider" Minimum="0" Maximum="255"
+Margin="{TemplateBinding Padding}"></Slider>
+   <Slider Grid.Row="2" Name="PART_BlueSlider" Minimum="0" Maximum="255"
+Margin="{TemplateBinding Padding}"></Slider> 
+    注意，Margin属性仍使用绑定表达式添加内边距，但这是一个可选的细节，可以很容易地从自定义模板中去掉该细节(可选择硬编码内边距或者使用使用不同的布局)
+
+    <Rectangle Grid.Column="1" Grid.RowSpan="3"
+     Margin="{TemplateBinding Padding}"
+     Width="50" Stroke="Black" StrokeThickness="1">
+        <Rectangle.Fill>
+            <SolidColorBrush x:Name="PART_PreviewBrush"></SolidColorBrush>
+        </Rectangle.Fill>
+    </Rectangle>
+    为确保获得最大的灵活性，这里没有为Rectangle元素提供名称，而是为其内部的SolidColorBrush指定了名称。这样，可根据模板为颜色预览功能使用任何形状或任意元素
+
+
+    
+    
+    
+    2.操作模板部件
+
+    在初始化控件后，可连接绑定表达式，但有一种更好的方法。WPF有一个专用的OnApplyTemplate()方法，如果需要在模板中查找元素并关联事件处理程序或添加数据绑定
+    表达式，应重写该方法。在该方法中，可以使用GetTemplateChild()方法(该方法继承自FrameworkElement)查找所需的元素
+
+    如果没有找到希望处理的元素，推荐的模式就不起作用。也可添加代码来检查该元素，如果元素存在，再检查类型是否正确；如果类型不正确，就引发异常(此处的想法是，
+    不存在的元素代表有意丢失某个特定功能，但元素类型不正确则代表错误)
+
+    3.记录模板部件
+    对于本示例，还有最后一处应予改进。良好的设计指导原则建议为控件声明添加TemplatePart特性，以记录在控件模板中使用了哪些部件名称，以及为每个部件使用了什么
+    类型的控件。从技术角度看，这一步不是必需的，但该文档可为其他使用自定义类的用户提供帮助(还可通过允许构建自定义控件模板的设计工具(如Expression Blend)来
+    进行检查)
+
+    下面是应当为ColorPicker控件类添加的TemplatePart特性：
+    [TemplatePart(Name = "PART_RedSlider", Type = typeof(RangeBase))]
+    [TemplatePart(Name = "PART_BlueSlider", Type = typeof(RangeBase))]
+    [TemplatePart(Name = "PART_GreenSlider", Type = typeof(RangeBase))]
+    [TemplatePart(Name = "PART_PreviewBrush", Type = typeof(SolidColorBrush))] 
+     public class ColorPicker : System.Windows.Controls.Control
+    {...}
+
+
+    
+    
+    
+    查看控件的默认样式
+
+    每个控件都有默认样式。可调用控件类静态构造函数的DefaultStyleKeyProperty.OverrideMetadata()方法来指示自定义控件应使用的默认样式。否则，自定义控件
+    将简单地使用为基类控件定义的默认样式
+    可能和您所期望的相反，默认主题样式不是通过Style属性提供的。WPF库中的所有控件都为他们的Style属性返回null引用
+    相反，Style属性是为应用程序样式准备的。如果设置了一个应用程序样式，他会合并到默认主题样式。如果设置的应用程序样式与默认样式发生了冲突，应用程序样式会
+    胜出，并覆盖默认样式中的属性设置器或触发器。但没有覆盖的细节仍然保留，这正是所希望的行为。这样可创建只改变几个属性(如按钮的文本字体)的应用程序样式，
+    而不会删除再默认主题样式中提供的其他重要细节(如控件模板)
+    有时可通过代码检索默认样式。为此，可使用FindResource()方法为具有恰当元素类型键的样式搜索资源层次。
+    例如，如果希望查找应用到Button类的默认样式，可使用下面的代码语句：
+    Style style = Application.Current.FindResource(typeof(Button));
+    
+    
+    -->

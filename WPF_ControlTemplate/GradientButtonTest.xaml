@@ -6,6 +6,31 @@
         xmlns:local="clr-namespace:WPF_ControlTemplate"
         mc:Ignorable="d"
         Title="GradientButtonTest" Height="280" Width="322">
+<!--
+    组织模板资源
+
+    当使用控件模板时，需要决定如何更广泛地共享模板，以及是否希望自动地或明确地应用模板
+
+    大多数情况下，控件模板应用于多个窗口，甚至可能应用于整个应用程序。为避免多次定义模板，可在Application类
+    地Resources集合中定义模板资源。不过，通常，控件模板在多个应用程序之间共享。单个应用程序很有可能使用单独
+    开发地模板。然而，一个应用程序只能有一个App.xaml文件和一个Application.Resources集合。因此，在单独资源
+    字典中定义资源是一个更好的注意。这样，可灵活地在特定窗口或在整个应用程序中使用资源。而且还可以结合使用
+    样式，因为任何应用程序都可以包含多个资源字典
+
+    虽然可将所有模板组合到单个资源字典中，但富有经验的工作人员更愿意为每个控件模板创建单独的资源字典，这是因为
+    控件模板可能很快会变得过于复杂，并可能需要使用其他相关资源。将他们保存在一个单独的地方，并与其他控件相隔离，
+    是一种很好的组织方式
+
+    
+    -->
+    
+    
+    
+    
+    <!--
+    为使用资源字典，只需要将他们添加到特定窗口或应用程序(这种情况更常见)的Resources集合中。可使用
+    MergedDictionaries集合完成该工作
+    -->
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -71,6 +71,12 @@
     <Compile Include="MultiPartTemplates.xaml.cs">
       <DependentUpon>MultiPartTemplates.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Resources\GradientButton.xaml.cs">
+      <DependentUpon>GradientButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\GradientButtonVariant.xaml.cs">
+      <DependentUpon>GradientButtonVariant.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SimpleCustomButton.xaml.cs">
       <DependentUpon>SimpleCustomButton.xaml</DependentUpon>
     </Compile>

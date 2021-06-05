@@ -87,6 +87,12 @@
     </Compile>
     <Compile Include="CustomEllipseAnnotation.cs" />
     <Compile Include="DLLWrapper.cs" />
+    <Compile Include="FunctionSeriesTest.xaml.cs">
+      <DependentUpon>FunctionSeriesTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ItemsControlPlot.xaml.cs">
+      <DependentUpon>ItemsControlPlot.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ScatterDiagram.xaml.cs">
       <DependentUpon>ScatterDiagram.xaml</DependentUpon>
     </Compile>
@@ -119,6 +125,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="FunctionSeriesTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ItemsControlPlot.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ScatterDiagram.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

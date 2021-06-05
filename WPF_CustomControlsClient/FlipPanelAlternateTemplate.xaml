@@ -7,6 +7,23 @@
         xmlns:lib="clr-namespace:CustomControls;assembly=CustomControls"
         mc:Ignorable="d"
         Title="FlipPanelAlternateTemplate" Height="300" Width="300">
+
+    <!--
+    使用不同的控件模板
+    
+    已经恰当设计好的自定义控件极其灵活。对于FlipPanel控件，可提供新模板来更改ToggleButton按钮的外观和位置，并修改当在前后
+    内容区域之间进行切换时应用的动画效果
+
+    在本例中，翻转按钮被放置到一个特殊的栏中，该栏位于前面的底部并且位于后面的顶部。当翻转面板时，他不是像一页纸那样翻转内容。
+    相反，他缩小前面内容的同时在后面展开后面的内容。当反向翻转面板时，后面的内容从下面开始挤向后面，前面的内容从上面展开。为
+    实现更精彩的效果，甚至还借助于BlurEffect类模糊正在变形的内容
+    -->
+    <!--
+    其他的内容区域几乎完全相同，由包含ContentPresenter元素的Border元素组成，而且包含自己的ToggleButton按钮，该按钮被放置
+    在阴影矩形的右边。另外还为Border元素定义了最重要的ScaleTransform对象和BlurEffect对象，动态翻转面板时使用了这两个对象
+
+    因为改变前面内容区域的动画和改变后面内容区域的动画同时运行，所以不需要自定义过渡来管理他们
+    -->
     <Window.Resources>
         <ControlTemplate x:Key="AlternateTemplate" TargetType="lib:FlipPanel">
             <Grid>
@@ -29,6 +46,9 @@
                             </Storyboard>
                         </VisualState>
 
+<!--
+下面是翻转面板的动画
+                        -->
                         <VisualState x:Name="Flipped">
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetName="FrontContentTransform"

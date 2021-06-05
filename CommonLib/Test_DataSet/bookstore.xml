@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<bookstore>
+	<book>
+		<title>Oberon's Legacy</title>
+		<author>Corets, Eva</author>
+		<price>5.95</price>
+	</book>
+</bookstore>

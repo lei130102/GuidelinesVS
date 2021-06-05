@@ -187,8 +187,8 @@ namespace OxyPlot_Test
             plotView.Model.Annotations.Add(polylineAnnotation);
 
             //斜椭圆的参数方程
-            //x = a * cost * cosθ - b * sint * sinθ + X,
-            //y = a * cost * sinθ + b * sint * cosθ + Y.
+            //x = a * cost * cosθ - b * sint * sinθ + Xc,
+            //y = a * cost * sinθ + b * sint * cosθ + Yc.
             //θ为椭圆倾斜角,
             //a,b分别为长、短半轴；
             //t为参数
@@ -211,22 +211,27 @@ namespace OxyPlot_Test
             }
 
 
-            {
-                PolygonAnnotation polygonAnnotation = new PolygonAnnotation();
-                polygonAnnotation.Fill = OxyColor.FromArgb(0, 0, 0, 0);
-                polygonAnnotation.Stroke = OxyColor.FromArgb(255, 0, 255, 0);
-                polygonAnnotation.StrokeThickness = 1;
-                for (double angle = -1 * Math.PI; angle < Math.PI; angle += 0.001)
-                {
-                    DataPoint point = new DataPoint(
-                        Math.Sqrt(b2) * Math.Cos(angle) * Math.Cos(dipAngle) - Math.Sqrt(a2) * Math.Sin(angle) * Math.Sin(dipAngle) + Xc,
-                        Math.Sqrt(b2) * Math.Cos(angle) * Math.Sin(dipAngle) + Math.Sqrt(a2) * Math.Sin(angle) * Math.Cos(dipAngle) + Yc
-                        );
-                    polygonAnnotation.Points.Add(point);
-                }
-                plotView.Model.Annotations.Add(polygonAnnotation);
-            }
+            //测试用的参考
+            //{
+            //    PolygonAnnotation polygonAnnotation = new PolygonAnnotation();
+            //    polygonAnnotation.Fill = OxyColor.FromArgb(0, 0, 0, 0);
+            //    polygonAnnotation.Stroke = OxyColor.FromArgb(255, 0, 255, 0);
+            //    polygonAnnotation.StrokeThickness = 1;
+            //    for (double angle = -1 * Math.PI; angle < Math.PI; angle += 0.001)
+            //    {
+            //        DataPoint point = new DataPoint(
+            //            Math.Sqrt(b2) * Math.Cos(angle) * Math.Cos(dipAngle) - Math.Sqrt(a2) * Math.Sin(angle) * Math.Sin(dipAngle) + Xc,
+            //            Math.Sqrt(b2) * Math.Cos(angle) * Math.Sin(dipAngle) + Math.Sqrt(a2) * Math.Sin(angle) * Math.Cos(dipAngle) + Yc
+            //            );
+            //        polygonAnnotation.Points.Add(point);
+            //    }
+            //    plotView.Model.Annotations.Add(polygonAnnotation);
+            //}
 
+
+
+
+            //不要通过使用EllipseAnnotation，因为他画出的椭圆是正椭圆，无法旋转，只能采用PolygonAnnotation根据椭圆的参数方程进行绘制
             //EllipseAnnotation ellipseAnnotation = new EllipseAnnotation();
             //ellipseAnnotation.Fill = OxyColor.FromArgb(0, 0, 0, 0);
             //ellipseAnnotation.Stroke = OxyColor.FromArgb(255, 255, 0, 0);
@@ -271,15 +276,132 @@ namespace OxyPlot_Test
             };
         }
 
+        void PrepareDataN(out List<StandardData> standardData, out TestData testData)
+        {
+            standardData = new List<StandardData>();
+            {
+                StandardData item = new StandardData()
+                {
+                    Salinity = 2,
+                    Watertemp = 4
+                };
+                standardData.Add(item);
+            }
+            //{
+            //    StandardData item = new StandardData()
+            //    {
+            //        Salinity = 30,
+            //        Watertemp = -50
+            //    };
+            //    standardData.Add(item);
+            //}
+            {
+                StandardData item = new StandardData()
+                {
+                    Salinity = 30,
+                    Watertemp = 10
+                };
+                standardData.Add(item);
+            }
+            {
+                StandardData item = new StandardData()
+                {
+                    Salinity = 12,
+                    Watertemp = 14
+                };
+                standardData.Add(item);
+            }
+
+            testData = new TestData()
+            {
+                Salinity = 0,
+                Watertemp = 1,
+                Depth = 3000
+            };
+        }
+
+        void PrepareDataH(out List<StandardData> standardData, out TestData testData)
+        {
+            standardData = new List<StandardData>();
+            {
+                StandardData item = new StandardData()
+                {
+                    Salinity = 4,
+                    Watertemp = 0
+                };
+                standardData.Add(item);
+            }
+            {
+                StandardData item = new StandardData()
+                {
+                    Salinity = -4,
+                    Watertemp = 0
+                };
+                standardData.Add(item);
+            }
+            {
+                StandardData item = new StandardData()
+                {
+                    Salinity = 0,
+                    Watertemp = -2 
+                };
+                standardData.Add(item);
+            }
+
+            testData = new TestData()
+            {
+                Salinity = 0,
+                Watertemp = 2,
+                Depth = 3000
+            };
+        }
+
+        void PrepareDataV(out List<StandardData> standardData, out TestData testData)
+        {
+            standardData = new List<StandardData>();
+            {
+                StandardData item = new StandardData()
+                {
+                    Salinity = 2,
+                    Watertemp = 0
+                };
+                standardData.Add(item);
+            }
+            {
+                StandardData item = new StandardData()
+                {
+                    Salinity = -2,
+                    Watertemp = 0
+                };
+                standardData.Add(item);
+            }
+            {
+                StandardData item = new StandardData()
+                {
+                    Salinity = 0,
+                    Watertemp = -4 
+                };
+                standardData.Add(item);
+            }
+
+            testData = new TestData()
+            {
+                Salinity = 0,
+                Watertemp = 4,
+                Depth = 3000
+            };
+        }
+
         void calculationEllipse(double r, double s, double t, double u, double v, double w, out double Xc, out double Yc, out double dipAngle, out double a2, out double b2)
         {
             //rx ^ 2 + sy ^ 2 + txy + ux + vy + w = 0
             //Ax ^ 2 + Cy ^ 2 + Bxy + Dx + Ey + 1 = 0
-            double A = r / w;
-            double B = t / w;
-            double C = s / w;
-            double D = u / w;
-            double E = v / w;
+            double A = r;
+            double B = t;
+            double C = s;
+            double D = u;
+            double E = v;
+            double F = w;
 
             //椭圆几何中心
             Xc = (B * E - 2 * C * D) / (4 * A * C - B * B);
@@ -288,28 +410,19 @@ namespace OxyPlot_Test
             //a倾角
             dipAngle = Math.Atan(B / (A - C)) / 2;
 
-            //半轴
-            double m2 = 2 * (A * Xc * Xc + C * Yc * Yc + B * Xc * Yc - 1) / (A + C + Math.Sqrt((A - C) * (A - C) + B * B));
-            double n2 = 2 * (A * Xc * Xc + C * Yc * Yc + B * Xc * Yc - 1) / (A + C - Math.Sqrt((A - C) * (A - C) + B * B));
-
-            if(dipAngle < 0)
+            //b^2 - a^2 = [(cosa)^2 - (sina)^2]/(A - C)
+            double b2a2 = (Math.Cos(dipAngle) * Math.Cos(dipAngle) - Math.Sin(dipAngle) * Math.Sin(dipAngle)) / (A - C);
+            
+            if(b2a2 > 0)
             {
-                dipAngle = dipAngle + Math.PI / 2;
-            }
-
-            if (m2 > n2)
-            {
-                a2 = m2;
-                b2 = n2;
+                a2 = 2 * (A * Xc * Xc + C * Yc * Yc + B * Xc * Yc - F) / (A + C + Math.Sqrt((A - C) * (A - C) + B * B));
+                b2 = 2 * (A * Xc * Xc + C * Yc * Yc + B * Xc * Yc - F) / (A + C - Math.Sqrt((A - C) * (A - C) + B * B));
             }
             else
             {
-                a2 = n2;
-                b2 = m2;
+                a2 = 2 * (A * Xc * Xc + C * Yc * Yc + B * Xc * Yc - F) / (A + C - Math.Sqrt((A - C) * (A - C) + B * B));
+                b2 = 2 * (A * Xc * Xc + C * Yc * Yc + B * Xc * Yc - F) / (A + C + Math.Sqrt((A - C) * (A - C) + B * B));
             }
-
-            int z = 0;
-            ++z;
         }
 
         void calculationConvexHull(List<StandardData> standardData, TestData testData, out double n, out List<int> standardDataConvexHullIndices, out List<TestDataConvexHull> testDataConvexHullIndices)

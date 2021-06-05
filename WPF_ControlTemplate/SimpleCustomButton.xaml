@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPF_ControlTemplate"
         mc:Ignorable="d"
-        Title="SimpleCustomButton" Height="450" Width="800">
+        Title="SimpleCustomButton" Height="410" Width="378">
         <!--
         创建控件模板
 

@@ -23,6 +23,8 @@ namespace CommonLib
         public MainWindow()
         {
             InitializeComponent();
+
+            CommonLib.Test_DateTime.Test.run();
         }
     }
 }

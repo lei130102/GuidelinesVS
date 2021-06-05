@@ -1,0 +1,71 @@
+﻿<Window x:Class="WPF_DataBinding.CustomListViewTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_DataBinding"
+        mc:Ignorable="d"
+        Title="CustomListViewTest" Height="375" Width="525">
+    <Window.Resources>
+        <local:ImagePathConverter x:Key="ImagePathConverter"/>
+
+        <local:TileView x:Key="ImageView">
+            <local:TileView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Width="150" VerticalAlignment="Top">
+                        <Image Source="{Binding Path=ProductImagePath, Converter={StaticResource ImagePathConverter}}"/>
+                        <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" Text="{Binding Path=ModelName}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </local:TileView.ItemTemplate>
+        </local:TileView>
+
+        <local:TileView x:Key="ImageDetailView" SelectedBackground="LightSteelBlue">
+            <local:TileView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Col2"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Margin="5" Width="100" Source="{Binding Path=ProductImagePath, Converter={StaticResource ImagePathConverter}}"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock FontWeight="Bold" Text="{Binding Path=ModelName}"/>
+                            <TextBlock Text="{Binding Path=ModelNumber}"/>
+                            <TextBlock Text="{Binding Path=UnitCost, StringFormat={}{0:C}}"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </local:TileView.ItemTemplate>
+        </local:TileView>
+
+        <GridView x:Key="GridView">
+            <GridView.Columns>
+                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=ModelName}"/>
+                <GridViewColumn Header="Model" DisplayMemberBinding="{Binding Path=ModelNumber}"/>
+                <GridViewColumn Header="Price" DisplayMemberBinding="{Binding Path=UnitCost, StringFormat={}{0:C}}"/>
+            </GridView.Columns>
+        </GridView>
+    </Window.Resources>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListView Name="lstProducts" View="{StaticResource GridView}"/>
+        <Grid Grid.Row="1" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Margin="5" VerticalAlignment="Center" Text="Choose your view:"/>
+            <ComboBox Grid.Column="1" Margin="5" Width="150" HorizontalAlignment="Left"
+                      Name="lstView" SelectionChanged="lstView_SelectionChanged">
+                <ComboBoxItem Content="GridView"/>
+                <ComboBoxItem Content="ImageView"/>
+                <ComboBoxItem Content="ImageDetailView"/>
+            </ComboBox>
+        </Grid>
+    </Grid>
+</Window>

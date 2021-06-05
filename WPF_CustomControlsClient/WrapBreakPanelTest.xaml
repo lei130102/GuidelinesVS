@@ -17,6 +17,9 @@
                 </Style>
             </StackPanel.Resources>
             <TextBlock Padding="5" Background="LightGray">Content above the WrapBreakPanel.</TextBlock>
+            <!--
+            在本例中，WrapBreakPanel面板正确地分割行，并且根据其子元素的尺寸计算所需的尺寸
+            -->
             <lib:WrapBreakPanel>
                 <Button>No Break Here</Button>
                 <Button>No Break Here</Button>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPF_ControlTemplate"
         mc:Ignorable="d"
-        Title="ButtonTemplate" Height="450" Width="800">
+        Title="ButtonTemplate" Height="300" Width="300">
     <Window.Resources>
         <LinearGradientBrush x:Key="NormalBrush" StartPoint="0,0" EndPoint="0,1">
             <GradientBrush.GradientStops>
