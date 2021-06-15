@@ -6,6 +6,19 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="BindProductObject" Height="300" Width="300">
+        <!--
+    显示绑定对象
+
+    创建Product对象的一个实例，然后将它绑定到控件上。尽管可创建Product对象并将其保存为资源或静态属性，
+    但这并不合理。相反，需要使用StoreDb类在运行时创建合适的对象，然后将创建的对象绑定到窗口上
+    (注意：尽管不使用代码的声明式方法听起来更诱人，但有大量原因迫使我们在数据绑定窗口中使用少量代码。
+    例如，如果正在查询数据库，可能希望在代码中处理连接，从而可以决定如何处理异常以及如何将问题通知
+    给调用者)
+
+    当设计这个窗口时，不能访问将在运行时提供数据的Product对象。不过，仍可创建没有指定数据源的绑定，
+    只需要指定每个元素使用的Product类的属性即可
+    
+    -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -27,6 +40,10 @@
         </Grid>
 
         <Border Grid.Row="1" Padding="7" Margin="7" Background="LightSteelBlue">
+        <!--
+        注意，上面的代码为封装所有这些细节的Grid控件指定名称，从而可在代码中操作该Grid控件并完成
+            数据绑定
+            -->
             <Grid Name="gridProductDetails">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>

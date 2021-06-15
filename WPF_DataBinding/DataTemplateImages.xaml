@@ -6,6 +6,41 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="DataTemplateImages" Height="450" Width="675">
+
+    <!--
+    使用更高级的模板
+
+    数据模板可包含非常丰富的内容。除基本元素外，如TextBlock控件和数据绑定表达式，他们还能使用更复杂的控件、关联事件处理程序、
+    将数据转换为不同的表达形式以及使用动画等。
+
+    下面快速分析两个示例，看一看数据模板的功能有多么强大是值得的。首先，在数据绑定中可以使用值转换器对象将数据转换为更有用的
+    表示形式。
+
+    下面的示例使用在前面演示的ImagePathConverter转换器为列表中的每个产品显示图像：
+    
+    <Window.Resources>
+        <local:ImagePathConverter x:Key="ImagePathConverter"></local:ImagePathConverter>
+        <DataTemplate x:Key="ProductTemplate">
+            <Border Margin="5" BorderThickness="1" BorderBrush="SteelBlue" CornerRadius="4">
+                <Grid Margin="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock FontWeight="Bold" Text="{Binding Path=ModelNumber}"></TextBlock>
+                    <TextBlock Grid.Row="1" Text="{Binding Path=ModelName}"></TextBlock>
+                    <Image Grid.Row="2" Grid.RowSpan="2" Source="{Binding Path=ProductImagePath, Converter={StaticResource ImagePathConverter}}"></Image>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+    尽管这个标记未使用任何特殊内容，但结果却是一个非常有趣的列表
+
+    
+    -->
+
     <Window.Resources>
         <local:ImagePathConverter x:Key="ImagePathConverter"/>
     </Window.Resources>

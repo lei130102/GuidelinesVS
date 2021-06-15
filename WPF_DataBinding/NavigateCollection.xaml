@@ -6,6 +6,189 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="NavigateCollection" Height="367" Width="422">
+        <!--
+    现在已经研究了数据转换艺术、为列表中的项应用样式以及构建数据模板，已经准备好进入数据视图了。
+    数据视图在后台工作，用于协调绑定数据的集合。使用数据视图，可添加导航逻辑并实现过滤、排列以及分组
+    
+    
+    
+    View对象
+    
+    当将集合(或DataTable)绑定到ItemsControl控件时，会不加通告地在后台创建数据视图——位于数据源和绑定的控件之间。数据视图是进入数据源的窗口，
+    可以跟踪当前项，并且支持各种功能，如排序、过滤以及分组。这些功能和数据对象本身是相互独立的，这意味着可在窗口的不同部分(或应用程序的不同
+    部分)使用不同的方式绑定相同的数据。例如，可将同一产品集合绑定到两个不同的列表，并对产品进行过滤以显示不同的记录
+
+    使用的视图对象取决于数据对象的类型。所有视图都继承自CollectionView类，并且有两个继承自CollectionView类的特殊实现：ListCollectionView
+    和BindingListCollectionView。下面是CollectionView类的工作原理：
+    1.如果数据源实现了IBindingList接口，就会创建BindingListCollectionView视图。当绑定到ADO.NET中的DataTable对象时会创建该视图
+    2.如果数据源没有实现IBindingList接口，但实现了IList接口，就会创建ListCollectionView视图，当绑定到ObservableCollection集合(如产品列表)时
+     会创建该视图
+    3.如果数据源没有实现IBindingList或IList接口，但实现了IEnumerable接口，就会得到基本的CollectionView视图
+    
+    提示：
+    在理想情况下，应避免第三种情况。对于大量的项和修改数据源的操作(如插入和删除)、CollectionView视图的性能不佳。如果不是绑定到ADO.NET数据对象，使用
+    ObservableCollection类几乎总是最简单的方法
+
+    
+    
+
+
+    
+    
+    检索视图对象
+
+    为得到当前使用的视图对象，可使用System.Windows.Data.CollectionViewSource类的GetDfaultView()静态方法。当调用GetDefaultView()方法时，传入
+    数据源——正在使用的集合或DataTable对象。下面的示例获取绑定到列表的产品集合的视图：
+    ICollectionView view = CollectionViewSource.GetDefaultView(lstProducts.ItemsSource);
+    GetDefaultView()方法总是返回一个ICollectionView引用，所以您需要根据数据源，将视图对象转换为合适的类，如ListCollectionView或BindingListCollectionView
+    ListCollectionView view = (ListCollectionView)CollectionViewSource.GetDefaultView(lstProducts.ItemsSource);
+
+    
+    
+    
+
+    
+    
+    视图导航
+
+    可使用视图对象完成的最简单一件事是确定列表中的项数(通过Count属性)，以及获取当前数据对象的引用(通过CurrentItem属性)或当前位置索引(通过CurrentIndex属性)。
+    还可以用少数方法从一条记录移到另一条记录，如MoveCurrentToFirst()、MoveCurrentToLast()、MoveCurrentToNext()、MoveCurrentToPrevious()以及
+    MoveCurrentToPosition()。到目前为止，您还不需要这些细节，因为现在看到的所有示例都是通过使用列表，让用户可从一条记录移到下一条记录。但是如果希望创建记录
+    浏览器应用程序，就可能希望提供自己的导航按钮
+
+    为绑定的产品显示数据的绑定文本框保持不变。他们只需要指明合适的属性
+    <TextBlock Margin="7">Model Number:</TextBlock>
+    <TextBox Margin="5" Grid.Column="1" Text="{Binding Path=ModelNumber}"></TextBox>
+    然而，这个示例没有提供任何列表控件，所以需要由您负责控制导航。为了简单起见，可在窗口类中使用成员变量来保存视图的引用：
+    private ListCollectionView view;
+    在这个示例中，代码将视图转换成恰当的视图类型(ListCollectionView)，而不使用ICollectionView接口。虽然ICollectionView接口提供了大多数相同的功能，但
+    缺少能提供集合中项数的Count属性
+
+    当首次加载窗口时可以获取数据，将数据放到窗口的DataContext属性中，并保存指向视图的一个引用：
+    ICollection<Products> products = App.StoreDB.GetProducts();
+    this.DataContext = products;
+    view = (ListCollectionView)CollectionViewSource.GetDefaultView(this.DataContext);
+    view.CurrentChanged += new EventHandler(view_CurrentChanaged);
+    第二行代码完成了在窗口中显示项集合所需的全部工作。这行代码在DataContext属性中放置Product对象的完整集合。窗体上绑定的控件会查找元素树，直到他们发现了这个对象。
+    当然，可能希望绑定表达式绑定到集合中的当前项，而不是绑定到集合本身，但WPF足够智能，能够自动完成这一设置。他使用当前项自动提供信息，所以不需要额外的关联代码
+
+    上面的示例中有一行额外的代码语句。该行代码为视图的CurrentChanged事件连接事件处理程序。当引发这个事件时，可执行一些有用的操作。例如，根据当前位置启用或禁用上一个
+    按钮和下一个按钮，以及在窗口底部的TextBlock元素中显示当前位置
+    private void view_CurrentChanged(object sender, EventArgs e)
+    {
+        lblPosition.Text = "Record " + (view.CurrentPosition + 1).ToString() + " of " + view.Count.ToString();
+        cmdPrev.IsEnabled = view.CurrentPosition > 0;
+        cmdNext.IsEnabled = view.CurrentPosition < view.Count -1;
+    }
+    上面的代码像是数据绑定和触发器的候选方法。然而，其逻辑有点太复杂(部分原因是为了获取希望显示的记录位置编号，需要为索引加1)
+
+    最后一步是为前面的按钮和后面的按钮编写逻辑。因为当不能应用他们时，会自动禁用这些按钮，所以不必担心移到第一项之前或最后一项之后
+    private void cmdNext_Click(object sender, RoutedEventArgs e)
+    {
+        view.MoveCurrentToNext();
+    }
+    private void cmdPrev_Click(object sender, RoutedEventArgs e)
+    {
+        view.MoveCurrentToPrevious();
+    }
+    为得到有趣的结果，可为这个窗口添加列表控件，这样用户就可以使用按钮逐一查看每条记录，或使用列表直接跳到特定的项
+
+    对于这种情况，需要使用ItemsSource属性(以获取完整的产品列表)并为Text属性使用绑定(以显式正确的项)的ComboBox控件：
+    <ComboBox Name="lstProducts" DisplayMemberPath="ModelName" Text="{Binding Path=ModelName}" SelectionChanged="lstProducts_SelectionChanged"></ComboBox>
+
+    当首次检索产品集合时，绑定列表：
+    lstProducts.ItemsSource = products;
+
+    这可能不会得到我们期望的效果。默认情况下，在ItemsControl控件中选择的项和视图中的当前项并不同步。这意味着当从列表中进行新的选择时，不是导航到新记录，而是最终会修改
+    当前记录的ModelName属性。幸运的是，可采用两种简单方法解决这个问题
+
+    粗鲁的强制方法是无论何时在列表中选择一条记录，都简单地移动到新记录。
+    下面的代码可以完成这一工作：
+    private void lstProducts_SelectionChanged(object sender, RoutedEventArgs e)
+    {
+        view.MoveCurrentTo(lstProducts.SelectedItem);
+    }
+    更简单的方法是，将ItemsControl.IsSynchronizedWithCurrentItem属性设置为true。使用这种方法，当前选择的项会被自动同步，从而匹配视图的当前位置，而且
+    不需要使用任何代码
+
+
+    
+    
+    
+
+    
+    
+    
+    
+    为了编辑使用查找列表
+
+    ComboBox控件为编辑记录值提供了一种简便方法。在当前示例中，他没有什么多大意义——毕竟，没理由为一个产品提供与另一个产品相同的名称。然而，在很多情况下，
+    ComboBox控件是一个非常理想的编辑工具。
+    
+    例如，在数据库中可能有个字段能接受预先设置的几个数值中的一个。对于这种情况，可使用ComboBox控件，并为Text属性使用绑定表达式将它绑定到恰当的字段。然而，
+    通过设置他的ItemsSource属性来指向一个已经定义好的列表，可使用允许的值填充ComboBox控件。如果希望以某种方式(例如，作为文本)显示列表中的数值，但用另一种方式
+    (例如，作为数字编码)存储他们，为Text属性绑定添加一个值转换器即可。
+
+    使用查找列表的另一种合理的情况是，处理关联的表。例如，可能希望允许用户使用包含所有预定义类别的列表为产品选择类别。基本做法是相同的：设置Text属性以便绑定到
+    恰当的字段，并使用ItemsSource属性填充选项列表。如果需要将低级的唯一ID转换为更有意义的名称，可使用值转换器
+
+    
+    
+    
+    
+    
+    
+    以声明方式创建视图
+    
+    上面的示例使用将在本章通篇中看到的简单模式。使用代码检索希望使用的视图，然后通过代码修改视图。但还有一种选择——可在XAML标记中以声明方式构建CollectionViewSource
+    对象，然后将CollectionViewSource对象绑定到控件(如列表控件)
+
+    注意：
+    从技术角度看，CollectionViewSource不是视图，而是用于检索视图的辅助类(使用在前面示例中介绍的GetDefaultView()方法)。当需要时，甚至是能够创建视图的工厂
+
+    CollectionViewSource类中两个最重要的属性是View和Source，其中View属性封装了视图对象，Source属性封装了数据源。CollectionViewSource类还添加了
+    SortDescriptions和GroupDescriptions属性，这两个属性镜像了前面介绍过的同名视图属性。当使用CollectionViewSource类创建视图时，只是将这些属性的值传给视图。
+
+    CollectionViewSource类还提供了Filter事件，用于执行过滤。除被定义为事件从而可以很容易地使用XAML关联事件处理程序外，Filter事件的工作方式与视图对象提供的
+    Filter回调函数的工作方式相同
+
+    例如，考虑前面的示例，该例使用价格范围对产品进行分组。在此以声明方式定义这个示例所需的转换器和CollectionViewSource对象：
+    <local:PriceRangeProductGrouper x:Key="Price50Grouper" GroupInterval="50"/>
+    <CollectionViewSource x:Key="GroupByRangeView">
+        <CollectionViewSource.SortDescriptions>
+            <Component:SortDescription PropertyName="UnitCost" Direction="Ascending"/>
+        </CollectionViewSource.SortDescriptions>
+        <CollectionViewSource.GroupDescriptions>
+            <PropertyGroupDecription PropertyName="UnitCost" Converter="{StaticResource Price50Grouper}"/>
+        </CollectionViewSource.GroupDescriptions>
+    </CollectionViewSource>
+    注意，SortDescription类不是WPF命名空间中的类。所以为了使用该类，需要添加下面的命名空间别名：
+    xmlns:component="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+    一旦设置好CollectionViewSource对象，就可将它绑定到列表中：
+    <ListBox ItemsSource="{Binding Source={StaticResource GroupByRangeView}}" ...>
+    乍一看，这有些古怪。好像ListBox空间被绑定到CollectionViewSource对象，而不是被绑定到CollectionViewSource对象提供的视图(视图存储在CollectionViewSource.View属性中)。
+    然而，WPF数据绑定为CollectionViewSource对象使用了一种特殊的例外处理方式。当在绑定表达式中使用CollectionViewSource对象时，WPF会要求CollectionViewSource对象创建
+    视图，然后将视图绑定到恰当的元素
+
+    实际上，声明式方式并没有节省任何工作。在运行时仍需编写代码来检索数据。区别是现在代码必须通过CollectionViewSource对象传递数据，而不能直接为列表提供数据：
+    ICollection<Product> products = App.StoreDB.GetProducts();
+    CollectionViewSource viewSource = (CollectionViewSource)this.FindResource("GroupByRangeView");
+    viewSource.Source = products;
+    此外，也可使用XAML标记作为资源创建产品集合。然后可使用声明方式将CollectionViewSource对象绑定到产品集合。不过，仍需使用代码填充产品集合。
+
+    注意：
+    开发人员很少使用不可靠的方法创建不使用代码的数据绑定。有时，他们会使用XAML标记定义和填充数据集合(使用硬编码的值)。对于其他情况，用于填充数据对象的代码被
+    隐藏在数据对象的构造函数中。所有这些方法都严重脱离了实际。在此介绍这些方法仅仅是因为他们经常被用于创建快速的、准备不充分的数据绑定示例。
+
+    现在，您已经看到了如何使用基于代码和标记的方法配置视图，您可能会好奇哪种方法是更好的设计决定。其实，这两种方法都可以。应该根据希望在什么位置集中放置
+    数据视图的细节来决定使用哪种方法。
+
+    但如果希望使用多视图，选用哪种方法就变得更加重要了。对于这种情况，最好在标记中定义所有视图，然后使用代码在适当的视图中进行交换
+
+    提示：
+    如果视图是动态变化的，创建多视图就比较合理(例如，他们根据完全不同的准则进行分组)。在许多情况下，为当前视图修改排序或分组信息更简单
+    
+    -->
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

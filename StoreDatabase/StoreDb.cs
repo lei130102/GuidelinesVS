@@ -6,6 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+//使用自定义对象绑定到数据库
+
+
+
+
 namespace StoreDatabase
 {
     public class StoreDb

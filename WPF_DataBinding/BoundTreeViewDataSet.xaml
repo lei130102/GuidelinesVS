@@ -6,6 +6,157 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="BoundTreeViewDataSet" Height="300" Width="300">
+
+    <!--
+
+    将DataSet对象绑定到TreeView控件
+
+    还可以用TreeView控件显示多层的DataSet对象——具有连接关系的DataSet对象，连接关系将一个DataTable对象连接到另一个
+    DataTable对象
+
+    例如，下面的代码例程创建一个DataSet对象，使用产品表和单独的类别表填充该对象，并使用DataRelation对象将两个表链接在一起：
+    public DataSet GetCategoriesAndProductsDataSet()
+    {
+        SqlConnection con = new SqlConnection(connectionString);
+        sqlCommand cmd = new SqlCommand("GetProducts", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+
+        DataSet ds = new DataSet();
+        adapter.Fill(ds, "Products");
+        cmd.CommandText = "GetCategories";
+        adapter.Fill(ds, "Categories");
+
+        // Set up a relation between these tables
+        DataRelation relCategoryProduct = new DataRelation("CategoryProduct",
+            ds.Tables["Categories"].Columns["CategoryID"],
+            ds.Tables["Products"].Columns["CategoryID"]);
+        ds.Relations.Add(relCategoryProduct);
+
+        return ds;
+    }
+
+    为在TreeView控件中使用这个DataSet对象，首先绑定到用于显示第一层的DataTable对象：
+    DataSet ds = App.StoreDB.GetCategoriesAndProductsDataSet();
+    treeCategories.ItemsSource = ds.Tables["Categories"].DefaultView;
+
+    但如何获取相关联的行呢？毕竟，不能从XAML中调用诸如GetChildRows()的方法。幸运的是，WPF数据绑定系统为这种情况提供了
+    内置支持。技巧是使用DataRelation对象名称作为第二层的ItemsSource。在这个示例中，创建的DataRelation对象的名称是
+    CategoryProduct，所以是实现这一技巧的标记如下所示：
+
+    <TreeView Name="treeCategories" Margin="5">
+        <TreeView.ItemTemplate>
+            <HierarchicalDataTemplate ItemsSource="{Binding CategoryProduct}">
+                <TextBlock Text="{Binding CategoryName}" Padding="2"/>
+                <HierarchicalDataTemplate.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding ModelName}" Padding="2"/>
+                    </DataTemplate>
+                </HierarchicalDataTemplate.ItemTemplate>
+            </HierarchicalDataTemplate>
+        </TreeView.ItemTemplate>
+    </TreeView>
+    现在，这个示例和上一个示例的工作方式相同，也使用了自定义的Product和Category对象
+
+    
+    
+    
+    即时创建节点
+    
+    TreeView控件经常用于包含大量数据，这是因为TreeView控件的显示是能够折叠的。即使用户从顶部滚动到底部，也不需要显示全部信息。
+    完全可在TreeView控件中省略不显示的信息，以便降低开销(以及填充树所需的时间)。甚至更好的是，当展开每个TreeViewItem对象时会
+    引发Expanded事件，并且当关闭时会引发Collapsed事件。可通过处理这两个事件即时填充丢失的节点或丢弃不再需要的节点。这种技术被
+    称为即时创建节点(just-in-time node creation)
+
+    即时创建节点可应用于从数据库提取所需数据的应用程序，但典型的例子是目录浏览应用程序。现在，大多数用户都有层次复杂的庞大硬盘驱动器。
+    尽管可使用硬盘的目录结构填充TreeView控件，但这个过程非常缓慢。更好的做法是首先填充部分折叠的视图，并允许用户进入到特定目录。
+    当打开每个节点时，相应的子目录被添加到树中——这个过程几乎是瞬间完成的
+
+    使用即时TreeView控件显示硬盘中的文件夹并不是新鲜事物。然而，事件路由使WPF解决方案更趋完美
+
+    第一步是当第一次加载窗口时为TreeView控件添加驱动器列表。最初，针对每个驱动器的节点是折叠的。驱动器盘符显示在标题中，并且在TreeViewItem.Tag属性
+    中保存DriveInfo对象，方便了以后查找嵌套的目录，因为不需要重新创建对象(这会增加应用程序的内存开销，但也会减少访问文件所需的安全检查次数。虽然整体
+    效果不明显，但却能够稍微提高性能，并且可以简化代码)
+
+    下面的代码使用System.IO.DriveInfo类，将驱动器列表添加到TreeView控件中：
+    foreach(DriveInfo drive in DriveInfo.GetDrives())
+    {
+        TreeViewItem item = new TreeViewItem();
+        item.Tag = drive;
+        item.Header = drive.ToString();
+
+        item.Items.Add("*");
+        treeFileSystem.Items.Add(item);
+    }
+    上面给出的代码在每个驱动器节点中添加了一个占位符(具有星号的字符串)。占位符没有显示，因为最初节点处于折叠状态。一旦展开节点，就可以删除占位符并在
+    他的位置添加子目录列表
+
+    注意：
+    占位符是一个很有用的工具，可用于确定用户是否已经展开了这个文件夹以查看内容。然而，占位符的主要用途是确保在项的旁边显示展开图标。如果不使用占位符，
+    用户就不能展开目录，从而也就不能查找子文件夹。如果目录没有包含任何子文件夹，那么当用户试图展开他时，展开图标就会消失——这与使用Windows资源管理器
+    查看网络文件夹时的行为类似
+
+    为即时创建节点，必须处理TreeViewItem.Expanded事件。因为这个事件使用了冒泡功能，所以可直接在TreeView控件中关联事件处理程序，为包含的所有TreeViewItem
+    对象处理Expanded事件：
+    <TreeView Name="treeFileSystem" TreeViewItem.Expanded="item_Expanded">
+    </TreeView>
+    下面的代码处理Expanded事件，并使用System.IO.DirectoryInfo类填充树中缺少的下一层节点：
+    private void item_Expanded(object sender, RoutedEventArgs e)
+    {
+        TreeViewItem item = (TreeViewItem)e.OriginalSource;
+        item.Items.Clear();
+
+        DirectoryInfo dir;
+        if(item.Tag is DriveInfo)
+        {
+            DriveInfo drive = (DriveInfo)item.Tag;
+            dir = drive.RootDirectory;
+        }
+        else
+        {
+            dir = (DirectoryInfo)item.Tag;
+        }
+
+        try
+        {
+            foreach(DirectoryInfo subDir in dir.GetDirectories())
+            {
+                TreeViewItem newItem = new TreeViewItem();
+                newItem.Tag = subDir;
+                newItem.Header = subDir.ToString();
+                newItem.Items.Add("*");
+                item.Items.Add(newItem);
+            }
+        }
+        catch
+        {
+            // An exception could be thrown in this code if you don't
+            // have sufficient security permissions for a file or directory.
+            // You can catch and then ignore this exception.
+        }
+    }
+    现在，每次展开相应的项时该代码都会执行一次刷新。此外，也可仅在第一次展开时(这时会发现占位符)才进行刷新。这虽然能减少应用程序所需要做的工作，但却会
+    增加使用过时信息的机会。此外，可通过处理TreeViewItem.Selected事件，当每次选中一个项时进行刷新；或者当添加、删除或重命名文件夹时，使用组件
+    (如System.IO.FileSystemWatcher)等待操作系统通知。当发生变化时，FileSystemWatcher是唯一能够确保立即更新目录树的方法，但这种做法的开销也是最大的
+    
+
+    
+    
+    
+    
+    
+    创建高级的TreeView控件
+    
+    如果将控件模板的强大功能与TreeView控件结合在一起，那么还可以实现许多功能。实际上，可通过简单地替换TreeView和TreeViewItem控件的模板，创建外观和
+    行为都大不相同的控件。
+
+    为执行这些修改，需要更加深入地分析模板。可从那些令人大开眼界的示例开始。Visual Studio提供了一个多列的TreeView控件示例，使用网格统一管理一棵树。
+    为浏览该例，可在Visual Studio帮助中查找索引项"TreeListView sample[WPF]"。另一个示例是Josh Smith的布局实验，这个示例将TreeView控件转换为更
+    紧密的更像组织图的元素
+    
+    
+    
+    -->
     <Grid>
         <TreeView Name="treeCategories" Margin="5">
             <TreeView.ItemTemplate>

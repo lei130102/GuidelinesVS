@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="ExpandingDataTemplate" Height="424" Width="355">
+    
+    
     <Window.Resources>
         <local:ImagePathConverter x:Key="ImagePathConverter"/>
 

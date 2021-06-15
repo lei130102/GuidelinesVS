@@ -7,6 +7,159 @@
         mc:Ignorable="d"
         Title="BoundTreeView" Height="300" Width="300"
         xmlns:data="clr-namespace:StoreDatabase;assembly=StoreDatabase">
+        <!--
+        TreeView控件
+
+    TreeView控件是最重要的Windows控件之一，他被集成到Windows资源管理器乃至.NET帮助文档库等各种元素中。
+    WPF中实现的TreeView控件更是令人印象深刻，因为他完全支持数据绑定
+
+    TreeView控件在本质上是驻留TreeViewItem对象的特殊ItemsControl控件。但与ListViewItem对象不同，TreeViewItem
+    对象不是内容控件。相反，每个TreeViewItem对象都是单独的ItemsControl控件，可以包含更多TreeViewItem对象。
+    通过这一灵活性，可以创建更深层次的数据显示
+
+    注意：
+    从技术角度看，TreeViewItem类继承自HeaderedItemsControl类，HeaderedItemsControl类又继承自ItemsControl类。
+    HeaderedItemsControl类添加了Header属性，该属性包含了希望为树中每个项显示的内容(通常是文本)。WPF还另外提供了
+    两个HeaderedItemsControl类：MenuItem和ToolBar
+    
+    下面是一个非常基本的TreeView控件的骨架，他全部使用标记声明：
+    <TreeView>
+        <TreeViewItem Header="Fruit">
+            <TreeViewItem Header="Orange"/>
+            <TreeViewItem Header="Banana"/>
+            <TreeViewItem Header="Grapefruit"/>
+        </TreeViewItem>
+        <TreeViewItem Header="Vegetables">
+            <TreeViewItem Header="Aubergine"/>
+            <TreeViewItem Header="Squash"/>
+            <TreeViewitem Header="Spinach"/>
+        </TreeeViewItem>
+    </TreeView>
+
+    不见得非要使用TreeViewItem对象构造TreeView控件。实际上，几乎可为TreeView控件添加任何元素，包括按钮、面板以及
+    图像。然而，如果希望显示非文本内容，最好使用TreeViewItem封装器，并通过TreeViewItem.Header属性提供内容。虽然这与
+    直接为TreeView控件添加非TreeViewItem元素得到的效果相同，但这样做将更容易管理一些特定于TreeView控件的细节，例如选择
+    和展开节点。如果希望显示非UIElement对象，可使用具有HeaderTemplate或HeaderTemplateSelector属性的数据模板设置其格式
+
+    
+    
+    
+    
+    创建数据绑定的TreeView控件
+    
+    通常，不希望在标记中使用硬编码的固定信息填充TreeView控件。相反，将通过代码构造TreeViewItem对象，或使用数据绑定显示对象集合
+
+    使用数据填充TreeView控件非常简单——与任意ItemsControl控件一样，只需要设置ItemsSource属性。然而，这种技术只能填充TreeView控件
+    的第一层。使用TreeView控件更有趣的方法是包含具有某种嵌套结构的层次化数据
+
+    TreeView控件使得显示层次化数据变得更加容易，不管是使用手工编写的类还是使用ADO.NET DataSet。您只需要指定正确的数据模板，数据模板
+    指示不同层次数据之间的关系
+
+    例如，假设希望构建如图所示的示例。在前面已经看到过用于表示单个产品的Product类。但为了创建这个示例，还需要Category类。与Product类
+    一样，Category类实现了INotifyPropertyChanged接口以提供更改通知。唯一新增的细节是：Category类通过他的Products属性提供了一个
+    Product对象的集合
+
+    public class Category : INotifyPropertyChanged
+    {
+        private string categoryName;
+        public string CategoryName
+        {
+            get{return categoryName;}
+            set{categoryName = value; OnPropertyChanged(new PropertyChangedEventArgs("CategoryName"));}
+        }
+
+        private ObservableCollection<Product> products;
+        public ObservableCollection<Product> Products
+        {
+            get{return products;}
+            set{products = value; OnPropertyChanged(new PropertyChangedEventArgs("Products"));}
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            if(PropertyChanged != null)
+            {
+                PropertyChanged(this, e);
+            }
+        }
+
+        public Category(string categoryName, ObservableCollection<Product> products)
+        {
+            CategoryName = categoryName;
+            Products = products;
+        }
+    }
+
+    提示：
+    这个技巧——创建通过属性提供另一个集合的集合——是使用WPF数据绑定导航父-子关系的秘密所在。例如，可将Category对象集合绑定到一个列表
+    控件，然后将另一个列表控件绑定到当前选中的Category对象的Products属性，从而显示相关联的Product对象
+
+    为使用Category类，还需要修改在之前第一次看到的数据访问代码。现在，将从数据库查询有关产品和类别的信息。在这个示例中，窗口调用
+    StoreDB.GetCategoriesAndProducts()方法来获取Category对象集合，每个Category对象都有嵌套的Product对象集合。然后将Category
+    集合绑定到树控件，使树控件显示第一层数据：
+    treeCategories.ItemsSource = App.StoreDB.GetCategoriesAndProducts();
+
+    为显示类别，需要提供能处理绑定对象的TreeView.ItemTemplate。在这个示例中，需要显示每个Category对象的CategoryName属性。
+    下面是完成这一工作的数据模板：
+    <TreeView Name="treeCategories" Margin="5">
+        <TreeView.ItemTemplate>
+            <HierarchicalDataTemplate>
+                <TextBlock Text="{Binding Path=CategoryName}"/>
+            </HierarchicalDataTemplate>
+        </TreeView.ItemTemplate>
+    </TreeView>
+    
+    唯一不寻常的细节是使用HierarchicalDataTemplate对象设置TreeView.ItemTemplate属性，而不是使用DataTemplate对象。
+    HierarchicalDataTemplate对象具有一个额外优点，就是能够封装第二个模板。然后HierarchicalDataTemplate对象就可以从第一层数据中
+    提取项的集合，并将之提供给第二层的模板。可简单地设置ItemsSource属性，指示该属性具有子项：并设置ItemTemplate属性，指示如何设置
+    每个对象的格式
+
+    下面是修改后的数据模板： 
+    <TreeView Name="treeCategories" Margin="5">
+        <TreeView.ItemTemplate>
+            <HierarchicalDataTemplate ItemsSource="{Binding Path=Products}">
+                <TextBlock Text="{Binding Path=CategoryName}"/>
+                <HierarchicalDataTemplate.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=ModelName}"/>
+                    </DataTemplate>
+                </HierarchicalDataTemplate.ItemTemplate>
+            </HierarchicalDataTemplate>
+        </TreeView.ItemTemplate>
+    </TreeView>
+
+    实际上，现在有两个模板，每个模板用于树控件中的每个层次。第二个模板使用从第一个模板中选择的项作为其数据源。
+
+    尽管这个标记工作得很好，但分解每个数据模板并通过数据类型(而不是通过位置)将之应用到数据对象的情况更加普遍。为理解这种方法，
+    分析使用数据绑定的TreeView控件的标记的修改版本是有帮助的：
+    <Window x:Class="DataBinding.BoundTreeView" ... xmlns:local="clr-namespace:DataBinding">
+        <Window.Resources>
+            <HierarchicalDataTemplate DataType="{x:Type local:Category}" ItemsSource="{Binding Path=Products}">
+                <TextBlock Text="{Binding Path=CategoryName}"/>
+            </HierarchicalDataTemplate>
+            <HierarchicalDataTemplate DataType="{x:Type local:Product}">
+                <TextBlock Text="{Binding Path=ModelName}"/>
+            </HierarchicalDataTemplate>
+        </Window.Resources>
+
+        <Grid>
+            <TreeView Name="treeCategories" Margin="5">
+            </TreeView>
+        </Grid>
+
+    </Window>
+
+    在这个示例中，TreeView控件没有显式地设置他的ItemTemplate属性，而是根据绑定对象的数据类型使用恰当的ItemTemplate数据模板。同样，
+    Category模板也没有指定将用于处理Products集合的ItemTemplate，也是通过数据类型自动选择的。现在，这棵树可显示产品列表或包含产品
+    组的目录列表。
+
+    在当前示例中，这些修改未添加任何新内容。这种方法简化了标记，方便了模板的重用，但却没有影响数据用显示方式。然而，如果具有嵌套很深的
+    结构更松散的树，这种设计是非常有用的。例如，假设正在创建一棵包含Manager对象的树，并且每个Manager对象具有一个Employees集合。这个
+    集合可能包含普通的Employee对象或其他Manager对象，被包含的Manager对象又包含更多Employee对象。如果使用前面显示的基于类型的模板系统，
+    每个对象会根据他的数据类型自动获取正确的模板
+    
+    -->
     <Window.Resources>
 
         <HierarchicalDataTemplate DataType="{x:Type data:Category}"

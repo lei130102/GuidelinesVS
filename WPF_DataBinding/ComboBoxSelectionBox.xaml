@@ -6,6 +6,76 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="ComboBoxSelectionBox" Height="300" Width="300">
+
+    <!--
+
+    ComboBox控件
+
+    尽管样式和数据模板被构建进了ItemsControl类，并且所有WPF列表控件都支持这两个特性，但到目前为止看到的所有示例都
+    使用标准的ListBox控件。这个事实没有任何错误——毕竟，ListBox控件是完全可定制的并且能够很容易地处理复选框列表、
+    图像列表、格式化文本列表以及所有这些类型内容组合的列表。然而，其他列表控件确实引入了一些新特性。之后将学习ListView、
+    TreeView以及DataGrid控件的相关内容。但甚至更低级的ComboBox控件也有一些额外的考虑事项，这些考虑事项就是这一节
+    中将要研究的细节
+
+    与ListBox类一样，ComboBox类是Selector类的派生类。与ListBox类不同的是，ComboBox类增加了另外两个部分：显示当前
+    选择项的选择框和用于选择项的下拉列表。当单击组合框边缘上的下拉箭头时会显示下拉列表。或者，如果组合框处于只读模式
+    (默认设置)，可通过单击选择框的任意位置展开下拉列表。最后，可通过代码设置IsDropDownOpen属性来打开或关闭下拉列表。
+    
+    通常，ComboBox控件显示一个只读组合框，这意味着可使用他选择一个项，但不能随意输入自己的内容。然而，可通过将
+    IsReadOnly属性设置为false并将IsEditable属性设置为true来改变这种行为。现在选择框变成了文本框，并且可在其中输入
+    希望的任何文本
+
+    ComboBox控件提供了基本的自动完成功能，当输入内容时会自动完成输入(不要与IE这类程序中花哨的自动完成功能相混淆，此处
+    的自动完成功能会在当前文本框的下面显示所有可能项的列表)。下面是他的工作原理——当在ComboBox控件中键入内容时，WPF使用
+    第一个匹配自动完成建议的项填充选择框中的剩余内容。例如，如果输入Gr并且列表中包含字符串Green，组合框就会填充字母een。
+    由于自动完成文本是可选的，因此当继续键入内容时会自动覆盖原来的文本
+
+    如果不希望使用自动完成行为，只需要将ComboBox.IsTextSearchEnabled属性设置为false。这个属性继承自ItemsControl基类，
+    并被应用到许多其他列表控件。例如，如果在ListBox控件中将IsTextSearchEnabled属性设置为true，就可输入一个项的第一层次
+    内容以跳到该项的位置。
+
+    注意：
+    WPF没有为使用系统跟踪的自动完成列表提供任何功能，例如最近使用的URL以及文件列表，也不支持自动完成下拉列表
+
+    到目前为止，ComboBox控件的行为非常简单。但如果列表包含的是更复杂的对象而不是简单的文本字符串，情形就不同了
+    
+    可通过两种方式在ComboBox控件中放置更复杂的对象。第一钟方式是手工添加。与ListBox控件一样，可在ComboBox控件中
+    放置任何希望的内容。例如，如果希望得到包含图形和文本的列表，可以简单地在StackPanel面板中放置恰当的元素，并在
+    ComboBoxItem对象中封装这个StackPanel面板。更实用的情形是，可使用数据模板将数据对象中的内容插入到预先定义好的
+    元素组中
+    
+    当使用非文本内容时，选择框应当包含什么内容并不明显。如果IsEditable属性为false(默认值)，选择框将显示项的精确
+    可视化副本
+
+    注意：
+    重要的细节是组合框显示的是他的内容，而不是他具有的数据源。例如，设想使用Product对象填充ComboBox控件，并将
+    DisplayMemberPath属性设置为ModelName，使组合框显示每个项的ModelName属性，尽管组合框从一组Product对象中
+    检索信息，但标记创建了一个普通文本列表。因此，选择框能够具有所期望的行为。他将显示当前产品的ModelName字段，如果
+    IsEnable属性为true而且IsReadOnly属性为false，他将允许编辑这个值
+
+    用户不能与在选择框中显示的内容进行交互。例如，如果当前选择项的内容包括一个文本框，就不能在该文本框中输入内容。
+    如果当前选择项的内容包含一个按钮，就不能单击该按钮。相反，若单击选择框只会打开下拉列表(当然，有许多很好很实用的理由，
+    让我们不要首先在下拉列表中放置用户交互控件)
+    
+    如果IsEditable属性为true，ComboBox控件的行为会发生变化。不是显示选择项的副本，而是显示选择项的文本形式表示。为
+    创建这种文本表示形式，WPF简单地为每个项调用ToString()方法。在这个示例中，显示的文本"DataBinding.Product"只是当前
+    选择的Product对象的完全限定类名，这是ToString()方法的默认实现，除非在自定义的数据类中重写该方法
+
+    解决这个问题最容易的方法是设置TextSearch.TextPath附加属性，指示应当被用于选择框内容的属性。下面是一个示例：
+    <ComboBox IsEditable="True" IsReadOnly="True" TextSearch.TextPath="ModelName" ...>
+
+    尽管IsEditable属性必须为true，但由您决定IsReadOnly属性的设置是false(表示允许编辑该属性)还是true(表示阻止用户随意输入内容)
+    
+    提示：
+    如果希望显示更丰富的内容，而不只是显示一块简单文本，但又希望选择框中的内容与下拉列表中的内容不同，那么应如何实现这种效果呢？
+    ComboBox控件提供了SelectionBoxItemTemplate属性，该属性定义了为选择框使用的模板。遗憾的是，SelectionBoxItemTemplate属性
+    是只读的，他自动设置为与当前项相匹配，并且不能提供不同的模板。但可创建全新的根本不使用SelectionBoxItemTemplate属性的
+    ComboBox控件模板，这个控件模板可硬编码选择框模板或从窗口的资源集合中检索选择框模板
+    
+    
+    
+    -->
+
     <Window.Resources>
         <local:ImagePathConverter x:Key="ImagePathConverter"/>
     </Window.Resources>

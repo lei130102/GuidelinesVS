@@ -6,6 +6,165 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="ListStyles" Height="500" Width="347" MinHeight="500">
+
+    <!--
+
+    列表控件
+    
+    要为单独绑定的值应用灵活的格式，只需要字符串格式化和值转换器。但格式化绑定的列表需要更多内容。幸运的是，WPF提供了充足的格式化选择。这些格式化
+    选择中的大部分都构建进了ItemsControl基类中，所有列表控件都继承自该类，所以应当从该类开始研究列表格式化
+
+    正如您所知道的，ItemsControl类为封装项列表中的控件定义了基本功能。这些项可以是列表中的项、树中的节点、菜单中的命令、工具栏中的按钮等
+    
+
+    
+    
+    
+    DispatcherObject 抽象类
+
+    DependencyObject
+
+    Visual           抽象类
+
+    UIElement
+    
+    FrameworkElement
+
+    Control
+    
+    ItemsControl
+
+    Selector                   HeaderedItemsControl                MenuBase                TreeView
+
+    TabControl                     ToolBar                         Menu                     StatusBar
+    ComboBox                       MenuItem                        ContextMenu
+    ListBox                        TreeViewItem
+       ListView
+    
+    注意：
+    您可能注意到，在继承自ItemsControl类的层次结构中，还显示了某些项封装器。例如不仅看到了期望的Menu和TreeView类，还看到了MenuItem和TreeViewItem类。
+    这是因为这些类能包含自己的项集合——从而使树控件和菜单能够实现嵌套的层次化结构。另一方面，在这个列表中没有发现ComboBoxItem或ListBoxItem类，因为他们
+    不需要包含项的子集合，所以不需要继承自ItemsControl类
+
+    ItemsControl类定义了支持数据绑定以及两个重要格式化特性(样式和数据模板)的属性。
+    
+
+    
+    
+    
+    
+    
+    ItemsControl类中与格式化相关的属性
+
+    ItemsSource                              绑定数据源(希望在列表中显示的集合或DataView对象)
+
+    DisplayMemberPath                        希望为每个数据项显示的属性。对于更复杂的表达形式或者为了使用多个属性的组合而言，应改用ItemTemplate属性
+
+    ItemStringFormat                         该属性使一个.NET格式字符串，如果设置了该属性，将使用该属性为每个项格式化文本。通常，这种技术用于将数字或日期值转换成合适的
+                                             显示形式，正如Binding.StringFormat属性所做的那样
+
+    ItemContainerStyle                       该属性是一个样式，通过该样式可以设置封装每个项的容器的多个属性。容器取决于列表类型(例如，对于ListBox类是ListBoxItem，对于
+                                             ComboBox类是ComboBoxItem)。当填充列表时，自动创建这些封装器对象
+    
+    ItemContainerStyleSelector               使用代码为列表中每项的封装器选择样式的StyleSelector对象，可以使用该属性为列表中的不同项提供不同的样式。必须创建自定义的
+                                             StyleSelector类
+
+    AlternationCount                         在数据中设置的交替集合数量。例如，将AlternationCount设置为2，将在两个不同的行样式之间交替。如果将AlternationCount设置
+                                             为3，将在3个不同的行样式之间交替，等等
+
+    ItemTemplate                             此类模板从绑定的对象提取合适的数据，并将提取的数据安排到合适的控件组合中
+
+    ItemTemplateSelector                     使用代码为列表中的每个项选择模板的DataTemplateSelector对象。可以通过这个属性为不同的项应用不同的模板。必须创建
+                                             自定义的DataTemplateSelector类
+
+    ItemsPanel                               定义用于包含列表中项的面板。所有项封装器都添加到这个容器中。通常，使用垂直方向(自上而下)的VirtualizingStackPanel面板
+
+    GroupStyle                               如果正在使用分组，这个样式定义了应当如何格式化每个分组。当使用分组时，项封装器(ListBoxItem和ComboBoxItem等)被添加到表示
+                                             每个分组的GroupItem封装器中，然后这些分组被添加到列表中
+
+    GroupStyleSelector                       使用代码为每个分组选择样式的StyleSelector对象。可以通过这个属性为不同的分组使用不同的样式。必须创建自定义的StyleSelector类
+
+    
+    
+    
+    ItemsControl类继承层次中的下一层是Selector类，该类为确定并设置选择项添加了一套简单的属性。并不是所有的ItemsControls类都支持选择。例如，对于ToolBar和Menu控件，
+    选择就没有任何意义，所以这些类继承自ItemsControl类，而不是继承自Selector类
+
+    Selector类添加的属性包括SelectedItem(选中的数据对象)、SelectedIndex(选中项的位置)以及SelectedValue(所选数据对象的value属性，他是通过设置SelectedValuePath
+    属性指定的)。注意，Selector类不支持多项选择——ListBox控件通过他的SelectionMode和SelectedItems属性(本质上这是ListBox类为这个模型添加的所有内容)添加了这一支持
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    列表样式
+    
+    开始准备集中介绍WPF列表控件提供的两个特性：样式和数据模板。在这两个工具中，样式更简单一些(但功能逊色一些)。在许多情况下，可以通过他们添加更精彩的格式。接下来
+    你将看到如何使用样式设置列表项格式、如何应用交替行格式化以及如何根据指定的标准应用条件格式
+
+
+    
+    
+    
+    
+    ItemContainerStyle
+
+    之前介绍了样式如何为在不同位置的类似元素重用格式。样式在列表中扮演了相同的角色——通过他们可为每个单独的项应用一套格式化特征
+    这很重要，因为WPF的数据绑定系统自动生成列表项对象。因此，为单个项应用您所希望的格式不是很容易。解决方案是ItemContainerStyle属性。如果设置了ItemContainerStyle属性，
+    当创建列表项时，列表控件会将其向下传递给每个项。对于ListBox控件，每个项由ListBoxItem对象表示；对于ComboBox控件，每个项由ComboBoxItem对象表示，等等。因此，通过
+    ListBox.ItemContainerStyle属性应用的任何样式都将用于设置每个ListBoxItem对象的属性
+
+    下面是使用ListBoxItem能够实现的可能最简单的效果之一。为每项应用蓝灰色背景。为了确保单个项和其他项能够相互区别(而不是使他们的背景合并到一起)，样式还添加了一些
+    外边距空间：
+    <ListBox Name="lstProducts" Margin="5" DisplayMemberPath="ModelName">
+        <ListBox.ItemContainerStyle>
+            <Style>
+                <Setter Property="ListBoxItem.Background" Value="LightSteelBlue"/>
+                <Setter Property="ListBoxItem.Margin" Value="5"/>
+                <Setter Property="ListBoxItem.Padding" Value="5"/>
+            </Style>
+        </ListBox.ItemContainerStyle>
+    </ListBox>
+    样式本身并不十分有趣。然而当使用附加的触发器时，样式就变得更加精彩了，在接下来的示例中，当ListBoxItem.IsSelected属性变为true时，使用属性触发器改变背景颜色并且添加
+    一条固定边框
+    <ListBox Name="lstProducts" Margin="5" DisplayMemberPath="ModelName">
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ListBoxItem}">
+                <Setter Property="Background" Value="LightSteelBlue"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Padding" Value="5"/>
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True"/>
+                        <Setter Property="Background" Value="DarkRed"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="BorderBrush" Value="Black"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ListBox.ItemContainerStyle>
+    </ListBox>
+    
+    为使标记更加清晰，这个样式使用了Style.TargetType属性，从而在设置属性时不需要在每个设置器中包含类名
+    
+    在这种情况下使用触发器非常方便，因为ListBox没有为选择的项提供其他任何应用目标格式的方式。换句话说，如果不使用样式，就只能得到标准的蓝色突出显示效果
+
+    在后面的介绍中，当使用数据模板彻底地重新组合数据列表时，还将再次依赖ItemContainerStyle属性改变选择项的效果
+    
+    
+
+    
+    
+    -->
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

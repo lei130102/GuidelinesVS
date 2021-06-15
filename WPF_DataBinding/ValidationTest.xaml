@@ -6,6 +6,249 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="ValidationTest" Height="508" Width="409">
+        <!--
+    验证
+
+    在任何数据绑定中，另一个要素是验证(validation)——换句话说，是指用于捕获非法数值并拒绝这些非法数值的逻辑。
+    可直接在控件中构建验证(例如，通过响应文本框中的输入并拒绝非法字符)，但这种低级的方法限制了灵活性
+
+    幸运的是，WPF提供了能与前面讨论过的数据绑定系统紧密协作的验证功能。验证另外提供了以下两种方法用于捕获非法值：
+
+    //1.可在数据对象中引发错误
+    //为告知WPF发生了错误，只需要从属性设置过程中抛出异常。通常，WPF会忽略所有在设置属性时抛出的异常，但可以进行配置，
+    //从而显示更有帮助的可视化指示。另一种选择是在自定义的数据类中实现INotifyDataErrorInfo或IDataErrorInfo接口，
+    //从而可得到指示错误的功能而不会抛出异常
+
+    //2.可在绑定级别上定义验证
+    //这种方法可获得使用相同验证的灵活性，而不必考虑使用的是哪个输入控件。更好的是，因为是在不同的类中定义验证，所以可很
+    //容易地在存储类似数据类型的多个绑定中重用验证
+
+    //如果数据对象已经在他们的属性设置过程中硬编码了验证逻辑并且希望使用该逻辑，通常将使用第一种方法。当第一次定义验证逻辑，
+    //并希望在不同上下文和不同控件中重用时，将使用第二种方法。然而，一些开发人员同时选用这两种方法。他们在数据对象中使用
+    //验证预防一小部分基本的错误，并在绑定中使用验证捕获更大范围的用户输入错误
+
+    //注意，只有当来自目标的值正被用于更新源时才会应用验证——换句话说，只有当使用TwoWay模式或OneWayToSource模式的绑定时才
+    //应用验证
+    
+
+    
+    
+    
+    
+    
+    
+    
+    在数据对象中进行验证
+
+    一些开发人员直接在数据对象中构建错误检查逻辑。
+    例如，下面是经过修改的Product.UnitPrice属性版本，该版本不允许使用负数：
+    public decimal UnitCost
+    {
+        get{return unitCost;}
+        set
+        {
+            if(value < 0)
+            {
+                throw new ArgumentException("UnitCost cannot be negative.");
+            }
+            else
+            {
+                unitCost = value;
+                OnPropertyChanged(new PropertyChangedEventArgs("UnitCost"));
+            }
+        }
+    }
+    这个示例中显示的验证逻辑防止使用负的价格值，但不能为用户提供任何与问题相关的反馈信息。正如在前面学过的，WPF会不加通告地
+    忽略当设置和获取属性时发生地数据绑定错误。对于这种情况，用户无法知道更新已经被拒绝。实际上，非法地值仍然保留在文本框中——只是
+    没有被应用于绑定地数据对象。为改善这一状况，需要借助于ExceptionValidationRule验证规则
+
+    (
+    数据对象和验证
+    
+    在数据对象中放置验证逻辑是否是一种好方法？这是一场永无休止的辩论
+    这种方法有一些优点——例如总会捕获所有错误，而不管这些错误是由于非法的用户编辑、编码错误引起的，还是由于根据其他非法数据进行
+    计算引起的。然而，这种方法的缺点是会使数据对象变得更加复杂，并且将用于前台应用程序的验证代码深入到了后台的数据模型中
+
+    如果不谨慎使用这种方法，属性验证可能会无意中排除那些对数据对象非常合理的使用。他们还可能导致不一致的且实际上是复合的
+    数据错误(例如，UnitsInStock属性保存数值-10可能是不合理的，但如果后台数据库存储了这个值，可能仍希望创建相应的Product对象，
+    从而可以在用户界面中编辑他)。有时，可通过创建另一层对象来解决此类问题——例如在复杂系统中，开发人员可构建丰富的商务对象模型
+    而不是简单的数据对象层
+
+    在当前示例中，StoreDB和Product类都是作为后台数据访问组件设计的。在这个上下文中，Product类只是看似完美的数据包，允许将
+    信息从一个代码层传递到另一个代码层。因此，验证代码并未真正放在Product类中
+    )
+    
+
+    1.ExceptionValidationRule验证规则
+    ExceptionValidationRule是预先构建的验证规则，他向WPF报告所有异常。要使用ExceptionValidationRule验证规则，必须将他
+    添加到Binding.ValidationRules集合中，如下所示：
+    <TextBox Margin="5" Grid.Row="2" Grid.Column="1">
+        <TextBox.Text>
+            <Binding Path="UnitCost">
+                <Binding.ValidationRules>
+                    <ExceptionValidationRule></ExceptionValidationRule>
+                </Binding.ValidationRules>
+            </Binding>
+        </TextBox.Text>
+    </TextBox>
+    这个示例同时使用了值转换器和验证规则。通常是在转换值之前执行验证，但ExceptionValidationRule验证规则是一个例外。他捕获在
+    任何位置发生的异常，包括当编辑的值不能转换成正确数据类型时发生的异常、由属性设置器抛出的异常以及由值转换器抛出的异常
+
+    那么，当验证失败时会发生什么情况？System.Windows.Controls.Validation类的附加属性记录下了验证错误。对于每个失败的
+    验证规则，WPF采取以下三个步骤：
+    1.在绑定的元素上(在此是TextBox控件)，将Validation.HasError附加属性设置为true。
+    2.创建包含错误细节的ValidationError对象(作为ValidationRule.Validate()方法的返回值)，并将该对象添加到关联的
+    Validation.Errors集合中
+    3.如果Binding.NotifyOnValidationError属性被设置为true，WPF就在元素上引发Validation.Error附加事件
+    
+    当发生错误时，绑定控件的可视化外观也会发生变化。当控件的Validation.HasError属性被设置为true时，WPF自动将控件使用
+    的模板切换为由Validation.ErrorTemplate附加属性定义的模板。在文本框中，新模板将文本框的轮廓改成一条细的红色边框
+
+    在大多数情况下，您会希望以某种方式增强错误指示，并提供与引发问题的错误相关的特定信息。可使用代码处理Error事件，或
+    提供自定义控件模板，从而提供不同的可视化指示信息。但在执行这些任务之前，有必要分析一下WPF提供的其他两种捕获错误的
+    方式——通过使用数据对象中的INotifyDataErrorInfo或IDataErrorInfo接口以及通过编写自定义验证规则捕获错误
+
+    
+    
+    2.INotifyDataErrorInfo接口
+    许多面向对象的支持者更愿意引发异常来提示用户输入错误，这样做的原因有很多。例如，用户输入错误并非异常条件，错误条件
+    可能依赖于多个属性值之间的交互，以及有时不应立即丢弃错误值而值得保留他们以便进一步加以处理。WPF提供了两个接口，允许
+    您构建报告错误得对象而不会抛出异常，这两个接口名为IDataErrorInfo和INotifyDataErrorInfo
+
+    注意，IDataErrorInfo和INotifyDataErrorInfo接口具有共同的目标，即用更加人性化的错误通知系统替换未处理的异常。
+    IDataErrorInfo是初始的错误跟踪接口，可追溯至第一个.NET版本，WPF包含他是为了达到向后兼容的目的。INotifyDataErrorInfo
+    接口具有类似的作用，但界面更丰富，是针对Silverlight创建的，并且已移植到了WPF4.5.他还支持其他功能，如每个属性多个错误
+    以及异步验证
+
+    下面演示如何使用INotifyDataErrorInfo接口来检测Product对象存在的问题
+
+    第一步是实现该接口：
+    public class Product : INotifyPropertyChanged, INotifyDataErrorInfo
+    {...}
+
+    INotifyDataErrorInfo接口只需要三个成员。ErrorsChanged事件在添加或删除错误时引发。HasErrors属性返回true或false来指示
+    数据对象是否包含错误。最后，GetErrors()方法提供完整的错误信息
+
+    在实现这些方法之前，需要采用某种方式跟踪代码中的错误。最佳选择时使用私有集合
+    private Dictionary<string, List<string>> errors = new Dictionary<string, List<string>>();
+
+    该集合初看起来有些怪异。为理解其中的原因，需要了解两个事实。首先INotifyDataErrorInfo接口要求将错误链接到特定属性。其次，
+    每个属性可以有多个错误。要跟踪此错误信息，最简单的方法是使用Dictionary<T,K>集合，按属性名为该集合编写索引，字典中的每一项
+    本身就是一个错误集合，该例使用简单字符串的List<T>
+    然后，可使用功能完备的错误对象，将多个错误信息片段绑定在一起，包括文本信息、错误代码和严重级别等详情
+
+    准备好该集合后，只需要在错误发生时添加即可(如果错误得到纠正，就删除错误信息)。为简化该过程，本例中的Product类添加了
+    一对名为SetErrors()和ClearErrors()的私有方法
+    
+    public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+
+    private void SetErrors(string propertyName, List<string> propertyErrors)
+    {
+        // Clear any errors that already exist for this property.
+        errors.Remove(propertyName);
+
+        // Add the list collection for the specified property.
+        errors.Add(propertyName, propertyErrors);
+
+        // Raise the error-notification event.
+        if(ErrorsChanged != null)
+            ErrorsChanged(this, new DataErrorsChangedEventArgs(propertyName));
+    }
+
+    private void ClearErrors(string propertyName)
+    {
+        // Remove the error list for this property.
+        errors.Remove(propertyName);
+
+        // Raise the error-notification event.
+        if(ErrorsChanged != null)
+            ErrorsChanged(this, new DataErrorsChangedEventArgs(propertyName));
+    }
+    
+    下面显示了错误处理逻辑，这段代码确保将Product.ModelNumber属性限制为包含字母和数字的字符串(不允许使用标点符号、空格以及
+    其他特殊字符)：
+
+    private string modelNumber;
+    public string ModelNumber
+    {
+        get{return modelNumber;}
+        set
+        {
+            modelNumber = value;
+
+            bool valid = true;
+            foreach(char c in modelNumber)
+            {
+                if(!Char.IsLetterOrDigit(c))
+                {
+                    valid = false;
+                    break;
+                }
+            }
+            if(!valid)
+            {
+                List<string> errors = new List<string>();
+                errors.Add("The ModelNumber can only contain letters and numbers.");
+                SetErrors("ModelNumber", errors);
+            }
+            else
+            {
+                ClearErrors("ModelNumber");
+            }
+
+            OnPropertyChanged(new PropertyChangedEventArgs("ModelNumber"));
+        }
+    }
+
+    最后实现GetErrors()和HasErrors()方法。GetErrors()方法返回特定属性的错误列表(或所有属性的所有错误)。如果Product类存在
+    一个或多个错误，HasErrors()属性返回true
+
+    public IEnumerable GetErrors(string propertyName)
+    {
+        if(string.IsNullOrEmpty(propertyName))
+        {
+            // Provide all the error collections.
+            return (errors.Values);
+        }
+        else
+        {
+            // Provice the error collection for the requested property
+            // (if it has errors).
+            if(errors.ContainsKey(propertyName))
+            {
+                return (errors[propertyName]);
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    public bool HasErrors
+    {
+        get
+        {
+            // Indicate whether the entire Product object is error-free.
+            return (errors.Count > 0);
+        }
+    }
+
+    为告知WPF使用INotifyDataErrorInfo接口，并通过该接口在修改属性时检查错误，绑定的ValidatesOnNotifyDataErrors属性必须
+    为true：
+    <TextBox Margin="5" Grid.Row="2" Grid.Column="1" x:Name="txtModelNumber" Text="{Binding Path=ModelNumber,
+    Mode=TwoWay, ValidatesOnNotifyDataErrors=True,NotifyOnValidationError=True}"/>
+    
+    从技术角度看，并非一定要明确设置ValidatesOnNotifyDataErrors，因为默认情况下其值为true(类似的ValidatesOnDataErrors属性
+    与IDataErrorInfo接口一起使用，该属性与ValidatesOnNotifyDataErrors是不同的)。但最好还是明确设置，以便清晰地表明准备在
+    标记中使用他
+
+    另外，可通过创建数据对象来综合使用这两种方法；数据对象为某些错误类型抛出异常，并使用IDataErrorInfo或INotifyDataErrorInfo
+    报告其他错误。但务必记住，这两种方法差异极大。当触发异常时，不会在数据对象中更新属性。但当使用IDataErrorInfo或
+    INotifyDataErrorInfo接口时，允许使用非法值，但会标记出来。数据对象会被更新，但您可使用通知和BindingValidationFailed
+    事件告知用户
+    
+    -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

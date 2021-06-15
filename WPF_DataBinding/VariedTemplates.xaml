@@ -6,13 +6,58 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="VariedTemplates" Height="420" Width="675">
+
+    
+    <!--
+    改变模板
+    
+    使用到目前为止介绍的数据模板的一个限制是，只能为整个列表使用一个模板。但在许多情况下，希望采用不同方式灵活地表示不同的数据
+
+    可使用多种方式实现这一目标。下面是一些常用技术：
+    1.使用数据触发器
+    可根据绑定的数据对象中的属性值使用触发器修改模板中的属性。除了不需要依赖项属性外，数据触发器与之前介绍的有关样式的
+    属性触发器的工作方式类似
+    2.使用值转换器
+    实现了IValueConverter接口的类，能够将值从绑定的对象转换为可用于设置模板中与格式化相关的属性的值
+    3.使用模板选择器
+    模板选择器检查绑定的数据对象，并在几个不同模板之间进行选择
+
+    
+    -->
     <Window.Resources>
         <DataTemplate x:Key="DefaultTemplate">
+
+            <!--
+    数据触发器提供了最简单的方法。基本技术是根据数据项中的某个属性，设置模板中某个元素的某个属性
+    例如，可根据相应Product对象的CategoryName属性，修改封装每个列表项的自定义边框的背景。
+
+            -->
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Path=CategoryName}" Value="Tools">
                     <Setter Property="ListBoxItem.Foreground" Value="Red"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
+            <!--
+            因为Product对象实现了INotifyPropertyChanged接口，所以会立即应用任何变化
+            例如，如果修改CatagoryName属性，将一个产品移出Tools类别，列表中显示该产品的文本会同时发生改变
+            
+            这种方法非常有用，但却有其固有的局限性。不能改变与模板相关的复杂细节，只能修改模板或容器元素中元素的单个属性。
+            此外，如前所述，触发器只能测试是否相等——他们不支持更复杂的比较条件。例如，这意味着不能使用这种方法突出显示
+            超出特定值的价格。并且如果需要在某个可能的范围内进行选择(例如，为每个产品类别使用不同的背景颜色)，就需要为
+            每个可能的值编写触发器，这是非常麻烦的
+
+            另一种选择是创建足够智能的模板，该模板能根据绑定对象调整自身。为使用这种技巧，通常需要使用值转换器，检查绑定
+            对象的属性并返回更合适的值。例如，可创建CatagoryToColorConverter转换器，检查产品的类别并返回相应的Color对象。
+            使用这种方法，可以在模板中直接绑定到CategoryName属性，如下所示：
+            <Border Margin="5" BorderThcikness="1" BorderBrush="SteelBlue" CornerRadius="4"
+                Background="{Binding Path=CategoryName, Converter={StaticResource CategoryToColorConverter}}">
+            与触发器方法一样，值转换器方法不允许执行动态改变。例如，不能使用完全不同的内容替换模板的一部分。然而，这种方法可实现
+            更复杂的格式化逻辑。此外，如果使用IMultiVauleConverter接口代替普通的IValueConverter接口，这种方法可根据绑定数据对象
+            的多个属性构造格式化属性
+
+            提示：
+            如果希望在其他模板中重用格式化逻辑，值转换器是一种很好的选择
+            -->
 
             <Grid Margin="0" Background="{Binding RelativeSource=
                 {
@@ -82,12 +127,32 @@
             <ListBox Grid.Row="1" Margin="7,3,7,10" Name="lstProducts" HorizontalContentAlignment="Stretch"
                      SnapsToDevicePixels="True">
                 <ListBox.ItemTemplateSelector>
+
+                    <!--
+                    模板选择器
+
+                    另一种更强大的选择是，为项赋予完全不同的模板。为此，需要创建继承自DataTemplateSelector的类。模板选择器的工作方式和在前面
+                    分析的样式选择器的工作方式相同——他们检查绑定对象并使用您提供的逻辑选择合适的模板
+
+                    您在前面看到了如何构建搜索特定值并使用某个样式突出显示相应值的样式选择器。下面是功能相似的模板选择器，该模板选择器查找
+                    (通过PropertyToEvaluate指定的)属性，并且如果该属性和(通过PropertyValueToHighlight)设置的值相匹配，就返回HighlightTemplate
+                    模板，否则返回DefaultTemplate模板
+                    
+                    -->
                     <local:SingleCriteriaHighlightTemplateSelector
                         DefaultTemplate="{StaticResource DefaultTemplate}"
                         HighlightTemplate="{StaticResource HighlightTemplate}"
                         PropertyToEvaluate="CategoryName"
                         PropertyValueToHighlight="Travel"
                         />
+
+                    <!--
+                    正如您可能看到的，模板选择器比样式选择器强大得多，因为每个模板都具有使用不同布局显示不同元素排列形式的能力。在本示例中，
+                    HighlightTemplate模板添加了一个在末端具有额外文本行的TextBlock元素
+
+                    提示：这种方法的一个缺点是，可能必须创建多个类似的模板。如果模板比较复杂，这种方法会造成大量的重复。为尽量提高可维护性，
+                    不应为单个列表创建过多模板——而应当使用触发器和样式为模板应用不同的格式
+                    -->
                 </ListBox.ItemTemplateSelector>
                 <ListBox.ItemContainerStyle>
                     <Style>
@@ -138,3 +203,170 @@
         </Border>
     </Grid>
 </Window>
+
+    <!--
+    模板与选择
+    
+    在前面的模板示例中，有一个很小但也很令人感到烦恼的问题。这个问题就是已经看到的模板没有考虑选择
+    
+    如果在列表中选择了一项，WPF会自动设置项容器(在此是ListBoxItem对象)的Foreground和Background属性。前景色是白色，背景色是蓝色。
+    Foreground属性使用属性继承，所以添加到模板中的任何元素都自动获得新的白色，除非明确指定新的颜色。Background属性不使用属性继承，
+    但默认的Background值是Transparent。例如，如果边框也是透明的，就会穿透显示新的蓝色背景。否则仍然应用在模板中设置的颜色。
+    
+    这个混乱的设置可能会以您所不希望的方式改变格式化设置
+
+    可硬编码所有颜色来避免这一问题，但这样做会面临另一个挑战。项被选中的唯一标志是弯曲边框周围的蓝色背景
+
+    为解决这个问题，需要使用大家熟悉的ItemContainerStyle属性，为选择的项应用不同的格式：
+    <ListBox Name="lstProducts" HorizontalContentAlignment="Stretch">
+        <ListBox.ItemContainerStyle>
+            <Style>
+                <Setter Property="Control.Padding" Value="0"/>
+                <Style.Triggers>
+                    <Trigger Property="ListBoxItem.IsSelected" Value="True">
+                        <Setter Property="ListBoxItem.Background" Value="DarkRed"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ListBox.ItemContainerStyle>
+    </ListBox>
+    触发器为选择的项应用深红色背景，但上面的代码不能为使用模板的列表提供所期望的效果，这是因为这些模板包含了使用不同背景颜色的元素，这些元素
+    在深红色背景上显示。除非所有内容都是透明的(从而使红色背景能够透过整个模板)，否则只会在模板的外边距区域看到一条很细的红色边线
+
+    解决方法是将模板中部分元素的背景显式绑定到ListBoxItem.Background属性的值。这是合理的——毕竟，现在能够选择正确的背景颜色来突出显示选择的项。
+    只需要确保他在正确的位置显示。
+
+    实现这一方案所需的标记有点混乱。这是因为不能使用普通的绑定表达式，普通的绑定表达式只能绑定到当前数据对象中的属性(在此是Product对象)，而现在
+    需要获取项容器(在此是ListBoxItem控件)的背景。所以需要使用Binding.RelativeSource属性从元素树中查找第一个匹配的ListBoxItem对象。一旦
+    找到这个元素，就可以获取他的背景颜色，并相应地加以使用
+
+    下面是完成后的模板，该模板在弯曲的边框区域中使用所选背景。Border元素被放在具有白色背景的Grid控件中，从而确保在弯曲边框周围的外边距区域内
+    不会显示选择的颜色
+    <DataTemplate>
+        <Grid Margin="0" Background="White">
+            <Border Margin="5" BorderThickness="1"
+                BorderBrush="SteelBlue" CornerRadius="4"
+                Background="{Binding Path=Background, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}">
+                <Grid Margin="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock FontWeight="Bold" Text="{Binding Path=ModelNumber}"></TextBlock>
+                    <TextBlock Grid.Row="1" Text="{Binding Path=ModelName}"></TextBlock>
+                </Grid>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+
+    
+    
+    选择与设备像素对齐
+    还需要做一些修改，以确保模板在具有不同系统DPI设置(如120DPI而不是标准的96DPI)的计算机上能完美显示，应将ListBox.SnapsToDevicePixels属性
+    设置为true。当列表框的边缘落于两个像素之间时，这会确保不使用反锯齿效果
+    如果未将SnapsToDevicePixels属性设置为true，在自定义模板的边缘和ListBox容器控件的边缘之间，可能会出现熟悉的蓝色弯曲边框
+    
+
+    
+    如果能够从项容器中提取到所需要的属性值，使用绑定表达式修改模板这种方法将运作良好。例如，如果希望获取选择项的背景色和前景色，
+    这种技术是非常理想的。但如果需要以更深入的方式修改模板，这种方法就不能提供帮助了
+
+    
+    
+    例如，考虑图中显示的产品列表，当在这个列表中选择产品时，产品项会从一行文本扩展为包含一幅图片和完整描述的方框。这个示例组合使用
+    已经学过的几种技术，包括在模板中显示图像内容，以及当项被选中时使用数据绑定设置Border元素的背景色
+
+    为创建此类列表，需要使用在上个示例中所使用技术的变体。仍需使用Binding对象的RelativeSoure属性来查找当前ListBoxItem控件
+
+    然而，现在不希望提取他的背景色，而是希望检查他是否被选中。如果没有被选中，可通过设置Visibility属性隐藏额外的信息
+
+    该技术与上一示例中使用的技术类似，但不完全相同。在上一个示例中，能够直接绑定到所希望的值，从而使ListBoxItem元素的背景变成Border
+    对象的背景。但在该例中，需要考虑ListBoxItem.IsSelected属性，并设置另一个元素的Visibility属性。数据类型不匹配——IsSelected属性是
+    Boolean类型的值，而Visibility属性使用的是Visibility枚举值。所以不能将Visibility属性直接绑定到IsSelected属性(至少，如果不借助
+    于自定义的值转换器，就做不到这一点)。解决方法是使用数据触发器，从而当ListBoxItem元素的IsSelected属性放生变化时，修改容器的
+    Visibility属性
+
+    在标记中放置触发器的位置也不同。在ItemContainerStyle属性中放置触发器不再方便，因为不希望改变整个项的可见性。而只希望隐藏一部分，
+    所以触发器需要成为只应用到一个容器的样式的一部分
+    
+    下面是模板稍经修改后的版本，这个模板还不具有自动展开行为。但他能为列表中的每个产品显示所有信息(包括图片和描述信息)
+    <DataTemplate>
+        <Border Margin="5" BorderThickness="1" BorderBrush="SteelBlue" CornerRadius="4">
+            <StackPanel Margin="3">
+                <TextBlock Text="{Binding Path=ModelName}"></TextBlock>
+                <StackPanel>
+                    <TextBlock Margin="3" Text="{Binding Path=Description}" TextWrapping="Wrap" MaxWidth="250"
+                        HorizontalAlignment="Left"></TextBlock>
+                    <Image Source="{Binding Path=ProductImagePath, Converter={StaticResource ImagePathConverter}}"></Image>
+                    <Button FontWeight="Regular" HorizontalAlignment="Right" Padding="1" Tag="{Binding}">View Details...</Button>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+    Border元素的内部是一个StackPanel面板，该面板包含了所有内容。在StackPanel面板中又包括了第二个StackPanel面板，第二个StackPanel面板包含了
+    只为选择的项显示的内容，包括描述信息、图像和按钮。为隐藏这一信息，需要使用触发器设置这个内部StackPanel面板的样式，如下所示：
+    <StackPanel>
+
+    
+        <StackPanel.Style>
+            <Style>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource Model=FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="False">
+                        <Setter Property="StackPanel.Visibility" Value="Collapsed"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </StackPanel.Style>
+    
+        <TextBlock Margin="3" Text="{Binding Path=Description}" TextWrapping="Wrap" MaxWidth="250" HorizontalAlignment="Left"></TextBlock>
+        <Image Source="{Binding Path=ProductImagePath, Converter={StaticResource ImagePathConverter}}"></Image>
+        <Button FontWeight="Regular" HorizontalAlignment="Right" Padding="1" Tag="{Binding}">View Details...</Button>
+
+    </StackPanel>
+
+    在这个示例中，需要使用数据触发器替代普通的触发器，因为需要评估的属性在祖先元素中(ListBoxItem)，访问他的唯一方法是使用数据绑定表达式。
+    
+    现在，当ListBoxItem.IsSelected属性变为false时，StackPanel.Visibility属性就会被修改为Collapsed，从而隐藏额外的细节
+    
+    注意：
+    从技术角度看，展开的细节始终存在，只不过是隐藏了而已。因此，当第一个创建列表而不是选择项时，需要承当生成这些元素造成的开销。在当前的
+    示例中这没有太大的区别，但是如果在非常长的具有复杂模板的列表使用这种设计，就会影响性能
+
+
+    
+    
+    
+    改变项的布局
+
+    使用数据模板可非常灵活地控制项显示的各个方面，但他们不允许根据项之间的关系更改项的组织方式。不管使用什么样的模板和样式，ListBox控件
+    总是在独立的水平行中放置每个项，并堆叠每行从而创建列表
+
+    可通过替换列表用于布局其子元素的容器来改变这种布局。为此，需要使用一块XAML标记(定义希望使用的面板)来设置ItemsPanelTemplate属性。这个
+    面板可以是继承自System.Windows.Controls.Panel的任意类
+
+    下面的示例使用WrapPanel面板来封装项，这些项跨越ListBox控件的可用宽度
+    <ListBox Margin="7,3,7,10" Name="lstProducts" ItemTemplate="{StaticResource ItemTemplate}"
+        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+                <WrapPanel></WrapPanel>
+            </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+    </ListBox>
+    为使这种方法奏效，还必须将ScrollViewer.HorizontalScrollBarVisibility附加属性设置为Disabled，从而确保ScrollViewer元素
+    (ListBox控件自动使用该元素)永远不会使用水平滚动条。如果没有设置该细节，WrapPanel面板会使用无限的宽度来布置项，这时该面板就
+    等效于水平的StackPanel面板
+
+    这种方法有一个陷阱。通常，大多数列表控件使用VirtualizingStackPanel面板而不是使用标准的StackPanel面板。VirtualizingStackPanel
+    面板能够高效地处理大量的绑定数据。当使用VirtualizingStackPanel面板时，只创建显示当前可见项所需的元素。当使用StackPanel面板时，
+    为整个列表创建所需的元素。如果数据源包含数千项(或更多)，VirtualizingStackPanel面板使用的内存要少的多。当填充列表并且当用户在列表
+    中滚动时，使用VirtualizingStackPanel面板可以执行得更好，因为WPF布局系统需要完成的工作要少得多
+    
+    因此，不应设置新的ItemsPanelTemplate，除非使用列表显示数量适中的数据。如果处于模糊地带——例如，正在显示的数据列表只有200个项并且有
+    一个极其复杂的模板——可以针对这两种方法进行性能分析，查看性能的内存使用的变化情况，从而选择最佳策略
+    
+    
+    
+    -->
+

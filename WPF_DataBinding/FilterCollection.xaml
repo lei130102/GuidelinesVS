@@ -6,6 +6,118 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="FilterCollection" Height="390" Width="628">
+        <!--
+    过滤、排序与分组
+
+    正如您已经看到的，视图跟踪数据对象集合中的当前位置。这是一项重要的任务，而且查找或修改当前项是使用
+    视图最常见的原因
+
+    视图还提供了许多可选功能，通过这些功能可管理整个数据项集合。接下来的将介绍如何使用视图过滤数据项(临时
+    隐藏不希望看到的项)，如何使用视图应用排序(修改数据项的顺序)，以及如何使用视图应用分组(创建能单独导航
+    的子集合)
+    
+    
+
+    
+    
+    过滤集合
+
+    通过过滤可显示符合特定条件的记录子集。在将集合用作数据源时，可使用视图对象的Filter属性设置过滤器。
+    Filter属性的实现有些笨拙。他接受一个Predicate委托，该委托指向自定义的过滤方法。下面的示例演示了如何将视图连接到名为FilterProduct()的
+    方法：
+    ListCollectionView view = (ListCollectionView)CollectionViewSource.GetDefaultView(lstProducts.ItemsSource);
+    view.Filter = new Predicate<object>(FilterProduct);
+    过滤器检查集合中的每个数据项，并且如果被检查的项满足过滤条件，就返回true，否则则返回false。当创建Predicate对象时，指定进行检查的对象类型。
+    笨拙的部分是视图期望用户使用Predicate<object>实例——您不能使用更有用的内容(如Predicate<Product>)，这样就不可避免地使用类型转换代码。
+
+    下面的简单方法只显示超过100美元的产品：
+    public bool FilterProduct(object item)
+    {
+        Product product = (Product)item;
+        return (product.UnitCost > 100);
+    }
+    
+    显然，在过滤器条件中硬编码数值是不合理的。更实际的应用程序应当根据其他信息使用动态的过滤器
+    
+    为让这种情况生效，可使用两种策略。如果使用匿名委托，可定义内联的过滤方法，从而可访问当前方法中的任何本地变量。下面是一个示例：
+    ListCollectionView view = (ListCollectionView)CollectionViewSource.GetDefaultView(lstProducts.ItemsSource);
+    view.Filter = delegate(object item){
+        Product product = (Product)item;
+        return (product.UnitCost > 100);
+    }
+    尽管这是一种很整洁、很优美的方法，但对于更复杂的过滤情形，您可能更喜欢使用不同的策略并创建专门的过滤类。这时因为在这些情况下，经常需要使用几个不同的
+    准则进行过滤，并且可能希望具有在以后修改过滤准则的能力
+
+    过滤类封装了过滤准侧以及执行过滤的回调方法。下面是一个非常简单的过滤类，该类过滤低于最低价格的产品
+    public class ProductByPriceFilter
+    {
+        public decimal MinimumPrice
+        {
+            get;set;
+        }
+
+        public ProductByPriceFilter(decimal minimumPrice)
+        {
+            MinimumPrice = minimumPrice;
+        }
+
+        public bool FilterItem(Object item)
+        {
+            Product product = item as Product;
+            if(product != null)
+            {
+                return (product.UnitCost > MinimumPrice);
+            }
+            return false;
+        }
+    }
+
+    下面的代码创建了ProductByPriceFilter类的一个实例，并使用该实例进行最低价格过滤：
+    private void cmdFilter_Click(object sender, RoutedEventArgs e)
+    {
+        decimal minimumPrice;
+        if(Decimal.TryParse(txtMinPrice.Text, out minimumPrice))
+        {
+            ListCollectionView view = CollectionViewSource.GetDefaultView(lstProductsd.ItemsSource) as ListCollectionView;
+
+            if(view != null)
+            {
+                ProductByPriceFilter filter = new ProductByPriceFilter(minimumPrice);
+                view.Filter = new Predicate<object>(filter.FilterItem);
+            }
+        }
+    }
+    您可能会为过滤不同类型的数据而创建不同的过滤器类。例如，可能准备创建并重用MinMaxFilter和StringFilter等。然而，为希望应用过滤的每个窗口创建单独的
+    过滤类通常更有用。原因是不能将多个过滤器链接在一起。
+
+    注意：
+    当然，可创建自定义实现来解决这个问题——例如，创建FilterChain类来封装IFilter对象的集合，并且为了决定是否排除某个项而为每个IFilter对象调用FilterItem()
+    方法。然而，这一额外的层次会增加不必要的代码和复杂性
+
+    如果希望在以后能够修改过滤器而又不希望重新创建ProductByPriceFilter对象，就需要在窗口类中通过成员变量来保存过滤器对象的引用。然后可修改过滤器属性。然而，
+    还需要为每个视图对象调用Refresh()方法，从而强制性地重新过滤列表。无论何时在包含最低价格的文本框中触发TextChanged事件，下面的代码都会调整过滤器设置：
+    private void txtMinPrice_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        ListCollectionView view = CollectionViewSource.GetDefaultView(lstProducts.ItemsSource) as ListCollectionView;
+        if(view != null)
+        {
+            decimal minimumPrice;
+            if(Decimal.TryParse(txtMinPrice.Text, out minimumPrice) && (filter != null))
+            {
+                filter.MinimumPrice = minimumPrice;
+                view.Refresh();
+            }
+        }
+    }
+
+    提示：
+    使用一系列复选框让用户选择应用不同类型的过滤条件是一种常见的约定。例如，可为使用价格、名称、型号等进行过滤创建复选框。然后用户可通过选择恰当的复选框来选择使用
+    哪些过滤条件。
+
+    最后，可通过将Filter属性设置为null来彻底删除过滤器：
+    view.Filter = null;
+    
+    -->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>

@@ -6,6 +6,409 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="ValueConverter" Height="332" Width="355">
+
+<!--
+    数据转换
+    
+    在基本绑定中，信息在从源到目标的传递过程中没有任何变化。这看起来是符合逻辑的，但我们并不总是希望出现
+    这种行为。通常，数据源使用的是低级表达方式，我们可能不希望直接在用户界面中使用这种低级表达方式。例如，
+    可能希望使用更便于读取的字符串来代替数字编码，数字需要被削减到合适的尺寸，日期需要使用长格式显示等。
+    如果是这样的话，就需要有一种方法将这些数值转换为恰当的显示形式。并且如果正在使用双向绑定，还需要进行反向
+    转换——获取用户提供的数据并将他们转换到适于在恰当的数据对象中保存的表示形式
+
+    幸运的是，WPF提供了两个工具，可为您提供帮助：
+    1.字符串格式化
+    使用该功能可以通过设置Binding.StringFormat属性对文本形式的数据进行转换——例如包含日期和数字的字符串。对于至少
+    一半的格式化任务，字符串格式化是一种便捷的技术
+    2.值转换器
+    该功能更强大(有时更复杂)，使用该功能可将任意类型的源数据转换为任意类型的对象表示，然后可传递到关联的控件
+    
+
+    
+    
+    
+    
+    
+    使用StringFormat属性
+
+    为格式化需要显示为文本的数字，字符串格式化堪称完美工具。例如，分析在上一章介绍的Product类的UnitCost属性。UnitCost存储
+    为小数，因此当在文本框中显示时，可能会看到类似3.9900的数值。这种显示格式不仅显示了比看起来更多的小鼠部分，而且缺少货币符号。
+    更直观的表示方式应当是货币格式的数值$3.99
+
+    最简单的解决方法是设置Binding.StringFormat属性。在即将在控件中显示之前，WPF将使用格式字符串将原始文本转换为显示值。同样重要的是，
+    WPF在大多数情况下将使用该字符串执行反向转换，获取所有编辑后的数据并使用编辑后的数据更新绑定的属性
+    
+    当设置Binding.StringFormat属性时，使用标准的.NET格式字符串，具体形式为{0:C}。其中，0代表第一个数值，C引用希望应用的格式字符串——对于这个示例，
+    他是标准的本地专用的货币格式。在我们的计算机上，该格式将3.99转换为$3.99。整个表达式被包含到一对花括号中。
+    
+    下面列举一个示例，该例为UnitCost字段应用格式字符串，从而使其显示为货币值：
+    <TextBox Margin="5" Grid.Row="2" Grid.Column="1" Text="{Binding Path=UnitCost, StringFormat={}{0:C}}">
+    </TextBox>
+    您可能注意到了，StringFormat属性的值以花括号{}开头。完整值是{}{0:C}而不是{0:C}。为了转义字符串，需要在开始处使用稍微笨拙的花括号对。
+    否则，XAML解析器可能会被{0:C}开头的花括号所迷惑
+
+    顺便提一下，只有当StringFormat值以花括号开头时才需要{}转义序列。分析下面的示例，该例在每个格式化的数值之前添加了一个字面文本序列：
+    <TextBox Margin="5" Grid.Row="2" Grid.Column="1" Text="{Binding Path=UnitCost, StringFormat=The value is {0:C}.}">
+    </TextBox>
+    这个表达式将值(如3.99)转换成"The value is $3.99."。因为StringFormat属性值中的第一个字符是普通字母，不是括号，所以在开头不需要初始化转义序列。
+    然而，这个格式字符串只能在一个方向上工作。如果用户试图提供包含该字面文本的编辑过的值(如“The value is $4.25.”)，更新会失败。而另一方面，如果用户
+    为只有数字字符(4.25)或具有数字字符和货币符号($4.25)的数值执行编辑，编辑就会成功，绑定表达式将其转换为显示文本“The value is $4.25”，并在文本框
+    中显示该文本
+
+    为使用StringFormat属性获得所希望的结果，需要合适的格式字符串。可以在Visual Studio帮助文档中找到与所有格式字符串相关的内容。下面列出了一些最常用
+    的选项，这些选项分别用于转换数字和日期数值
+
+
+    
+    
+    货币                        C                           $1234.50
+                                                            圆括号表示负值：($1234.50)
+                                                            货币符号特定于区域
+    科学计数法(指数)             E                           1234.50E+004
+    百分数                      P                           45.6%
+    固定小数                    F?                          取决于设置的小数位数。F3格式化数值类似于123.400，F0格式化数值类似于123
+
+    
+    
+    短日期                       d                          M/d/yyyy
+                                                           例如：01/30/2013
+    长日期                       D                          dddd,MMMM dd,yyyy
+                                                            例如：Wednesday, January 30, 2013
+    长日期和短时间                f                          dddd,MMMM dd,yyyy HH:mm aa
+                                                            例如：Wednesday, January 30, 2013 10:00 AM
+    长日期和长时间                F                          dddd,MMMM dd,yyyy HH:mm:ss aa
+                                                            例如：Wednesday，January 30， 2013 10:00:23 AM
+    ISO Sortable标准             s                           yyyy-MM-dd HH:mm:ss
+                                                            例如：2013-01-30 10:00:23
+    月和日                       M                          MMMM dd
+                                                            例如：January 30
+    通用格式                     G                           M/d/yyyy HH:mm:ss aa(取决于特定区域设置)
+                                                            例如：10/30/2013 10:00:23 AM
+    
+    
+    下面的绑定表达式使用自定义的日期格式字符串来格式化OrderDate属性：
+    <TextBlock Text="{Binding Date, StringFormat={}{0:MM/dd/yyyy}}"></TextBlock>
+
+    
+    
+    WPF列表控件还支持针对列表项的字符串格式化。为使用这种格式化，只需要设置列表的ItemStringFormat属性(该属性继承自ItemsControl基类)。下面是具有
+    产品价格列表的示例：
+    <ListBox Name="lstProducts" DisplayMemberPath="UnitCost" ItemStringFormat="{0:C}">
+    </ListBox>
+    格式字符串自动向下传递到为每个项获取文本的绑定
+    
+
+    
+    
+    
+    
+    值转换器简介
+
+    Binding.StringFormat属性是针对简单的、标准的格式化数字和日期而创建的。但许多数据绑定需要更强大的工具，称为值转换器(value converter)类。
+
+    值转换器的作用显而易见。他负责在目标中显示数据之前转换源数据，并且(对于双向绑定)在将数据应用回源之前转换新的目标值
+
+    注意：这种转换方法类似于在Windows窗体中使用Format和Parse绑定事件进行数据绑定的方式。区别是在Windows窗体应用程序中，可在任何地方编写代码逻辑——只需要
+    将这两个事件关联到绑定。在WPF中，这一逻辑必须被封装到值转换器类中，从而使重用更加容易
+
+    值转换器是WPF数据绑定难题中非常有用的一部分。可通过如下几种有用的方法使用他们：
+    1.将数据格式化为字符串表示形式
+    例如，可将数字转换成货币字符串。这是值转换器最明显的用途，但当然不是唯一用途
+    2.创建特定类型的WPF对象
+    例如，可读取一块二进制数据，并创建一幅能绑定到Image元素的BitmapImage对象
+    3.根据绑定数据有条件地改变元素中地属性
+    例如，可创建值转换器，用于改变元素地背景色以突出显示位于特定范围内地数值
+
+    
+    
+    使用值转换器设置字符串的格式
+
+    为理解值转换器的基本思想，有必要再次分析之前讨论的货币格式化示例。尽管这个示例使用Binding.StringFormat属性，但可使用值转换器完成相同的工作——并能
+    完成更多工作。例如，可舍入和截尾数值(将3.99修改为4)、使用数字名称(将1000000修改为100万)、甚至可添加经销商标记(将3.99乘以15%)，还可修剪反向转换
+    (将和用户提供的数值转换为绑定对象中合适的数据值)的工作方式
+
+    为创建值转换器，许哟啊执行以下4个步骤：
+    1.创建一个实现了IValueConverter接口的类
+    2.为该类声明添加ValueConversion特性，并指定目标数据类型
+    3.实现Convert()方法，该方法将数据从原来的格式转换为显示格式
+    4.实现ConvertBack()方法，该方法执行反向变换，将值从显示格式转换为原格式
+
+         源对象(数据对象)                                      值转换器                                     目标对象(显示元素)
+    +——————————————————————————+                  +————————————————————————————————+              +————————————————————————————+
+    |                          | ————————————————>|            Convert()           | ——————————>  |                            |
+    |          属性            |                  +————————————————————————————————+              |        依赖项属性           |
+    |                          |                  +————————————————————————————————+              |       (使用绑定设置)        |
+    |                          | <——————————————— |            ConvertBack()       | <——————————  |                            |
+    +——————————————————————————                   +————————————————————————————————+              +————————————————————————————+
+    
+    对于将小数转换成货币，可使用Decimal.ToString()方法获取所期望的格式化字符串表示形式。只需要指定货币格式字符串"C"即可，如下所示：
+    string currencyText = decimalPrice.ToString("C");
+    
+    上面的代码使用应用于当前线程的文化设置。在配置为英语(美国)区域的计算机上运行时使用en-US本地化设置，并显示美元货币符号($)。在配置为其他区域的
+    计算机上运行时会显示不同的货币符号(这与使用Binding.StringFormat属性应用{0:C}格式字符串的工作方式相同)。如果这不是所期望的结果(例如，总是希望显示
+    美元符号)，可使用重载版本的ToString()方法来指定文化，如下所示：
+    CultureInfo culture = new CultureInfo("en-US");
+    string currencyText = decimalPrice.ToString("C", culture);
+    从显示格式转换回希望的数字更麻烦一些。Decimal类型的Parse()和TryParse()方法是执行该工作最合理的选择，但他们通常不能处理包含了货币符号的字符串。
+    解决方法是使用重载版本的接受System.Globalization.NumberStyles值的Parse()或TryParse()方法。如果提供了NumberStyles.Any值，并且存在货币符号，就能
+    够成功地略过货币符号
+
+    下面是用于处理类似于Product.UnitCost属性地价格数值的值转换器的完整代码：
+    [ValueConversion(typeof(decimal), typeof(string))]
+    public class PriceConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            decimal price = (decimal)value;
+            return price.ToString("C", culture);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string price = value.ToString(culture);
+
+            decimal result;
+            if(Decimal.TryParse(price, NumberStyles.Any, culture, out result))
+            {
+                return result;
+            }
+            return value;
+        }
+    }
+
+    为使用这个值转换器，首先需要将项目命名空间映射到能够在标记中使用的XML命名空间前缀。下面的示例使用local命名空间前缀，并假定值转换器位于DataBinding命名空间中：
+    xmlns:local="clr-namespace:DataBinding"
+    在典型情况下，将为包含所有标记的<Window>标签添加这个特性
+    现在，只需要创建PriceConverter类的一个实例，并将该实例指定给绑定的Converter属性。为此，需要使用如下所示的更长的语法：
+    <TextBlock Margin="7" Grid.Row="2">Unit Cost:</TextBlock>
+    <TextBox Margin="5" Grid.Row="2" Grid.Column="1">
+        <TextBox.Text>
+            <Binding Path="UnitCost">
+                <Binding.Converter>
+                    <local:PriceConverter></local:PriceConverter>
+                </Binding.Converter>
+            </Binding>
+        </TextBox.Text>
+    </TextBox>
+    在许多情况下，可将相同的转换器用于多个绑定。在当前示例中，为每个绑定都创建一个转换器实例是不合理的，而应当在Resources集合中创建转换器对象
+    <Window.Resources>
+        <local:PriceConverter x:Key="PriceConverter"></local:PriceConverter>
+    </Window.Resources>
+    之后，可在绑定中使用StaticResource引用来指向资源中的转换器对象
+    <TextBox Margin="5" Grid.Row="2" Grid.Column="1" Text="{Binding Path=UnitCost, Converter={StaticResource PriceConverter}}">
+    </TextBox>
+    
+
+
+    
+    
+    
+    
+    使用值转换器创建对象
+
+    如果需要填平数据在自定义类中的存储的方式和在窗口中显示的方式之前的鸿沟，值转换器是必不可少的
+    例如，设想具有在数据库的字段中存储为字节数组的图片数据。可将二进制数据转换为System.Windows.Media.Imaging.BitmapImage对象，并将该对象
+    存储为自定义数据对象的一部分。然而，这种设计可能不合适
+    例如，可能需要灵活地创建图像地多个对象表示形式，可能是因为在WPF应用程序和Windows窗体应用程序(改用System.Drawing.Bitmap类)中都要使用
+    数据库。对于这种情况，更合理的做法是在数据对象中存储原始的二进制数据，并使用值转换器将他转换成WPF的BitmapImage对象(为将图像绑定到
+    Windows窗体应用程序中的窗体，可使用System.Windows.Binding类的Format和Parse事件)
+
+    提示：
+    要将一块二进制数据转换成一幅图像，首先必须创建BitmapImage对象，并将图像数据读入到MemoryStream对象中。然后，可调用BitmapImage.BeginInit()
+    方法来设置BitmapImage对象的StreamSource属性，使其指向MemoryStream对象，并调用EndInit()方法来完成图像的加载
+
+    Store数据库中的Products表不包含二进制图片数据，但包含用于存储与产品图像关联的文件名的ProductImage字段。对于这种情况，更应延迟创建图像对象。
+    首先，根据应用程序运行的位置，可能无法获得图像。其次，除非图像即将显示，否则使用额外的内存保存图像是没有意义的
+
+    ProductImage字段包含文件名称，但不包含图像文件的完整路径，这样可灵活地将图像文件放置到任何合适的位置。值转换器负责根据ProductImage字段和希望
+    使用的目录创建指向图像文件的URI。使用自定义的ImageDirectory属性保存目录，该属性默认指向当前目录
+
+    下面是执行转换的ImagePathConverter类的完整代码：
+    public class ImagePathConverter : IValueConverter
+    {
+        private string imageDirectory = Directory.GetCurrentDirectory();
+
+        public string ImageDirectory
+        {
+            get{return imageDirectory;}
+            set{imageDirectory = value;}
+        }
+
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string imagePath = Path.Combine(ImageDirectory, (string)value);
+            return new BitmapImage(new Uri(imagePath));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    为使用这个转换器，首先需要将他添加到资源。在这个示例中，没有设置ImageDirectory属性，这意味着ImagePathConverter对象默认使用应用程序的当前目录：
+    <Window.Resources>
+        <local:ImagePathConverter x:Key="ImagePathConverter"></local:ImagePathConverter>
+    </Window.Resources>
+
+    现在可以很方便地创建使用这个值转换器的绑定表达式：
+    <Image Margin="5" Grid.Row="2" Grid.Column="1" Stretch="None" HorizontalAlignment="Left" Source
+        ="{Binding Path=ProductImagePath, Converter={StaticResource ImagePathConverter}}">
+    </Image>
+    
+    上面的标记可以工作，因为Image.Source属性期望一个ImageSource对象，并且BitmapImage类继承自ImageSource类
+    
+    可通过两种方法改进这个示例。首先，当试图为不存在的文件创建BitmapImage对象时，会引发异常；当设置DataContext、ItemsSource或Source属性时，
+    将接收到该异常。此外，可为ImagePathConverter类添加用于配置这一行为的属性。例如，可添加Boolean类型的SuppressException属性。如果该属性
+    设置为true，就可以在Convert()方法中捕获异常，然后返回Binding.DoNothing值(这会通知WPF暂时认为没有设置数据绑定)。还可添加能够保存BitmapImage
+    对象的DefaultImage属性。如果发生异常，ImagePathConverter类可返回一幅默认图像
+    
+    您可能还注意到，这个转换器只支持单向转换。这是因为不可能改变BitmapImage对象并使用他更新图像路径。但也可以采取另一种方法，不是从ImagePathConverter
+    返回BitmapImage对象，只是从Convert()方法返回完全限定的URI，如下所示：
+    return new Uri(imagePath);
+    上面的代码同样能够正常运行，因为Image元素使用类型转换器将Uri转换为他实际所希望的ImageSource对象。如果采用这种方法，就可让用户选择新的文件路径
+    (可能使用通过OpenFileDialog类设置的TextBox控件)。然后就可以在ConvertBack()方法中提取文件名，并使用该文件名更新存储在数据对象中的图像路径。
+    
+    
+    
+    
+    应用条件格式化
+    有些最有趣的值转换器不是为了显示而格式化数据，而是旨在根据数据规则格式化元素中与外观相关的其他一些方面
+    例如，设想希望通过不同的背景色标志那些价格昂贵的产品项。使用下面的值转换器就能方便地封装这一逻辑：
+    public class PriceToBackgroundConverter : IValueConverter
+    {
+        public decimal MinimumPriceToHighlight
+        {
+            get;set;
+        }
+
+        public Brush HighlightBrush
+        {
+            get;set;
+        }
+
+        public Brush DefaultBrush
+        {
+            get;set;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            decimal price = (decimal)value;
+            if(price >= MinimumPriceToHighlight)
+            {
+                return HighlightBrush;
+            }
+            else
+            {
+                return DefaultBrush;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    同样，为了达到重用目的，对值转换器进行了精心设计。在转换器中并没有硬编码突出显示颜色，而是在XAML中通过使用转换器地代码予以指定：
+    <local:PriceToBackgroundConverter x:Key="PriceToBackgroundConverter"
+        DefaultBrush="{x:Null}" HighlightBrush="Orange" MinimumPriceHighlight="50">
+    </local:PriceToBackgroundConverter>
+
+    在此使用的是画刷而不是颜色，从而可使用渐变和背景图像创建更高级的突出显示效果。如果希望保持标准的透明背景(从而使用父元素的背景)，只需要将
+    DefaultBrush或HighlightBrush属性设置为null即可
+
+    现在只需要使用转换器来设置一些元素的背景，例如包含其他所有元素的Border：
+    <Border Background="{Binding Path=UnitCost, Converter={StaticResource PriceToBackgroundConverter}}" ...>
+
+
+    
+    
+    
+
+    
+    
+    
+    应用条件格式化的其他方法
+    
+    使用自定义的值转换器，只是根据数据对象应用条件格式化方法中的一种。还可以使用样式中的数据触发器、样式选择器以及模板选择器，这些方法各有优缺点
+
+    当需要根据绑定的数据对象设置元素中的某个单独属性时，值转换器方法效果最好。这种方法很容易，而且能自动保持同步。如果绑定的数据对象发生了变化，
+    链接的属性也会立即改变。
+    
+    数据触发器同样很简单，但他们仅支持非常简单的测试是否相等的逻辑。例如，数据触发器可对特定目录中的产品应用格式，但不能对价格高于某个指定的最小值的
+    产品应用格式。数据触发器的关键优点是，可以使用他们应用特定类型的格式，并且不需要编写任何代码就可以选择效果
+
+    样式选择器和模板选择器是最强大的方法。使用他们可在目标元素中一次改变多个属性，并且可以改变项在列表中的显示方式。但他们也增加了复杂程度。此外，
+    如果绑定的数据发生变化，为了重新应用样式和模板，还需要添加代码
+
+
+    
+    
+    
+    
+    
+    
+    评估多个属性
+
+    到目前为止，已经使用绑定表达式将一部分源数据转换成单个格式化的结果。尽管不能修改等式的另一部分(结果)，但是只需要很少的技巧，就可以创建能够评估
+    或结合多个源属性信息的绑定。
+
+    第一个技巧是用MultiBinding对象代替Binding对象。然后使用MultiBinding.StringFormat属性定义绑定属性的排列。下面是一个示例，该例将Joe和Smith
+    转换为"Smith,Joe"，并在TextBlock元素中显示结果：
+    <TextBlock>
+        <TextBlock.Text>
+            <MultiBinding StringFormat="{1}, {0}">
+                <Binding Path="FirstName"></Binding>
+                <Binding Path="LastName"></Binding>
+            </MultiBinding>
+        </TextBlock.Text>
+    </TextBlock>
+    您可能注意到，这个示例在StringFormat属性中使用了两个字段。同样，可使用格式字符串进行修改。例如，如果使用MultiBinding结合文本值和货币值，可将
+    StringFormat属性设置为"{0} costs {1:C}。"
+
+    如果希望使用两个源字段完成更富有挑战性的工作，而不只是将他们缝合到一起，需要借助于值转换器。可使用这种方法执行计算(例如，将UnitPrice乘以UnitsInStock)，
+    或同时使用多个细节进行格式化(例如，突出显示特定目录中的所有高价位产品)。然而对于这种情况，值转换器必须实现IMultiValueConverter接口，
+    而不是实现IValueConverter接口
+    
+    以下示例中的MultiBinding对象使用来自源对象的UnitCost和UnitsInStock属性，并使用值转换器结合他们：
+
+    <TextBlock>Total Stock Value:</TextBlock>
+    <TextBox>
+        <TextBox.Text>
+            <MultiBinding Converter="{StaticResource ValueInStockConverter}">
+                <Binding Path="UnitCost"/>
+                <Binding Path="UnitsInStock"/>
+            </MultiBinding>
+        </TextBox.Text>
+    </TextBox>
+    
+    IMultiValueConverter接口定义了与IValueConverter接口中类似的Convert()和ConvertBack()方法，主要区别是，提供了用于保存数值的数组而不是单个值。
+    这些值在数组中的顺序和在标记中定义他们的顺序相同。因此，在上一个示例中可以期望首先是UnitCost，然后是UnitsInStock
+
+    下面是ValueInStockConverter类的代码：
+    public class ValueInStockConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            // Return the total value of all the items in stock.
+            decimal unitCost = (decimal)values[0];
+            int unitsInStock = (int)values[i];
+            return unitCost * unitsInStock;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    -->
+    
+    
+    
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

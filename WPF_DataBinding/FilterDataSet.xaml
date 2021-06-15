@@ -6,6 +6,40 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="FilterDataSet" Height="373" Width="611">
+        <!--
+    过滤DataTable对象
+
+    对于DataTable对象，过滤工作是不同的。如果以前使用过ADO.NET，可能已经知道每个DataTable对象都与一个DataView对象相关联(和DataTable对象一样，
+    DataView对象和其他ADO.NET核心数据对象一起在System.Data命名空间中进行定义)。ADO.NET中的DataView对象扮演和WPF视图对象相同的角色。与WPF视图
+    一样，可使用DataView对象过滤记录(使用RowFilter属性通过字段内容进行过滤，或者使用RowStateFilter属性通过行状态进行过滤)。DataView对象还通过
+    Sort属性支持排序。与WPF视图对象不同的是，DataView对象不跟踪数据集中的位置。DataView对象还提供了用于锁定编辑能力的附加属性(AllowDelete、
+    AllowEdit以及AllowNew)
+
+    可通过检索绑定的DataView对象并直接修改其属性来改变过滤数据列表的方式(请记住，可通过DataTable.DefaultView属性获取默认的DataView对象)。不过，
+    如能通过WPF视图对象调整过滤会更好，因为这样可以继续使用相同的模型
+
+    这是可能的，但存在一些局限性。与ListCollectionView视图不同，DataTable对象使用的BindingListCollectionView视图不支持Filter属性
+    (BindingListCollectionView.CanFilter属性返回false，并且如果试图设置Filter属性，就会导致抛出异常)。相反，BindingListCollectionView视图提供了
+    CustomFilter属性。CustomFilter属性本身不能做任何工作——只是接收指定的过滤字符串，并使用这个过滤字符串设置DataView.RowFilter属性
+
+    使用DataView.RowFilter属性非常容易，但有点混乱。将基于字符串的过滤器表达式作为参数，这个表达式类似于SELECT查询中用于构造WHERE子句的SQL代码段。因此，
+    需要遵循所有的SQL约定。例如，使用单引号(')将字符串和日期值括起来。并且如果希望使用多个条件，还需要使用OR和AND关键字将这些条件结合在一起。
+
+    下面的示例复制了前面基于集合的示例中的过滤，并将该过滤应用于产品记录的DataTable对象：
+    decimal minimumPrice;
+    if(Decimal.TryParse(txtMinPrice.Text, out minimumPrice))
+    {
+        BindingListCollectionView view = CollectionViewSource.GetDefaultView(lstProducts.ItemsSource) as BindingListCollectionView;
+
+        if(view != null)
+        {
+            view.CustomFilter = "UnitCost > " + minimumPrice.ToString();
+        }
+    }
+    注意，这个示例使用迂回方式将txtMinPrice文本框中的文本转换为decimal类型的数值，然后又将这个decimal数值转换为用于过滤的字符串。这需要做更多的工作，
+    但这样可以避免由于使用非法字符造成的攻击和错误。如果只是通过连接txtMinPrice文本框中的文本来构造过滤字符串，可能会包含过滤运算(=、<、>)以及关键字
+    (AND、OR)，从而可能会应用和所希望的过滤完全不同的过滤。这可能是蓄意攻击的一部分，而可能是由于用户的错误造成的
+    -->
     <Grid>
         <Grid>
             <Grid.ColumnDefinitions>

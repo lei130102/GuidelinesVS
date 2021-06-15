@@ -7,6 +7,50 @@
         xmlns:data="clr-namespace:StoreDatabase;assembly=StoreDatabase"
         mc:Ignorable="d"
         Title="DataTemplateByType" Height="420" Width="675">
+        <!--
+    分离和重用模板
+
+    与样式类似，通常也将模板声明为窗口或应用程序的资源，而不是在使用他们的列表中进行定义。这种隔离通常更加清晰，当在同一个控件中
+    使用很长的、复杂的一个或多个模板时尤其如此。当希望在用户界面的不同地方以相同的方式呈现数据时，这样还允许在多个列表或内容控件
+    中重用模板
+
+    为使该方法奏效，只需要在资源集合中定义数据模板并赋予键名
+
+    <Window.Resources>
+        <DataTemplate x:Key="ProductDataTemplate">
+            <Border Margin="5" BorderThickness="1" BorderBrush="SteelBlue" CornerRadius="4">
+                <Grid Margin="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock FontWeight="Bold" Text="{Binding Path=ModelNumber}"/>
+                    <TextBlock Grid.Row="1" Text="{Binding Path=ModelName}"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+    现在通过StaticResource引用来为列表添加数据模板：
+    <ListBox Name="lstProducts" HorizontalContentAlignment="Stretch"
+        ItemTemplate="{StaticResource ProductDataTemplate}"/>
+    
+    如果希望在不同类型的控件中自动重用相同的模板，可使用另一种有趣的技巧——通过设置DataTemplate.DataType属性来确定使用模板的
+    绑定数据的类型。例如，可修改上面的示例，删除资源键并指定该模板准备用于绑定的Product对象，而不管他们在何处显示：
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type local:Product}">
+        </DataTemplate>
+    </Window.Resources>
+    上面的标记假定已经定义了名为local的命名空间前缀，并将该前缀映射到项目的命名空间
+
+    现在这个模板将用于窗口中任何绑定到Product对象的列表控件或内容控件，而不需要指定ItemTemplate设置
+    
+    注意：
+    数据模板不需要数据绑定。换句话说，不需要使用ItemsSource属性填充模板列表。在上一个示例中，可以使用声明方式(在XAML标记中)或
+    以编程方式(通过调用ListBox.Items.Add()方法)添加Product对象。对于这两种情况，数据模板以相同的方式工作
+
+    -->
+
     <Window.Resources>
         <DataTemplate DataType="{x:Type data:Product}">
             <Border Margin="3" BorderThickness="1" BorderBrush="SteelBlue" CornerRadius="4">

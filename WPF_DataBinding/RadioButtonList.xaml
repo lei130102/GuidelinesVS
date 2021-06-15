@@ -6,6 +6,261 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="RadioButtonList" Height="300" Width="300">
+        <!--
+    
+    
+    包含复选框或单选按钮的ListBox控件
+
+    如果希望深入到列表控件并修改项使用的控件模板，ItemContainerStyle属性同样十分重要。例如，可使用这种技术，让每个ListBoxItem对象在项文本的旁边显示单选按钮或复选框
+    
+    注意：
+    乍一看，好像不值得使用模板改变ListBoxItem。毕竟，通过组合也可以很容易地解决这个问题。需要做的全部工作就是用一系列CheckBox对象填充ScrollViewer。然而，这种实现
+    不能提供相同的编程模型。无法方便地迭代所有的复选框，并且更重要的是，无法为这一实现使用数据绑定
+
+    在这个示例中，基本技术是修改作为每个列表项容器的控件模板。不会希望修改ListBox.Template属性，因为这个属性为ListBox控件提供模板；而是需要修改ListBoxItem.Template属性。
+    下面是在RadioButton元素中封装每一项需要的模板：
+    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+        <RadioButton Focusable="False" IsChecked="{Binding Path=IsSelected, RelativeSource={RelativeSource TemplatedParent}, Model=TwoWay}">
+            <ContentPresenter></ContentPresenter>
+        </RadioButton>
+    </ControlTemplate>
+
+    上面的代码能够工作，因为RadioButton是内容控件，并且能包含任何内容。尽管可使用绑定表达式获取内容，但使用ContentPresenter元素更灵活，如上面的标记所示。
+    ContentPresenter元素获取任何最初在项中显示的内容，这些内容可以是属性文本(如果使用ListBox.DisplayMemberPath属性)，也可以是更复杂的数据表示形式(如果使用
+    ListBox.ItemTemplate属性)
+
+    真正的诀窍在于为RadioButton.IsChecked属性使用的绑定表达式。这个表达式使用Binding.RelativeSource属性检索ListBoxItem.IsSelected属性的值。通过这种方式，当
+    单击RadioButton控件选择该元素时，相应的ListBoxItem就会被标记为选中状态。同时，所有其他项为非选中状态。这个绑定表达式还能以另一种方式进行工作，这意味着可使用
+    代码设置选择，并会填充正确的RadioButton元素
+    
+    为完成这个模板，需要将RadioButton.Focusable属性设置成false。否则，就能通过Tab键将焦点移到当前选中的ListBoxItem(他能够具有焦点)，然后焦点会移到RadioButton元素自身，
+    而这不是很合理
+
+    为设置ListBoxItem.Template属性，需要一条能深入到正确层次的样式规则。借助于ItemContainerStyle属性，这一部分很容易实现：
+    <Window.Resources>
+        <Style x:Key="RadioButtonListStyle" TargetType="{x:Type ListBox}">
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Margin" Value="2"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <RadioButton Focusable="False" IsChecked="{Binding Path=IsSelected, Model=TwoWay,
+                                        RelativeSource={RelativeSource TemplatedParent}}">
+                                        <ContentPresenter></ContentPresenter>
+                                    </RadioButton>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    尽管可直接设置ListBox.ItemContainerStyle属性，但在这个示例中还是为其多分解了一个层次。设置ListBoxItem.Control模板的样式被封装到另一个将该样式应用于
+    ListBox.ItemContainerStyle属性的样式中。这使得模板能够被重用，可连接到所期望的任何数量的ListBox对象上
+    <ListBox Style="{StaticResource RadioButtonListStyle}" Name="lstProducts" DisplayMemberPath="ModelName">
+    
+    还可以用相同的样式调整Listbox控件的其他属性
+
+    创建ListBox控件同样容易。实际上，只需要进行两处修改。首先，使用同样的CheckBox元素代替RadioButton元素。然后修改ListBox.SelectionMode属性，从而允许多项选择。
+    现在，用户可选择所期望的更多或更少的项
+
+    下面的样式规则将普通的ListBox转换成复选框列表
+
+    <Style x:Key="CheckBoxListStyle" TargetType="{x:Type ListBox}">
+        <Setter Property="SelectionMode" Value="Multiple"/>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Margin" Value="2"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                <CheckBox Focusable="False" IsChecked="{Binding Path=IsSelected, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <ContentPresenter></ContentPresenter>
+                                </CheckBox>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    
+
+    
+    
+    
+    交替条目样式
+
+    格式化列表的一种常用方式是使用交替行格式化——换句话说，用于区分列表中每两项的一套格式特征。交替行通常是通过稍微不同的背景颜色提供的，从而
+    清晰地隔离行
+    
+    WPF通过两个属性为交替项提供了内置支持：AlternationCount和AlternationIndex
+
+    AlternationCount指定序列中项的数量，经过该数量的项之后交替样式。默认情况下，AlternationCount被设置为0，而且不使用交替格式。如果将
+    AlternationCount设置为1，列表将在每项之后交替，从而可以应用奇偶格式化模式
+    
+    为每个ListBoxItem提供AlternationIndex属性，该属性用于确定在交替项序列中如何编号。假设将AlternationCount设置为2，第1个ListBoxItem
+    将获得值为0的AlternationIndex，第2个将获得值为1的AlternationIndex，第3个将获得值为0的AlternationIndex，第4个将获得值为1的AlternationIndex，
+    等等。技巧是使用触发器在ItemContainerStyle中检查AlternationIndex值并相应改变格式
+
+    例如，在此显示的ListBox控件为交替项提供了稍微不同的背景颜色(除非已经选择了该项，否则这时针对ListBoxItem.IsSelected属性的具有更高优先级的
+    触发器胜出)：
+    <ListBox Name="lstProducts" Margin="5" DisplayMemberPath="ModelName" AlternationCount="2">
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ListBoxItem}">
+                <Setter Property="Background" Value="LightSteelBlue"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Padding" Value="5"/>
+                <Style.Triggers>
+                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                        <Setter Property="Background" Value="LightBlue"/>
+                    </Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="DarkRed"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="BorderBrush" Value="Black"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ListBox.ItemContainerStyle>
+    </ListBox>
+
+    您可能注意到了AlternationIndex是附加属性，该属性是由ListBox类定义的(或者从技术上讲，是在其父类ItemsControl中定义的)。由于不是在
+    ListBoxItem类中定义的，因此当在样式触发器中使用该属性时，需要指定类名
+
+    有趣的是，对于每个第2项不需要交替项。不过，可创建在包含3个或更多个项的序列中进行交替的更复杂交替格式。例如，为使用包含3个项的组，将
+    AlternationCount设置为3，并为每个可能的AlternationIndex值(0、1或2)编写触发器。在这个列表中，项1、4、7、10等将具有值为0的AlternationIndex；
+    项2、5、8、11等将具有值为1的AlternationIndex；最后，项3、6、9、12等将具有值为2的AlternationIndex。
+    
+
+    
+    
+    样式选择器
+
+    现在您已看到了如何根据项的选择状态或在列表中的位置改变样式。然而，可能希望使用其他很多条件——依赖于您提供的数据而不是依赖于存储所提供数据的
+    ListBoxItem容器的标准。
+
+    为处理这种情况，需要一种为不同的项提供完全不同样式的方法，但无法以声明的方式进行该工作。相反，需要构建专门的继承自StyleSelector的类。该类负责
+    检查每个数据项并选择合适的样式。该工作是在SelectStyle()方法中执行的，必须重写该方法
+
+    下面是一个基本的选择器，该选择器在两个样式中进行选择：
+    public class ProductByCategoryStyleSelector : StyleSelector
+    {
+        public override Style SelectStyle(object item, DependencyObject container)
+        {
+            Product product = (Product)item;
+            Window window = Application.Current.MainWindow;
+
+            if(product.CategoryName == "Travel")
+            {
+                return (Style)window.FindResource("TravelProductStyle");
+            }
+            else
+            {
+                return (Style)window.FindResource("DefaultProductStyle");
+            }
+        }
+    }
+    在该例中，Travel目录中的产品获得一种样式，而其他所有产品获得另一种样式。在这个示例中，希望使用的两种样式都必须在窗口的Resources集合中定义，
+    并且具有键名TravelProductStyle和DefaultProductStyle。
+
+    这个样式选择器能够工作，但并不完美。一个问题是代码依赖于标记中的细节，这意味着有依赖性在编译时没有加强并且很容易遭到破坏(例如，如果为样式
+    提供错误的资源键)。另一个问题是这个样式选择器会硬编码查找的值(在这个示例中是目录名)，这限制了重用能力
+
+    更好的做法是创建使用一个或多个属性的样式选择器，从而指定一些细节，例如将用于评估数据项的标准以及希望使用的样式。下面的样式选择器仍很简单，
+    但非常灵活。他能检查任何数据对象，查找给定的属性，并根据另一个值比较属性以在两种样式之间做出选择。属性、属性值以及样式都作为属性指定。
+    SelectStyle()方法使用反射查找合适的属性，其方式和当挖掘绑定的值时数据绑定的工作方式类似
+    
+    下面是完整的代码：
+    public class SingleCriteriaHighlightStyleSelector : StyleSelector
+    {
+        public Style DefaultStyle
+        {
+            get;set;
+        }
+
+        public Style HighlightStyle
+        {
+            get;set;
+        }
+
+        public string PropertyToEvaluate
+        {
+            get;set;
+        }
+
+        public string PropertyValueToHighlight
+        {
+            get;set;
+        }
+
+        public override Style SelectStyle(object item, DependencyObject container)
+        {
+            Product product = (Product)item;
+
+            // Use reflection to get the property to check.
+            Type type = product.GetType();
+            PropertyInfo property = type.GetProperty(PropertyToEvalute);
+
+            // Decide if this product should be highlighted
+            // based on the property value.
+            if(property.GetValue(product, null).ToString() == PropertyValueToHighlight)
+            {
+                return HighlightStyle;
+            }
+            else
+            {
+                return DefaultStyle;
+            }
+        }
+    }
+    为使这个样式选择器能够工作，需要创建希望使用的两个样式，而且需要创建和初始化SingleCriteriaHightlightStyleSelector类的实例
+    
+    
+    下面是两个类似样式，唯一的区别是背景颜色不同以及是否使用粗体格式：
+    <Window.Resources>
+        <Style x:Key="DefaultStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Background" Value="LightYellow"/>
+            <Setter Property="Padding" Value="2"/>
+        </Style>
+
+        <Style x:Key="HighlightStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Background" Value="LightSteelBlue"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="2"/>
+        </Style>
+    </Window.Resources>
+    
+    当创建SingleCriteriaHightlightStyleSelector类的实例时，为其指定这两个样式。既可以作为资源创建SingleCriteriaHightlightStyleSelector(如果
+    希望在多个位置重用，这是很有用的)，也可以在列表控件的内部定义，正如本例这样：
+    <ListBox Name="lstProducts" HorizontalContentAlignment="Stretch">
+        <ListBox.ItemContainerStyleSelector>
+            <local:SingleCriteriaHighlightStyleSelector
+                DefaultStyle="{StaticResource DefaultStyle}"
+                HighlightStyle="{StaticResource HighlightStyle}"
+                PropertyToEvaluate="CategoryName"
+                PropertyValueToHighlight="Travel">
+            </local:SingleCriteriaHighlightStyleSelector>
+        </ListBox.ItemContainerStyleSelector>
+    </ListBox>
+    在此，SingleCriteriaHightlightStyleSelector在绑定的数据项中检查Category属性，如果该属性包含文本Travel，就使用HightlightStyle样式
+
+    样式选择过程只执行一次，当第一次绑定列表时执行。如果正在显示可编辑的数据，并且当进行编辑时可能将数据项从一个样式类别移到另一个样式类别中，
+    这就会成为问题。在这种情况下，需要强制WPF重新应用样式，并且没有优雅的方式完成该任务。粗鲁的方法是通过将ItemContainerStyleSelector属性
+    设置为null来移除样式选择器，然后再次指定样式选择器：
+    StyleSelector selector = lstProducts.ItemContainerStyleSelector;
+    lstProducts.ItemContainerStyleSelector = null;
+    lstProducts.ItemContainerStyleSelector = selector;
+
+    可通过处理事件来响应特定修改，从而选择自动运行上面的代码，例如PropertyChanged事件
+    
+    -->
     <Window.Resources>
         <Style x:Key="RadioButtonListStyle" TargetType="{x:Type ListBox}">
             <Setter Property="ItemContainerStyle">

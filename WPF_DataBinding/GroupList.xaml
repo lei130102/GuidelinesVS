@@ -6,6 +6,225 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="GroupList" Height="390" Width="628">
+        <!--
+
+    排序
+
+    还可以使用视图进行排序。最简单的方法是根据每个数据项中的一个或多个属性的值进行排序。使用System.ComponentModel.SortDescription
+    对象确定希望使用的字段。每个SortDescription对象确定希望用于排序的字段和排序方向(升序或降序)。按照希望应用他们的顺序添加SortDescription
+    对象。例如，可首先根据类别进行排序，然后再根据型号名称进行排序
+
+    下面的示例根据型号名称进行简单的升序排序：
+    ICollectionView view = CollectionViewSource.GetDefaultView(lstProducts.ItemsSource);
+    view.SortDescriptions.Add(new SortDescription("ModelName" , ListSortDirection.Ascending));
+
+    因为上面的代码使用的是ICollectionView接口(而不是特殊的视图类)，所以能够正常工作，而不管绑定的是什么类型的数据源。如果使用的是
+    BindingListCollectionView视图(当绑定到DataTable时)，SortDescription对象用于构建应用于DataView.Sort属性的排序字符串
+
+    注意：
+    很少为同一个DataView对象使用多个BindingListCollectionView视图，他们会共享相同的过滤和排序设置，因为这些细节保存在DataView对象中，
+    而不是保存在BindingListCollectionView视图中。如果这不是所希望的行为，可创建多个封装同一个DataTable对象的DataView对象
+
+    正如您所期望的，当对字符串进行排序时，按照字母顺序对值进行排序。数字按照数字顺序进行排序。为应用不同的排序顺序，首先要清除已经存在的
+    SortDescriptions集合
+
+    还可执行自定义排序，但只能用于ListCollectionView视图(不能用于BindingListCollectionView视图)。ListCollectionView类提供的CustomSort
+    属性接收一个IComparar对象，IComparer对象在两个数据项之间进行比较，并且指示较大项。如果需要构建通过组合多个属性来得到排序键的排序例程，
+    这种方法是非常方便的。如果需要使用非标准的排序规则，这种方法也很有意义。例如，在排序之前可能希望忽略产品代码的前面几个字符、对价格进行一些
+    计算、将字段转换为不同的数据类型或不同的表示形式等。
+    
+    下面的示例计算产品型号名称中字母的数量，并使用该数量确定排序的顺序：
+    public class SortByModelNameLength : IComparer
+    {
+        public int Compare(object x, object y)
+        {
+            Product productX = (Product)x;
+            Product productY = (Product)y;
+            return productX.ModelName.Length.CompareTo(productY.ModelName.Length);
+        }
+    };
+    下面的代码将IComparer对象连接到视图：
+    ListCollectionView view = (ListCollectionView)CollectionViewSource.GetDefaultView(lstProducts.ItemsSource);
+    view.CustomSort = new SortByModelNameLength();
+
+    在这个示例中，IComparer接口用于特定的情况。如果需要在不同的地方使用类似的数据重用IComparer对象，可将IComparer对象通用化。例如，可将
+    SortByModelNameLength类改为SortByTextLength类。当创建SortByTextLength实例时，代码需要提供使用的属性名称(作为字符串)，之后Compare()
+    方法可以使用反射在数据对象中查找该属性
+
+    
+    
+    
+    
+    
+    
+    分组
+    
+    与支持排序的方式相同，视图也支持分组。与排序一样，可使用简单的方式进行分组(根据单个属性值)，也可以使用复杂的方式进行分组(使用自定义的回调函数)
+
+    为执行分组，需要为CollectionView.GroupDescriptions集合添加System.ComponentModel.PropertyGroupDescription对象。
+    下面的示例根据类别名称进行分组：
+    ICollectionView view = CollectionViewSource.GetDefaultView(lstProducts.ItemsSource);
+    view.GroupDescriptions.Add(new PropertyGroupDescription("CategoryName"));
+
+    注意：
+    该例假定Product类有名为CategoryName的属性。您很可能有名为Category的属性(该属性返回链接的Category对象)或名为CategoryID的属性(该属性使用唯一
+    的ID数字来标识类别).在这些情况下，仍可以使用分组，但需要添加检查分组信息(如Category对象或CategoryID属性)的值转换器，并返回正确的用于分组的
+    类别文本
+
+    
+    这个示例存在一个问题。尽管现在数据项根据他们的类别被安排到不同的分组中，但当查看列表时，很难发现已经应用了任何分组。实际上，结果和根据类别名称
+    进行简单排序后的结果相同。
+
+    实际上，该例发生了更多变化——只是在默认设置下看不到这些变化。当使用分组时，列表为每个分组创建了单独的GroupItem对象，并且为列表添加了这些GroupItem对象。
+    GroupItem是内容控件，所以每个GroupItem对象都包含一个适当的具有实际数据的容器(如ListBoxItem对象)。显示分组的秘密是格式化GroupItem元素，使其
+    突出显示
+
+    可使用样式为列表中的所有GroupItem对象应用格式。然而，您不仅可能希望调整格式——例如，可能还希望显示分组标题，这就需要使用模板。幸运的是，ItemsControl类
+    通过他的ItemsControl.GroupStyle属性简化了这两项任务，该属性提供了一个GroupStyle对象的集合。虽然属性名称中包含了"Style"，但GroupStyle类并不是样式。
+    他只是一个简便的包，为配置GroupItem对象封装了一些有用的设置
+
+
+    
+    
+    
+    
+    GroupStyle类的属性
+
+    ContainerStyle                          设置被应用到未每个分组生成的GroupItem元素的样式
+
+    ContainerStyleSelector                  不是使用ContainerStyle属性，而是使用ContainerStyleSelector属性提供一个类，该类根据分组选择准备
+                                            使用的正确样式
+
+    HeaderTemplate                          允许用户为了在每个分组开头显示内容而创建模板
+
+    HeaderTemplateSelector                  不是使用HeaderTemplate属性，而是使用HeaderTemplateSelector属性提供一个类，该类根据分组选用正确
+                                            的头模板
+    
+    Panel                                   改变用于包含分组的模板。例如，可使用WrapPanel面板而非标准的StackPanel面板，创建从左向右然后向下平铺
+                                            分组的列表
+
+    在本例中，需要做的所有工作就是在每个分组前显示一个标题
+
+    为添加分组标题，需要设置GroupStyle.HeaderTemplate属性。可使用普通的数据模板填充该属性。就像之前看到的那样，也可在模板中使用元素和数据绑定表达式
+    的任意组合
+
+    然而，此处有一个技巧。当编写绑定表达式时，不能绑定到列表中的数据对象(在这个示例中是Product对象)，而要绑定到分组的PropertyGroupDescription对象。
+    这意味着，如果希望显示分组的字段值，就需要绑定PropertyGroupDescription.Name属性，而不是绑定Product.CategoryName属性
+
+    下面是完整的模板：
+    <ListBox Name="lstProducts" DisplayMemberPath="ModelName">
+        <ListBox.GroupStyle>
+            <GroupStyle>
+                <GroupStyle.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=Name}" FontWeight="Bold" Foreground="White" Background="LightGreen"
+                            Margin="0,5,0,0" Padding="3"/>
+                    </DataTemplate>
+                </GroupStyle.HeaderTemplate>
+            </GroupStyle>
+        </ListBox.GroupStyle>
+    </ListBox>
+
+    提示：
+    ListBox.GroupStyle属性实际上是GroupStyle对象的集合，从而可添加多个层次的分组。为此，需要按希望应用的分组以及子分组的顺序添加多个
+    PropertyGroupDescription对象，然后添加匹配的GroupStyle对象来格式化每个层次
+
+    您可能希望组合使用分组和排序。如果希望对分组进行排序，只需要确保用于排序的第一个SortDescription对象基于分组字段即可。下面的代码根据类别名称
+    按字母顺序对类别进行排序，然后根据型号名称对类别中的每个产品按字母顺序进行排序
+    view.SortDescriptions.Add(new SortDescription("CategoryName", ListSortDirection.Ascending));
+    view.SortDescriptions.Add(new SortDescription("ModelName", ListSortDirection.Ascending));
+    
+    1.范围分组
+    使用在此看到的这种简单分组方法的局限性在于，为了进行分组，分组中的记录需要有一个具有相同数值的字段。上面的示例之所以能够工作。是因为许多产品共享
+    相同的类别并为CategoryName属性使用相同的数值。但如果视图根据其他信息进行排序，如UnitCost字段，这种方法就不能起作用。对于这种情况，将为每个产品
+    构建一个分组
+    可采用一种方法解决这个问题。可创建一个类，检查一些信息并为了显示目的而将它放置到一个概念组中。这种技术通常用于使用特定范围内的数字或日期信息对
+    数据对象进行分组。例如，可为小于50美元的产品创建一个组，为50美元和100美元之间的产品创建另一个组，等等
+    为创建这个解决方案，需要提供值转换器，检查数据源中的一个字段(或多个字段，如果实现了IMultiValueConverter接口)，并返回组标题，只要为多个数据对象
+    使用相同的组标题，这些对象就会被放到相同的逻辑分组中
+
+    下面的代码显示了创建价格范围的值转换器。该转换器的设计考虑了一定的灵活性——可以指定分组范围的大小
+    public class PriceRangeProductGrouper : IValueConverter
+    {
+        public int GroupInterval
+        {
+            get;set;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            decimal price = (decimal)value;
+            if(price < GroupInterval)
+            {
+                return String.Format(culture, "Less than {0:C}", GroupInterval);
+            }
+            else
+            {
+                int interval = (int)price / GroupInterval;
+                int lowerLimit = interval * GroupInterval;
+                int upperLimit = (interval + 1) * GroupInterval;
+                return String.Format(culture, "{0:C} to {1:C}", lowerLimit, upperLimit);
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException("This converter is for grouping only.");
+        }
+    }
+    为提高这个类的灵活性，从而可使用其他字段，需要添加其他属性以设置标题文本的固定部分以及在将数值转换为标题文本时使用的格式化字符串
+    (当前的代码假定数字可以被作为货币，这样50就变成了标题中的"$50.00")
+
+    下面的代码使用转换器应用范围分组。注意，首先必须根据价格对产品进行排序，否则将会根据他们在列表中的位置进行分组
+    ICollectionView view = CollectionViewSource.GetDefaultView(lstProducts.ItemsSource);
+    view.SortDescriptions.Add(new SortDescription("UnitCost", ListSortDirection.Ascending));
+    PriceRangeProductGrouper grouper = new PriceRangeProductGrouper();
+    grouper.GroupInterval = 50;
+    view.GroupDescriptions.Add(new PropertyGroupDescription("UnitCost", grouper));
+
+    2.分组和虚拟化
+    之前介绍了虚拟化，该功能降低了控件的内存开销，而且在绑定极长的列表时提升了速度。但是，即使控件支持虚拟化，也不会在启用虚拟化时使用。
+    WPF使用新的VirtualizingStackPanel.IsVirtualizingWhenGrouping属性纠正了这个问题。将其设置为true，分组列表将于未分组列表获得相同的
+    虚拟化性能提升效果：
+    <ListBox VirtualizingStackPanel.IsVirtualizingWhenGrouping="True" ...>
+    但在结合使用分组和长列表时仍要谨慎，因为分组数据时会导致速度明显变缓。因此，在实现此设计前需要对应用程序进行性能分析
+
+    
+    
+    
+    
+    实时成型
+    
+    如果改变正在使用的视图的过滤、排序或分组，就需要调用ICollectionViewSource.Refresh()方法来刷新视图，并确保正确的项出现在列表中。前面已列举过一个使用该
+    技巧的示例：在用户修改最低价格范围时触发刷新操作的价格过滤文本框。
+    然而，一些更改捕获起来稍困难一些。当您更改视图时，容易记住刷新视图，但当应用程序中某处的代码例程更改数据时，会出现什么情况呢？例如，假设某个编辑操作将产品
+    价格降至视图过滤条件需要的最低值以下。从技术角度看，这会导致记录从当前视图中消失，但除非您记得强制执行更新，否则看不到任何更改。
+
+    WPF 4.5引入了一项称为"实时成型"的功能，从而填补了这项空白。从本质上讲，实时成型监视特定属性中的变化。如果发生变化(如降低了Product对象中的价格)，就确定
+    相应更改会影响当前视图并触发刷新操作。
+
+    要使用实时成型，需要满足以下三项标准：
+    1.数据对象必须实现INotifyPropertyChanged。当属性变化时，使用该接口发出通知。当前的Product已经做到这一点
+    2.集合必须实现ICollectionViewLiveShaping。标准的ListCollectionView和BingdingListCollectionView类都实现ICollectionViewLiveShaping，这意味着您可以为
+    本章介绍的任意示例使用实时成型
+    3.必须明确启用实时成型。为此，需要在ListCollectionView或BindingListCollectionView对象上设置多个属性
+
+    最后一点最重要。实时成型增加了额外开销，因此是否启用要酌情而定。为此，需要使用三个独立属性：IsLiveFiltering、IsLiveSorting和IsLiveGrouping。其中的每个属性
+    为不同的视图功能启用实时成型。例如，如果将IsLiveFiltering设置为true，但未设置其他两个属性，集合将检查那些影响当前设置的过滤条件的变化，但会忽略那些影响列表的
+    排序和分组的变化。
+
+    启用了实时成型后，还需要告知集合需要监视哪些属性。为此，为三个集合属性中的其中一个添加字符串形式的属性名：LiveFilteringProperties、LiveSortingProperties或
+    LiveGroupingProperties。与上面一样，此设计旨在确保获得最佳性能，忽略那些不重要的属性
+
+    例如，考虑价格过滤产品示例。在这种情形中，合理的做法是启用IsLiveFiltering并监视Product.UnitCost属性的变化，因为这是能够影响列表过滤的唯一属性。对诸如
+    Description或ModelNumber的其他属性的更改不会影响产品是否被过滤，因此并不重要。为在此例中使用实时成型，可添加以下代码：
+    
+    ListCollectionView view = CollectionViewSource.GetDefaultView(lstProducts.ItemsSource) as ListCollectionView;
+    view.IsLiveFiltering = true;
+    view.LiveFilteringProperties.Add("UnitCost");
+
+    现在尝试编辑记录，并将价格降至过滤条件以下。Product对象会报告此更改，ListCollectionView会注意到这一点，重新评估条件，然后刷新视图。最终结果是，低价记录自动消失
+    -->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>

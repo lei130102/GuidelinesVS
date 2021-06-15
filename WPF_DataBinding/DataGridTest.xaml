@@ -6,6 +6,493 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="DataGridTest" Height="300" Width="300">
+    <!--
+    DataGrid控件
+
+    顾明思义，DataGrid控件是用来显示数据的控件，从对象集合获取信息并在具有行和单元格的网格中显示信息。每行和单独的对象相对应，并且每列和对象的
+    某个属性相对应。
+
+    DataGrid控件添加了许多在WPF中处理数据所需的技能。其基于列的模型提供了显著的格式化灵活性。其选择模型允许选择一行、多行或一些单元格的组合。
+    其编辑支持非常强大，可使用DataGrid控件作为简单数据和复杂数据的统一数据编辑器
+
+    为创建暂且应急的DataGrid控件，可使用自动列生成功能。为此，需要将AutoGenerateColumns属性设置为true(这是默认值)：
+    <DataGrid x:Name="gridProducts" AutoGenerateColumns="True">
+    </DataGrid>
+
+    现在，可像填充列表控件那样，通过设置ItemsSource属性填充DataGrid控件：
+    gridProducts.DataSource = products;
+
+    图中的DataGrid控件使用了自动列生成功能，该DataGrid控件显示Product对象集合。对于自动列生成，DataGrid控件使用反射查找绑定对象中的每个
+    公有属性，并为每个属性创建一列
+
+    为显示非字符串属性，DataGrid控件调用ToString()方法。对于数字、日期以及其他简单类型，该方法效果不错。但如果对象包含更复杂的数据对象，该
+    方法就行不通了(对于这种情况，可能希望明确地定义列，从而获得绑定到子属性、使用值转换器或应用模板以获取正确显示内容的机会)
+
+    下表列出了一些可用于定制DataGrid控件基本外观的属性。接下来将看到如何使用样式和模板获得更精细的格式化控件，还将看到DataGrid控件如何处理
+    排序和选择，并将分析支持这些特征的更多属性
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    针对DataGrid控件的基本显示属性
+
+    RowBackground/AlternatingRowBackground                   用于绘制每行背景的画刷(RowBackground)，并且决定是否使用不同的背景颜色
+                                                             (AlternatingBackground)绘制交替行，从而更容易分行。在默认情况下，DataGrid控件
+                                                             为奇数行提供白色背景，为偶数行提供淡灰色背景
+
+    ColumnHeaderHeight                                       位于DataGrid控件顶部的列标题行的高度(设备无关单位)
+
+    RowHeaderWidth                                           具有行题头的列的宽度(设置无关单位)。该列在网格的最左边，不显示任何数据。
+                                                             该列(使用箭头)指示当前选择的行，并且(使用圈住的箭头)指示正在编辑的行
+
+    ColumnWidth                                              作为DataGridLength对象，用于设置每列默认宽度的尺寸改变模式
+
+    RowHeight                                                每行的高度。如果准备在DataGrid控件中显示多行文本或不同的内容(如图像)，该
+                                                             设置很有用。与列不同，用户不能改变行的尺寸
+
+    GridLinesVisibility                                      确定是否显示网格线的DataGridGridlines枚举值(Horizontal、Vertical、None或All)
+
+    VerticalGridLinesBrush                                   用于绘制列之间网格线的画刷
+
+    HorizontalGridLinesBrush                                 用于绘制行之间网格线的画刷
+
+    HeadersVisibility                                        确定显示哪个题头的DataGridHeaders枚举值(Column、Row、All、None)
+
+    HorizontalScrollBarVisibility/VerticalScrollBarVisibility   确定是否显示滚动条的ScrollBarVisibility枚举值：当需要时显示(Auto)，总是显示(Visible)或
+                                                                总是不显示(Hidden)。这两个属性的默认值都是Auto
+
+    
+    
+    
+    改变列的尺寸与重新安排列
+
+    当显示自动生成的列时，DataGrid控件尝试根据DataGrid.ColumnWidth属性智能地改变每列的宽度
+
+    为设置ColumnWidth属性，需要提供DataGridLength对象。DataGridLength对象能够制定确切的尺寸(使用设备无关单位)，或指定特定的尺寸改变模式，
+    从而让DataGrid控件自动完成一些工作。如果选用确切的尺寸，简单地在XAML中将ColumnWidth属性设置为合适的数字，或(在代码中)当创建DataGridLength
+    对象时作为构造函数的参数提供数字：
+    grid.ColumnWidth = new DataGridLength(150);
+
+    专门的尺寸改变模式更有趣。可通过DataGridLength类的静态属性访问专门的尺寸改变模式。下面是使用默认的DataGridLength.SizeToHeader尺寸改变
+    模式的示例，这意味着使列足够宽以适应他们的题头文本：
+    grid.ColumnWidth = DataGridLength.SizeToHeader;
+
+    另一个常见选项是DataGridLength.SizeToCells，该模式加宽每一列以适应当前视图中最宽的值。当用户开始滚动数据时，DataGrid控件试图保持这个智能
+    的尺寸改变方法。一旦进入具有更长数据的行，DataGrid控件就会加宽合适的列以适应该行。自动改变尺寸仅是单向的，所以当离开大的数据时不会收缩列。
+    
+    另一个专门的尺寸改变模式选择是DataGridLength.Auto，该模式的工作方式和DataGridLength.SizeToCells模式类似，除了加宽每列以适应最大的显示值
+    或列题头文本——使用其中较大的值
+
+    DataGrid控件还可使用按比例改变尺寸的系统，与在Grid布局面板中使用的星号(*)尺寸模式类似。通常，*表示按比例改变尺寸，并且可通过添加数字来使用
+    选择的比例分割可用的空间(比如，2*和*使第一列是第二列的两倍宽)。为设置这种关系，或为了提供不同的列宽或尺寸改变模式，需要明确地为每个列对象
+    设置Width属性
+
+    自动改变DataGrid列的尺寸很有趣，而且通常也很有用，但您并不总是希望这种行为。分析图中显示的示例，该例有一个包含长文本字符串的Description列。
+    最初，Description列非常宽以适应该数据，从而将其他列挤出视图(在图中，用户手动改变了Description列的尺寸，以使尺寸更合理，其他所有列都使用
+    最初的宽度)。在重新改变了一列的尺寸后，当用户在数据中滚动时，该列就不再具有自动扩展宽度的行为
+
+    提示：
+    当然，您不会希望强制用户手动修改宽度不正常的列。因此，还将会选择为每列定义不同的列宽或尺寸改变模式。为此，需要明确定义列并设置DataGridColumn.Width属性。
+    当设置列时，在默认情况下该属性覆盖了DataGrid.ColumnWidth属性
+    
+    通常，用户能通过将列边缘拖动至任意位置来改变列的尺寸。可通过将CanUserResizeColumns属性设置为false来阻止用户改变DataGrid控件中列的尺寸。如果
+    希望更加明确一些，可通过将列的CanUserResize属性设置为false，阻止用户改变特定列的尺寸。还可以通过设置列的MinWidth属性来防止用户使列变得特别窄。
+    
+    DataGrid控件还有一个令人感到惊奇之处，他允许用户定制列的外观。不但可以改变列的尺寸，而且能够将列从一个位置拖到另一个位置。如果不希望用户具有这种
+    重排序能力，可将DataGrid控件的CanUserReorderColumns属性或特定列的CanUserReorder属性设置为false
+    
+
+    
+    
+    
+    
+    定义列
+    
+    使用自动生成的列，可快速创建显示所有数据的DataGrid控件，但放弃了一些控制能力。例如，不能控制列的顺序、每列的宽度、如何格式化列中的值以及应该
+    放在顶部的标题文本的内容
+
+    更强大的方法是将AutoGenerateColumns属性设置为false以关闭自动列生成功能。然后可使用希望的设置和指定的顺序，明确地定义希望使用的列。为此，
+    需要使用合适的列对象填充DataGrid.Columns集合
+
+    目前，DataGrid控件支持几种类型的列，通过继承自DataGridColumn的不同类表示这些列：
+    1.DataGridTextColumn
+    这种列对于大部分数据类型是标准选择。值被转换为文本，并在TextBlock元素中显示。当编辑行时，TextBlock元素被替换为标准的文本框
+    2.DataGridCheckBoxColumn
+    这种列显示复选框。为Boolean(或可空Boolean)值自动使用这种列类型。通常，复选框是只读的；但当编辑行时，会变成普通的复选框
+    3.DataGridHyperlinkColumn
+    这种列显示可单击的链接。如果结合使用WPF中的导航容器，如Frame或NavigationWindow，可允许用户导航到其他URI(通常是外部Web站点)
+    4.DataGridComboBox
+    最初这种列看起来与DataGridTextColumn类似，但在编辑模式下这种列会变成下拉的ComboBox控件。当希望将编辑限制与允许的少部分值时，
+    这种列时很好的选择
+    5.DataGridTemplateColumn
+    这种列是到目前为止功能最强大的选择。这种列允许为显示列值定义数据模板，具有在列表控件中使用模板时所具有的所有灵活性和功能，例如，
+    可使用DataGridTemplateColumn显示图像数据或使用专门的WPF控件(如具有合法值的下拉列表或用于日期值的DataPicker控件)
+    
+
+    例如，下面是修改版的DataGrid控件。这个DataGrid控件创建了两列，显示产品名称和价格。还应用了更清晰的列标题，并加宽了Product列以
+    适应其数据：
+    <DataGrid x:Name="gridProducts" Margin="5" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Product" Width="175" Binding="{Binding Path=ModelName}"></DataGridTextColumn>
+            <DataGridTextColumn Header="Price" Binding="{Binding Path=UnitCost}"></DataGridTextColumn>
+        </DataGrid.Clumns>
+    </DataGrid>
+    当定义列时，几乎总是设置三个细节：在列顶部显示的题头文本、列的宽度以及获取数据的绑定
+
+    通常使用简单字符串设置DataGridColumn.Header属性，但不必限制为普通文本。列题头是内容控件，可为Header属性提供任何内容，包括图像或具有
+    元素组合的布局面板
+
+    DataGridColumn.Width属性支持硬编码的值和几种自动尺寸改变模式，与之前分析的DataGrid.ColumnWidth属性类似。唯一的区别是DataGridColumn.Width
+    属性应用于单个列，而DataGrid.ColumnWidth属性为整个表中所有的列设置默认宽度。当设置DataGridColumn.Width属性时，会覆盖DataGrid.ColumnWidth属性
+    
+    最重要的细节是为列提供恰当信息的绑定表达式，通过设置DataGridColumn.Binding属性提供该绑定表达式。这种方法与简单的列表控件(如ListBox和ComboBox)不同。
+    这些控件包括DisplayMemberPath属性而不是Binding属性。Binding方法更灵活——允许使用字符串格式化和值转换器，而不必切换到功能完备的模板列
+
+    <DataGridTextColumn Header="Price" Binding="{Binding Path=UnitCost, StringFormat={}{0:CC}}"></DataGridTextColumn>
+
+    提示：
+    可通过修改相应列对象的Visibility属性来动态地显示和隐藏列。此外，还可以随时通过修改DisplayIndex值来移动列
+
+    1.DataGridCheckBoxColumn
+    Product类不包含任何Boolean属性。如果包含Boolean属性的话，DataGridCheckBoxColumn会是个有用的选项
+    与DataGridTextColumn一样，Binding属性提取数据——对于这种情况，是用于设置内部CheckBox元素的IsChecked属性的true或false值。DataGridCheckBoxColumn还添加了Content属性，
+    该属性确定复选框是否支持未定状态以及更明显的选中和未选中状态。如果使用DataGridCheckBoxColumn显示来自可空Boolean值的信息，可将IsThreeState属性设置为true。这样，用户
+    可通过单击切换到未定状态(显示为具有轻淡阴影的复选框)，以便为绑定的值返回null
+
+    2.DataGridHyperlinkColumn
+    DataGridHyperlinkColumn允许显示的文本值各包含单个URL。例如，如果Product类有名为ProductLink的字符串，并且该属性包含类似http://myproducts.com/info?productID=10432
+    的值，那么可在DataGridHyperlinkColumn列中显示该信息。将使用Hyperlink元素显示每个绑定的值，并像下面这样进行渲染：
+    <Hyperlink NavigateUri="http://myproducts.com/info?productID=10432">http://myproducts.com/info?productID=10432</Hyperlink>
+    然后，用户可单击超链接来触发导航并访问相关页面，而不需要编写代码。然而，有一个重要警告：仅当在支持导航事件的容器(如Frame或NavigationWindow)中放置DataGrid控件时，
+    这种自动导航技巧才能奏效。如果希望得到完成类似效果的更通用方式，可考虑使用DataGridTemplateColumn。可使用这种列显示具有下划线的可单击文本(实际上，甚至可使用
+    Hyperlink控件)，而且具有在代码中处理单击事件的灵活性
+    通常，DataGridHyperlinkColumn为导航和显示使用相同的信息。但如果愿意的话，可单独指定这些细节。为此，只需要使用Binding属性设置URI，并使用可选的ContentBinding属性从
+    绑定数据对象的不同属性获取显示的文本
+
+    3.DataGridComboBoxColumn
+    DataGridComboBoxColumn虽然最初显示为普通文本，但却提供了简明流畅的编辑体验，允许用户从ComboBox控件的可用选项列表中选择一项(实际上，用户必须从列表中进行选择，因为
+    ComboBox不允许直接输入文本)，下图显示了一个示例，在该图中，用户正在从DataGridComboBoxColumn中选择产品类别
+    为使用DataGridComboBoxColumn，需要决定如何在编辑模式下填充组合框。为此，可简单地设置DataGridComboBoxColumn.ItemsSource集合。最简单的方法是在标记中手动填充。例如，
+    下面的示例为组合框添加字符串列表：
+    <DataGridComboBoxColumn Header="Category" SelectedItemBinding="{Binding Path=CategoryName}">
+        <DataGridComboBoxColumn.ItemsSource>
+            <col:ArrayList>
+                <sys:String>General</sys:String>
+                <sys:String>Communications</sys:String>
+                <sys:String>Deception</sys:String>
+                <sys:String>Munitions</sys:String>
+                <sys:String>Protection</sys:String>
+                <sys:String>Tools</sys:String>
+                <sys:String>Travel</sys:String>
+            </col:ArrayList>
+        </DataGridComboBoxColumn.ItemsSource>
+    </DataGridComboBoxColumn>
+    为使上面的标记能够工作，必须将sys和col前缀映射到合适的.NET命名空间：
+    <Window ...
+        xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    这种方法能够很好地工作，但并非是最佳的设计方法，因为将数据细节嵌入到了用户界面标记中，幸运的是，还有其他一些选择：
+    a.从资源中提取数据集合。由您确定是希望使用标记定义集合(如上面的示例那样)还是使用代码生成集合(如下面的示例那样)
+    b.使用静态标记扩展，从静态方法中提取ItemsSource集合。但对于固定编码设计，只能调用窗口类中的方法，而不能调用数据类中的方法
+    c.从ObjectProvider资源中提取数据集合，然后调用数据访问类
+    d.直接在代码中设置DataGridComboBox.Column属性
+
+    在许多情况下，列表中显示的值不是希望在数据对象中存储的值。处理相关联的数据是一种常见的情况(例如，链接到产品的订单、链接到客户的账单等)
+
+    StoreDB示例包含了产品和类别之间的这样一种关系。在后台数据库中，每个产品使用CategoryID字段链接到特定的类别。这一事实被隐藏到简化的数据模型中，到目前为止的
+    所有示例都使用了该模型，该模型为Product类提供了CategoryName属性(而不是CategoryID属性)。这种方法的优点在于十分便利，因为能够始终将重要的信息(每个产品的
+    类别名)呈现在眼前。缺点是CategoryName属性不是真正可编辑的，并且没有简单的方法将产品从一个类别修改为另一个类别
+
+    下面的示例考虑一种更贴近真实的情况，在该例中，每个Product类都包含CategoryID属性。就其本身而言，CategoryID数字对于应用程序的用户没有什么意义。反而为了显示目录名，
+    需要依赖于几种可能的技术之一：可为Product类添加额外的CategoryName属性(这种方法可行，但有点笨拙)，可在CategoryID绑定中使用数据转换器(这种方法在缓存的列表中
+    查找匹配的类别名)，或使用DataGridComboBoxColumn显示CategoryID列
+
+    使用这种方法，不是使用简单的字符串列表，将整个Category对象列表绑定到DataGridComboBoxColumn.ItemsSource属性：
+    categoryColumn.ItemsSource = App.StoreDb.GetCategories();
+    gridProducts.ItemsSource = App.StoreDb.GetProducts();
+
+    然后配置DataGridComboBoxColumn。必须设置三个属性：
+    <DataGridComboBoxColumn Header="Category" x:Name="categoryColumn"
+    DisplayMemberPath="CategoryName" SelectedValuePath="CategoryID"
+    SelectedValueBinding="{Binding Path=CategoryID}"></DataGridComboBoxColumn>
+
+    DisplayMemberPath告诉列从Category对象中提取哪个文本，并在列表中显示该文本。SelectedValuePath告诉列从Category对象中提取什么数据。SelectedalueBinding指定链接的
+    Product对象中的字段
+
+    4.DataGridTemplateColumn
+    DataGridTemplateColumn使用数据模板，其工作方式和在以前研究的用于列表控件的数据模板特征是相同的。唯一的区别是允许在DataGridTemplateColumn中定义两个模板：一个用于
+    数据显示(CellTemplate)；另一个用于数据编辑(CellEditingTemplate)，稍后将分析这两个模板。下面的示例使用模板数据列在网格中放置每个产品的缩略图
+    <DataGridTemplateColumn>
+        <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+                <Image Stretch="None" Source="{Binding Path=ProductImagePath, Converter={StaticResource ImagePathConverter}}"></Image>
+            </DataTemplate>
+        </DataGridTemplateColumn.CellTemplate>
+    </DataGridTemplateColumn>
+    这个示例假定已经为UserControl.Resources集合添加了ImagePathConverter值转换器：
+    <UserControl.Resources>
+        <local:ImagePathConverter x:Key="ImagePathConverter"></local:ImagePathConverter>
+    </UserControl.Resources>
+
+    
+    
+    设置列的格式和样式
+
+    可使用与设置TextBlock元素格式相同的方式设置DataGridTextureColumn元素的格式，方法就是设置Foreground、FontFamily、FontSize、FontStyle以及FontWeight属性。
+    然而，DataGridTextColumn没有提供TextBlock的所有属性。例如，如果希望创建显示多行文本的列，将无法设置经常使用的Wrapping属性，对于这种情况，需要改用ElementStyle属性。
+    
+    本质上，ElementStyle属性用于创建应用于DataGrid单元格内部的元素的样式。对于简单的DataGridTextColumn，该元素是TextBlock。对于DataGridCheckBoxColumn，单元格
+    内部的元素是复选框。对于DataGridTemplateColumn，单元格内部的元素是在数据模板中创建的任何元素
+
+    下面是一个允许在列中对文本进行换行的简单样式：
+    <DataGridTextColumn Header="Description" Width="400" Binding="{Binding Path=Description}">
+        <DataGridTextColumn.ElementStyle>
+            <Style TargetType="TextBlock">
+                <Setter Property="TextWrapping" Value="Wrap"/>
+            </Style>
+        </DataGridTextColumn.ElementStyle>
+    </DataGridTextColumn>
+
+    为了看到换行后的文本，必须扩展行的高度，但DataGrid控件本身的尺寸设置不如WPF布局容器那样灵活。相反，必须使用DataGrid.RowHeight属性为行设置固定的高度。该高度
+    应用于所有行，而不管他们包含的内容的多少
+
+    提示：
+    如果希望为多列应用相同的样式(例如，在多个地方处理能够换行的文本)，可在Resources集合中定义样式，然后在每列中使用StaticResource引用样式
+
+    可使用EditingElementStyle属性为编辑列时使用的元素提供样式。对于DataGridTextColumn，编辑元素是TextBox控件
+
+    
+    ElementStyle、EditingElementStyle以及其他列属性提供了设置特定列中所有单元格的格式的方法。然而，在某些情况下，可能希望为每一列中的每个单元格应用格式化设置。完成该
+    工作的最简单方法是为DataGrid.RowStyle属性配置样式。DataGrid控件还提供了少部分用于设置网格其他部分(如列题头和行题头)格式的额外属性
+
+
+    
+    
+    基于样式的DataGrid属性
+
+    ColumnHeaderStyle                             位于网格顶部的列题头的TextBlock
+
+    RowHeaderStyle                                行题头的TextBlock
+
+    DragIndicatorStyle                            当用户正在将列题头拖动到新位置时用于列题头的TextBlock
+
+    RowStyle                                      用于普通行(在列中没有通过列的ElementStyle属性明确定制过的行)的TextBlock
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    设置行的格式
+
+    通过设置DataGrid列对象的属性，可控制如何格式化整个列。但在许多情况下，标识包含特定数据的行更有用。例如，可能希望强调价格较高的产品和到期的装运。可通过处理
+    DataGrid.LoadingRow事件以编程方式应用此类格式。
+
+    对于设置行格式，LoadingRow事件是个非常强大的工具。他提供了对当前行数据对象的访问，允许开发人员执行简单的范围检查、比较以及更复杂的操作。他还提供了行的DataGridRow
+    对象，允许开发人员使用不同的颜色或不同的字体设置行的格式。然而，不能只设置行中单个单元格的格式——为达到这样的目的，需要使用DataGridTemplateColumn和自定义的
+    值转换器。
+
+    当每一行出现在屏幕上时，就会立即为该行引发LoadingRow事件。这种方法的优点是应用程序永远不必格式化整个网格；相反，只为当前可见的行引发LoadingRow事件。但也有缺点：
+    当用户在网格中滚动时，会连续引发LoadingRow事件。因此，在LoadingRow方法中不能放置耗时的代码，除非希望慢慢地滚动
+    
+    还有一个考虑事项：项容器再循环。为降低内存开销，当在数据中滚动时，DataGrid控件为显示新数据而重用相同的DataGridRow对象(这也是为什么将该事件称为LoadingRow而不是
+    CreatingRow的原因)。如有不慎，DataGrid控件能够将数据加载到已经格式化了的DataGridRow对象中。为防止发生这种情况，必须明确地将每行恢复到其初始状态
+    
+    下面的示例为价格较高的项提供明亮的橙色背景，为正常价格的项提供标准的白色背景：
+    
+    // Reuse brush objects for efficiency in large data displays.
+    private SolidColorBrush highlightBrush = new SolidColorBrush(Colors.Orange);
+    private SolidColorBrush normalBrush = new SolidColorBrush(Colors.White);
+
+    private void gridProducts_LoadingRow(object sender, DataGridRowEventArgs e)
+    {
+        // Check the data object for this row.
+        Product product = (Product)e.Row.DataContext;
+
+        // Apply the conditional formatting.
+        if(product.UnitCost > 100)
+        {
+            e.Row.Background = highlightBrush;
+        }
+        else
+        {
+            // Restore the default white background. This ensures that used,
+            // formatted DataGrid objects are reset to their original appearance.
+            e.Row.Background = normalBrush;
+        }
+    }
+
+    请记住，为了执行基于数值的格式化还有一种选择：可使用检查绑定数据的值转换器，并将其转换为其他内容。当结合使用DataGridTemplateColumn时这种技术特别强大。例如，
+    可创建包含TextBlock元素的基于模板的列，并将TextBlock.Background属性绑定到根据价格设置颜色的值转换器。与前面显示的LoadingRow方法不同，使用这种技术只能为包含
+    价格的单元格(而不是整行)设置格式
+    
+    注意：
+    只有当加载了行之后，才会应用在LoadingRow事件处理程序中应用的格式。如果编辑行，那么不会触发LoadingRow代码(至少在将行滚动出视图，然后在将其滚动回视图之前，不会
+    触发LoadingRow代码)
+    
+
+    
+    
+    
+    
+    显示行细节
+
+    DataGrid控件还支持行细节(row details)——一块可选的独立显示区域，在行的列值的下面显示。行细节区域添加了无法仅使用列实现的两个特征：
+    a.能够跨越DataGrid控件的整个宽度，并且不会切入到独立的列中，从而提供了更多可供使用的空间
+    b.可配置行细节区域，从而只为选择的行显示该区域，当不需要时允许用户折叠额外的细节
+    
+
+    下图显示了一个使用这两种行为的DataGrid控件。行细节区域显示能够换行的产品描述文本，并且只为当前选择的产品显示该描述文本
+
+    为创建这个示例，首先需要通过设置DataGrid.RowDetailsTemplate属性，定义在行细节区域中显示的内容。在这个示例中，行细节区域使用包含TextBlock元素的基本模板，
+    该TextBlock元素显示整个产品文本并在其周围添加边框：
+    <DataGrid.RowDetailsTemplate>
+        <DataTemplate>
+            <Border Margin="10" Padding="10" BorderBrush="SteelBlue" BorderThickness="3" CornerRadius="5">
+                <TextBlock Text="{Binding Path=Description}" TextWrapping="Wrap" FontSize="10">
+                </TextBlock>
+            </Border>
+        </DataTemplate>
+    </DataGrid.RowDetailsTemplate>
+    包含附加控件的其他选择允许执行各种任务(例如，获取有关产品的更多信息，将产品添加到销售列表，编辑产品等)
+    
+    可通过设置DataGrid.RowDetailsVisibilityMode属性来配置行细节区域的显示行为。默认情况下，该属性设置为VisibleWhenSelected，这意味着显示所选行的细节区域。另外，也
+    可将其设置为Visible，这意味着会同时显示所有行的细节区域。还可将该属性设置为Collapsed，这意味着不会为任何行显示细节区域——至少在使用代码修改RowDetailsVisibilityMode
+    属性(例如，当用户选择特定类型的行时)之前是这样的
+
+    
+    
+    
+    冻结列
+
+    冻结的列位于DataGrid控件的左边，甚至当向右滚动时冻结的列仍然位于左边，图中显示了冻结的Product列在滚动期间如何保持可见。注意水平滚动条只在可滚动的列下面伸展，而不会
+    伸展到冻结列的下面
+
+    对于非常宽的网格，列冻结是非常有用的特征，当希望确保特定信息(如产品名或唯一标识符)总是可见时尤其如此。为使用该特征，将DataGrid.FrozenColumn属性设置为大于0的数。
+    例如，数值1只冻结第一列：
+    <DataGrid x:Name="gridProducts" Margin="5" AutoGenerateColumns="False" FrozenColumnCount="1">
+    冻结的列必须总是位于网格的左侧。如果冻结一列，该列是最左边的列；如果冻结两列，他们将是左边的前两列，等等
+
+    
+    
+    
+    选择
+    
+    与普通的列表控件类似，DataGrid控件允许用户选择单个项。当选择一项时，可以响应SelectionChanged事件。为找到当前选择的数据对象，可使用SelectedItem属性。如果希望用户
+    能够选择多行，将SelectionMode属性设置为Extended(唯一的另一个选项是Single，这也是默认选项)。为了选择多行，用户必须按下Shift或Ctrl键。可从SelectedItems属性中检索
+    所选项的集合
+
+    提示：
+    可使用SelectedItem属性通过代码设置选择的项。如果将选择的项设置为当前视图以外的项，那么接着调用DataGrid.ScrolltoView()方法是个好主意，这会强制DataGrid控件向前或
+    向后滚动，直到指定的项可见
+    
+    
+    
+    
+    
+    
+    
+    
+    排序
+    
+    DataGrid控件内置了排序功能，只要绑定到实现了IList接口的集合(如List<T>和ObservableCollection<T>集合)，DataGrid控件就可以自动获得排序功能。
+    
+    为执行排序，用户需要单击列题头。单击一次会根据列的数据类型以升序排序(例如，数字从0向上排序，字母按照字母顺序进行排序)，再次单击该列会翻转排序顺序。在列题头的右边
+    会显示一个箭头，指示根据列中的值对DataGrid进行排序。对于升序排序，箭头指向上方；对于降序排序，箭头指向下方
+
+    当单击时通过按下Shift键，可根据多列进行排序。例如，如果按下Shift键并单击Category列，然后单击Price列，产品就会被排序到按照字母顺序进行排序的类别组中，并且每个类别
+    组中的项根据价格进行排序。
+
+    通常，DataGrid排序算法使用在列中显示的绑定数据，这是合理的。然而，可通过设置列的SortMemberPath属性从绑定的数据对象中选择不同属性。并且如果有一个DataGridTemplateColumn
+    列，就需要使用SortMemberPath属性，因为没有绑定属性提供绑定的数据。如果不这么做，该列就不支持排序
+
+    还可通过将CanUserSortColumns属性设置为false来禁用排序(或通过设置列的CanUserSort属性，为特定列禁用排序功能)
+    
+
+    
+    
+    
+    
+    
+    
+    编辑
+    
+    DataGrid控件的最方便之处在于支持编辑。当用户双击DataGrid单元格时，该单元格会切换到编辑模式。但DataGrid控件以几种方式限制这种编辑功能：
+    a.DataGrid.IsReadOnly
+    当该属性为true时，用户不能编辑任何内容
+    b.DataGridColumn.IsReadOnly
+    当该属性为true时，用户不能编辑该列中的任意值
+    c.只读属性
+    如果数据对象具有没有属性设置器的属性，DataGrid控件将足够智能，他能够注意到该细节，并且禁用列编辑，就像已将DataGridColumn.IsReadOnly属性设置为true一样。
+    类似地，如果属性不是简单的文本、数字或日期类型，DataGrid控件使其为只读(但可通过切换到DataGridTemplateColumn来补救这种情况)
+
+    当单元格切换到编辑模式时发生的变化取决于列的类型。DataGridTextColumn显示文本框(尽管该文本框的外观是无缝的，填满整个单元格并且没有可见的边框)。DataGridCheckBox
+    列显示可选中或取消选中的复选框。DataGridTemplateColumn是到目前为止最有趣的，他允许使用更专业的输入控件替换标准的编辑文本框
+    
+    例如，下面的列显示日期。当用户双击以编辑该值时，单元格就会变成具有预先选择的当前值的下拉DatePicker控件
+
+    <DataGridTemplateColumn Header="Date Added">
+        <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+                <TextBlock Margin="4" Text="{Binding Path=DateAdded, Converter={StaticResource DateOnlyConverter}}"></TextBlock>
+            </DataTemplate>
+        </DataGridTemplateColumn.CellTemplate>
+        <DataGridTemplateColumn.CellEditingTemplate>
+            <DataTemplate>
+                <DatePicker SelectedDate="{Binding Path=DateAdded, Mode=TwoWay}"></DatePicker>
+            </DataTemplate>
+        </DataGridTemplateColumn.CellEditingTemplate>
+    </DataGridTemplateColumn>
+    
+    DataGrid控件自动支持您在之前学习过的相同的基本验证系统，该系统响应在数据绑定系统中的问题(例如不能将提供的文本转换为合适的数据类型)以及由属性设置器抛出的异常。
+    下面的示例使用自定义的验证规则验证UnitCost字段：
+    <DataGridTextColumn Header="Price">
+        <DataGridTextColumn.Binding>
+            <Binding Path="UnitCost" StringFormat="{}{0:C}">
+                <Binding.ValidationRules>
+                    <local:PositivePriceRule Max="999.99"/>
+                </Binding.ValidationRules>
+            </Binding>
+        </DataGridTextColumn.Binding>
+    </DataGridTextColumn>
+    为DataGridCell提供的默认ErrorTemplate模板在非法值的周围显示红色的外边框，与其他输入控件(如文本框)相似
+
+    可通过其他几种方法为DataGrid控件实现验证。一种选择是使用DataGrid控件的编辑事件，下表列出了这些编辑事件。列出这些事件的顺序也是在DataGrid控件中引发这些事件的顺序
+    
+
+    
+    DataGrid控件的编辑事件
+
+    BeginningEdit                               当单元格正进入编辑模式时发生。可检查当前编辑的列和行，检查单元格的值，并且可以使用DataGridBeginningEditEventArgs.Cancel
+                                                属性取消操作
+
+    PreparingCellForEdit                        用于模板列。这时，可为编辑控件执行所有最后的初始化操作。可使用DataGridPreparingCellForEditEventArgs.EditingElement
+                                                访问CellEditingTemplate中的元素
+
+    CellEditEnding                              当单元格正退出编辑模式时发生。DataGridCellEditEndingEventsArgs.EditAction指示用户是试图接受编辑(例如，通过按下Enter键
+                                                或单击另一个单元格)，还是取消编辑(通过按下Escape键)。可检查新数据并设置Cancel属性以回滚修改
+
+    RowEditEnding                               当用户在编辑完当前行之后导航到新行时发生。与CellEditEnding事件一样，可使用该事件执行验证并取消修改。通常，将在此执行涉及
+                                                几列的验证——例如，确保某列中的值大于另一列中的值
+
+    
+    如果需要在某个地方执行特定于页面的验证逻辑(从而不会结合到数据对象中)，可编写响应CellEditEnding和RowEditEnding事件的自定义验证逻辑，在CellEditEnding事件处理程序中
+    检查列规则，并在RowEditEnding事件中验证整行的一致性。请记住，如果取消编辑，应当为发生的问题提供解释(通常是在页面其他地方的TextBlock控件中显示解释)
+    
+    -->
     <Window.Resources>
         <local:ImagePathConverter x:Key="ImagePathConverter"/>
     </Window.Resources>

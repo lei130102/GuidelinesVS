@@ -6,6 +6,85 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="BasicListView" Height="370" Width="554">
+        <!--
+    到目前为止，您已经学习了大量使用WPF数据绑定按需求的形式显示信息的技术和技巧。同时，还看到了许多
+    使用低级ListBox控件的示例
+
+    得益于样式、数据模板以及控件模板提供的扩展功能，即使ListBox控件(以及类似的ComboBox控件)也可成为
+    以各种方式显示数据的强大工具。然而，某些类型的数据表示形式只凭ListBox控件很难实现。幸运的是，
+    WPF还提供了几个填补这一空白的富数据控件，包括以下几个控件：
+    1.ListView
+    ListView继承自简单的没有特色的ListBox。增加了对基于列显示的支持，并增加了快速切换视图或显示模式
+    的能力，而不需要重新绑定数据以及重新构建列表
+    2.TreeView
+    TreeView是层次化容器，这意味可创建多层数据显示。例如，可创建在第一级中显示类别组，并在每个类别节点
+    中显示相关产品的TreeView控件
+    3.DataGrid
+    DataGrid是WPF中功能最完备的数据显示工具。他将数据分割到包含行和列的网格中，就像ListView控件，但
+    DataGrid控件具有其他格式化特性(如冻结列以及设置单行样式的能力)，并且支持就地编辑数据
+
+    
+    
+    
+    
+    
+    ListView控件
+
+    ListView类是一个特殊的列表类，他是专门针对显示相同数据的不同视图而设计的。如果需要构建显示每个
+    数据项几部分信息的多列视图，ListView控件特别有用
+
+    ListView类继承自ListBox类，并使用View属性进行了扩展。View属性是另一个扩展点，用于创建内容丰富的列表。
+    如果没有设置View属性，ListView控件的行为就类似于其功能较少的祖先ListBox控件的行为。然而，如果提供用于
+    指示如何设置数据项格式和样式的视图对象，ListView控件就变得更有趣了
+
+    从技术角度看，View属性指向继承自ViewBase类(他是一个抽象类)的任意类的实例。ViewBase类非常简单——实际上，
+    他只不过是一个将两个样式捆绑在一起的包。其中的一个样式应用到ListView控件(并通过DefaultStyleKey属性加以引用)，
+    而另一个样式应用到ListView控件中的项(并通过ItemContainerDefaultStyleKey属性加以引用)。DefaultStyleKey
+    和ItemContainerDefaultStyleKey属性实际上没有提供什么样式，他们只返回指向样式的ResourceKey对象。
+
+    现在，您可能会好奇为什么需要View属性——毕竟，ListBox控件已经提供了强大的数据模板和样式化功能(所有继承自
+    ItemsControl的类都是如此)。有雄心的开发人员可通过提供不同的数据模板、布局面板以及控件模板，重新实现
+    ListView控件的可视化外观
+
+    事实上，为创建能够自定义的具有多列的列表，不需要使用具有View属性的ListView类。实际上，为ListBox控件使用模板和
+    样式化功能可获得相同的效果。但View属性是一个很有用的抽象概念。下面列出他的一些优点：
+    1.可重用的视图
+    ListView控件将所有特定于视图的细节分离到一个对象中，这样便于创建不依赖于数据并且可用于多个列表的视图
+    2.多视图
+    将ListView控件和View对象分离开来，还使得对同一列表切换多个视图变得更容易(例如，在Windows资源管理器中，使用
+    这种技术实现文件和文件夹的不同查看方式)。可通过动态改变模板和样式来构建相同的特性，但只使用一个封装了所有
+    视图细节的对象更容易
+    3.更好的组织
+    视图对象封装了两个样式：一个用于ListView根控件；另一个用于列表中的单个项。因为这些样式封装在一起，所以很明显
+    这两部分是相关联的，可共享特定的细节并且相互依赖。例如，对于基于列的ListView控件这是非常合理的，因为需要保持
+    列标题和列数据相互对齐
+
+    使用这种模型，可预先创建大量非常有用的、所有开发人员都可以使用的视图。但WPF目前只提供了视图对象GridView。尽管
+    GridView对于创建多列列表非常有用，但如果有其他需求的话，就需要创建自定义视图。
+    
+    注意：如果希望实现可配置的数据显示，并希望用户能够选用网格风格的视图，那么GridView控件是很好的选择。但如果希望
+    网格支持高级的样式化、选择以及编辑功能，就需要使用本章后面描述的功能完整的DataGrid控件
+    
+
+    
+    
+    
+    
+    使用GridView创建列
+
+    GridView类继承自ViewBase类，表示具有多列的列表视图。通过为GridView.Columns集合添加GridViewColumn对象可定义
+    这些列
+    
+    GridView和GridViewColumn都提供了一些有用的方法，可使用这些方法定制列表的显示外观。为创建最简单、最直观的列表
+    (很像Windows资源管理器中的详细信息视图)，只需要为每个GridViewColumn对象设置两个属性：Header和DisplayMemberBinding。
+    Header属性提供放在列顶部的文本，而DisplayMemberBinding属性包含一个绑定，该绑定从每个数据项提取希望显示的信息。
+    
+    -->
+    
+    
+    <!--
+    下面的标记定义了这个示例中使用的三列：
+    -->
     <Grid>
         <ListView Margin="5" Name="lstProducts">
             <ListView.View>
@@ -23,3 +102,357 @@
         </ListView>
     </Grid>
 </Window>
+
+    <!--
+    这个示例有几个非常重要的地方需要注意。首先，所有列都没有硬编码尺寸。GridView视图只是将列的尺寸设置得足够大以适应最宽的可见项
+    (或列标题，如果他更宽的话)，在WPF的流式布局中，这种设计是非常合理的(当然，如果具有非常大的列，这也会带来一定的麻烦。对于这种情况，
+    可选择将文本封装起来)
+
+    此外，还需要注意如何使用功能完整的绑定表达式设置DisplayMemberBinding属性，绑定表达式提供了在之前学习过的所有技巧，包括
+    字符串格式化和值转换器
+
+    1.改变列的尺寸
+    最初，GridView视图使每列足够宽以适应最大的可见值。然而，可通过单击和拖动列标题的边缘，很容易的改变任意列的尺寸。也可双击
+    列标题的边缘，强制GridViewColumn对象根据当前的可见内容改变自身的大小。例如，如果向下滚动列表，就会发现一个被截断的项，因为
+    他比当前列更宽。只要双击正确的列标题边缘，这个列就会自动地扩展自己以适应内容。
+
+    为更精确地控制列的尺寸，当声明列时可设置特定宽度：
+    <GridViewColumn Width="300" .../>
+
+    这只是确定了列的初始宽度，不会阻止用户使用上面介绍的其他技术重新改变列的尺寸。但GridViewColumn类没有定义诸如MaxWidth与MinWidth
+    的属性，所以无法约束如何改变列的尺寸。如果希望完全禁止改变列的尺寸，唯一的选择是为GridViewColumn的标题提供新模板
+
+    注意：用户还可通过将标题拖到新的位置来改变列的顺序
+
+    2.单元格模板
+    为在单元格中显示数据，GridViewColumn.DisplayMemberBinding属性不是唯一的选择。另一个选择是使用CellTemplate属性，该属性使用数据
+    模板。除了只能应用于一列之外，他与在之前学过的数据模板十分相似。如果很有耐心的话，也可为每一列都提供数据模板。
+
+    当自定义GridView视图时，单元格模板是关键的一部分，他的一个功能是允许文本换行。通常，列中的文本被封装到单行的TextBlock元素中。然而，
+    可很容易地使用自己设计的数据模板改变这个细节：
+    <GridViewColumn Header="Description" Width="300">
+        <GridViewColumn.CellTemplate>
+            <DataTemplate>
+                <TextBlock Text="{Binding Path=Description}" TextWrapping="Wrap"/>
+            </DataTemplate>
+        </GridViewColumn.CellTemplate>
+    </GridViewColumn>
+
+    注意，为了能够得到换行效果，需要使用Width属性限制列宽。如果用户改变了列的尺寸，文本会重新换行以适应新的宽度。您可能不希望限制
+    TextBlock的宽度，因为这会使文本被限制为特定的尺寸，而不管列变得多宽或多窄
+
+    在这个示例中，唯一的限制是数据模板需要明确绑定到希望显示的属性。因此，不能创建能够换行的模板并为希望换行的每部分内容重用该模板。
+    相反，需要为每个字段创建单独的模板。虽然在这个简单示例中，这不是什么问题，但如果需要创建更复杂的应用到其他列表的模板(例如，将
+    数据转换成图像并在Image元素中显示图像的模板，或者使用允许进行编辑的TextBox控件的模板)，这个问题就很令人讨厌。因为无法为多个列
+    重用模板，所以必须剪切并粘贴模板，然后修改绑定
+
+    注意：
+    如果能够创建使用DisplayMemberBinding属性的数据模板，将是非常有用的。这样一来，可使用DisplayMemberBinding提取所需的特定属性，
+    并使用CellTemplate属性将内容格式化成合适的可视化表示形式。但这是不可能实现的。如果同时设置了DisplayMember和CellTemplate属性，
+    GridViewColumn就会使用DisplayMember属性为单元格设置内容并完全忽略模板
+
+    数据模板并不局限于只能使用TextBlock的属性。也可使用数据模板提供完全不同的元素。
+    例如，下面的列使用数据模板显示图像。ProductImagePath转换器帮助从文件系统加载相应的图像文件
+    <GridViewColumn Header="Picture">
+        <GridViewColumn.CellTemplate>
+            <DataTemplate>
+                <Image Source="{Binding Path=ProductImagePath, Converter={StaticResource ImagePathConverter}}"></Image>
+            </DataTemplate>
+        </GridViewColumn.CellTemplate>
+    </GridViewColumn>
+
+    提示：当创建数据模板时，可选择内联定义模板(就像前面两个示例那样)或引用在其他地方定义的资源。因为列模板不能被不同的字段重用，所以
+    内联定义方式通常最为清晰
+
+    正如在之前介绍的，可改变模板，从而为不同的数据项应用不同的模板。为此，需要创建模板选择器，根据位于特定位置的数据对象的属性选择
+    恰当的模板。为使用该特性，需要创建自己的选择器，并使用他设置GridViewColumn.CellTemplateSelector属性
+
+    
+    
+    
+    
+    
+    
+    自定义列标题
+
+    到目前为止，您已经看到了如何自定义每个单元格中数值的外观。然而，还没有进行任何精细调整列标题的工作。如果对标准的灰色方框不是很
+    满意，那么会很高兴地发现可以改变列标题的内容和外观，就像改变列中的数值一样容易。实际上，可使用几种方法达到该目标
+
+    如果希望保持灰色的列标题方框，但希望用自己的内容填充他们；可简单地设置GridViewColumn.Header属性。虽然上一个示例具有使用普通
+    文本的标题，但也可以提供元素。例如，可使用StackPanel面板封装TextBlock元素和图像，从而创建华丽的包含文本和图像组合内容的标题
+    
+    如果希望用自己的内容填充列标题，但不希望为每列单独指定内容，可使用GridViewColumn.HeaderTemplate属性定义一个数据模板。这个数据
+    模板可以绑定到在GridViewColumn.Header属性中指定的任何对象，并相应地加以显示
+
+    如果希望重新格式化特定列的标题，可使用GridViewColumn.HeaderContainerStyle属性提供的样式。如果希望以相同的方式重新格式化所有列
+    的标题，就需要改用GridView.ColumnHeaderContainerStyle属性
+
+    如果希望完全改变标题的外观(例如，使用蓝色的圆角边框代替灰色方框)，可为标题提供一个全新的控件模板。使用GridViewColumn.HeaderTemplate
+    属性改变特定列的标题，或使用GridView.ColumnHeaderTemplate属性以相同的方式改变所有列的标题。甚至可通过设置GridViewColumn.HeaderTemplateSelector
+    或GridView.ColumnHeaderTemplaterSelector属性，使用模板选择器为特定的标题选择正确模板
+        
+
+    
+    
+    
+    
+    
+    创建自定义视图
+    
+    如果GridView视图不能满足您的需要，可创建自己的视图以扩展ListView控件的功能。不过，这并不容易实现。
+    
+    为理解这一点，需要理解有关视图工作原理的更多细节。视图通过重写两个受保护的属性进行工作：DefaultStyleKey和ItemContainerDefaultStyleKey。
+    这两个属性都返回名为ResourceKey的特殊对象，该对象指向在XAML中定义的样式。DefaultStyleKey属性指向将被用于配置整个ListView控件的
+    样式，而ItemContainer.DefaultStyleKey属性指向将被用于配置ListView控件中每个ListViewItem元素的样式。尽管这些样式可修改任意属性，
+    但他们通常通过替代用于ListView控件的ControlTemplate以及用于每个ListViewItem元素的DataTemplate进行工作
+
+    这正是出现问题的地方。用于显示项的DataTemplate是在XAML标记中定义的。假设希望创建一个ListView控件，为每个项显示平铺的图像。使用
+    数据模板十分容易——只需要将Image元素的Source属性绑定到数据对象的合适属性即可。但如何知道用户会提供哪个数据对象呢？如果将属性名称
+    硬编码为视图的一部分，就会使视图失去作用，从而会限制在其他情况下重用自定义的视图。另一种选择是——强制用户提供DataTemplate——这意味着
+    不能在视图中封装太多功能，这样重用视图也就失去了意义。
+
+    提示：
+    在开始创建自定义视图之前，首先需要考虑一下：通过为ListBox控件简单使用合适的DataTemplate，或者结合使用ListView或GridView，是否能
+    够得到同样的结果
+
+    如果通过重新样式化ListView控件(甚至ListBox控件)已经能够得到所有需要的功能，那么为什么还要设计自定义视图呢？主要原因是希望列表能够
+    动态地改变视图。例如，可能希望根据用户的选择以不同模式查看产品列表。可通过动态地切换不同的DataTemplate对象实现这种效果(这也是合理的
+    方法)，但视图通常需要同时改变ListViewItem的DataTemplate，以及ListView控件自身的布局或整个外观。视图有助于澄清源代码中这些细节之间
+    的关系
+
+    下面的示例显示了如何创建能无缝地从一个视图切换到另一个视图的网格控件。该网格以熟悉的独立列视图开始，但还支持两个平铺显示图像的视图
+
+    1.视图类
+
+    构建这个示例的第一步是设计代表自定义视图的类。该类必须继承自ViewBase类。此外，为提供样式引用，自定义视图类通常会(但并非总是如此)重写
+    DefaultStyleKey和ItemContainerDefaultStyleKey属性
+
+    在这个示例中，视图被命名为TileView，因为他的重要特征是在提供的空间中平铺显示数据项。TileView类使用WrapPanel面板布局所包含的ListViewItem
+    对象。这个视图没有被命名为ImageView，这是因为没有硬编码平铺显示的内容，并且完全可以不包含图像。相反，平铺的内容是由开发人员在使用TileView
+    视图时提供的模板定义的
+
+    TileView类应用了两个样式：TileView(用于ListView)和TileViewItem(用于ListViewItem)。此外，TileView类还定义了ItemTemplate属性，使得使用
+    TileView类的开发人员能够提供正确的数据模板。然后这个模板被插入到每个ListViewItem元素的内部，用于创建平铺显示的内容。
+
+    public class TileView : ViewBase
+    {
+        private DataTemplate itemTemplate;
+        public DataTemplate ItemTemplate
+        {
+            get{return itemTemplate;}
+            set{itemTemplate = value;}
+        }
+
+        protected override object DefaultStyleKey
+        {
+            get{return new ComponentResourceKey(GetType(), "TileView");}
+        }
+
+        protected override object ItemContainerDefaultStyleKey
+        {
+            get{return new ComponentResourceKey(GetType(), "TileViewItem");}
+        }
+    }
+    正如您可能看到的，TileView类没有执行很多工作。他只提供了一个ComponentResourceKey引用，指向正确的样式。在之前当第一次分析如何从DLL程序集中检索共享
+    资源时，已学习过ComponentResourceKey
+    
+    ComponentResourceKey封装了两部分信息：拥有样式的类的类型，以及标识资源的描述性的ResourceId字符串。在这个示例中，类型很明显是针对这两个资源键的
+    TileView类。描述性的ResourceId名称不很重要，但必须保持一致。在这个示例中，默认的样式键被命名为TileView，而用于每个ListViewItem元素的样式被命名为
+    TileViewItem。接下来的内容将深入分析这些样式，并会介绍如何定义他们
+
+    
+    2.视图样式
+
+    为让TileView视图能够工作，WPF需要能够找到希望使用的样式，确保能够自动获得样式的技巧是创建名为generic.xaml的资源字典。这个资源字典必须被放在项目
+    文件夹下的Themes子文件夹中。WPF使用generic.xaml文件获取关联到某个类的默认样式
+
+    在这个示例中，generic.xaml文件定义的样式被关联到TileView类。为在样式和TileView类之间设置关联，需要在generic.xaml资源字典中为样式设置正确的键。
+    不能使用普通的字符串键，WPF期望设置的键是一个ComponentResourceKey对象，并且这个ComponentResourceKey对象需要与TileView类中的DefaultStyleKey和
+    ItemContainerDefaultStyleKey属性返回的信息相匹配
+
+    下面是包含正确键的generic.xaml资源字典的基本结构：
+    <ResourceDictionary
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:DataBinding">
+
+    <Style x:Key="{ComponentResourceKeyTypeInTargetAssembly={x:Type local:TileView}, ResourceId=TileView}" TargetType="{x:Type ListView}"
+        BasedOn="{StaticResource {x:Type ListBox}}">
+        ...
+    </Style>
+
+    <Style x:Key="{ComponentResourceKeyTypeInTargetAssembly={x:Type local:TileView}, ResourceId=TileViewItem}" TargetType="{x:Type ListViewItem}"
+        BasedOn="{StaticResource {x:Type ListBoxItem}}">
+        ...
+    </Style>
+
+    </ResourceDictionary>
+
+    正如您可能看到的，为每个样式设置的键都与TileView类提供的信息相匹配。此外，样式还设置了TargetType属性(指示样式会修改哪些元素)和BasedOn属性
+    (指示继承ListBox控件和ListBoxItem元素使用的更基本的样式)。这会节省一些工作，并使您能集中精力使用自定义的设置扩展这些样式
+
+    因为这两个样式都与TileView类关联到一起，所以无论何时将View属性设置为TileView对象，他们都将被用于配置ListView控件。如果正在使用不同的视图对象，
+    将会忽略这些样式。这正是所希望的ListView控件的工作方式，从而每当改变View属性时都会无缝地重新配置ListView控件
+
+    应用于ListView控件的TileView样式有如下三个变化：
+    1.在ListView控件周围添加了稍微不同的边框
+    2.将Grid.IsSharedSizeScope附加属性设置为true。从而如果使用Grid布局容器，可以使不同的列表项使用共享的列或行。在这个示例中，这个设置确保在详细
+    信息平铺视图中每个项都具有相同的范围
+    3.将ItemsPanel属性从StackPanel面板改为WrapPanel面板，从而实现平铺行为。WrapPanel面板的宽度被设置为与ListView控件的宽度相匹配
+    
+    下面是这个样式的完整标记：
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssemblhy={x:Type local:TileView}, ResourceId=TileView}" TargetType="{x:Type ListView}"
+        BasedOn="{StaticResource {x:Type ListBox}}">
+        <Setter Property="BorderBrush" Value="Black"></Setter>
+        <Setter Property="BorderThickness" Value="0.5"></Setter>
+        <Setter Property="Grid.IsSharedSizeScope" Value="True"></Setter>
+
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}">
+                    </WrapPanel>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    这只是一些较小的改变。要求更高的视图可以连接改变ListView控件使用的控件模板的样式，从而得到更大的改变。现在开始体验到视图模型的优点了，通过改变ListView中的单个
+    属性，就可以通过两个样式应用一组相关联的设置。应用到ListViewItem元素的TileView样式改变了其他一些细节。他设置内边距和内容的对齐方式，最重要的是，设置用于显示内容
+    的数据模板
+
+    下面是这个样式的完整标记：
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type local:TileView}, ResourceId=TileViewItem}" TargetType="{x:Type ListViewItem}"
+        BasedOn="{StaticResource {x:Type ListBoxItem}}">
+        <Setter Property="Padding" Value="3"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="ContentTemplate" Value="{Binding Path=View.ItemTemplate, RelativeSource=
+            {RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}}"/>
+    </Style>
+
+    请记住，为了确保最大的灵活性，将TileView类设计为使用由开发人员提供的数据模板。为应用这个模板，TileView样式需要检索TileView对象(使用ListView.View属性)，然后
+    从TileView.ItemTemplate属性中提取数据模板。这个步骤使用绑定表达式来查找元素树(使用FindAncestorRelativeSource模式)，直至找到所属的ListView控件
+
+    注意：
+    即使没有设置ListViewItem.ContentTemplate属性，也可以通过设置ListView.ItemTemplate属性获得形同的结果。这只不过是一种偏好而已
+
+    3.使用ListView控件
+
+    一旦构建好视图类和支持样式，就为在ListView控件中使用他们做好了准备。为使用自定义视图，只需要将ListView.View属性设置为自定义视图对象的实例，如下所示：
+    <ListView Name="lstProducts">
+        <ListView.View>
+            <TileView ...>
+        </ListView.View>
+    </ListView>
+
+    然而，该例演示了一个能够在三个视图之间进行切换的ListView控件。所以，需要实例化三个不同的视图对象。解决这个问题的最简单方法是在Windows.Resources集合中
+    分别定义每个视图对象。然后当用户从ComboBox控件中选择视图时，可使用下面的代码加载希望使用的视图：
+    
+    private void lstView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        ComboBoxItem selectedItem = (ComboBoxItem)lstView.SelectedItem;
+        lstProducts.View = (ViewBase)this.FindResource(selectedItem.Content);
+    }
+
+    第一个视图非常简单——使用前面已经介绍过的大家熟悉的GridView类创建多列显示。下面是他使用的标记：
+    <GridView x:Key="GridView">
+        <GridView.Columns>
+            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=ModelName}"/>
+            <GridViewColumn Header="Model" DisplayMemberBinding="{Binding Path=ModelNumber}"/>
+            <GridViewColumn Header="Price" DisplayMemberBinding="{Binding Path=UnitCost, StringFormat={}{0:C}}"/>
+        </GridView.Columns>
+    </GridView>
+
+    两个TileView对象更有趣。他们都提供了模板以确定平铺图像的外观。ImageView视图使用在产品标题上堆栈产品图像的StackPanel面板：
+    <local:TileView x:Key="ImageView">
+        <local:TileView.ItemTemplate>
+            <DataTemplate>
+                <StackPanel Width="150" VerticalAlignment="Top">
+                    <Image Source="{Binding Path=ProductImagePath, Converter={StaticResource ImagePathConverter}}"></Image>
+                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" Text="{Binding Path=ModelName}"></TextBlock>
+                </StackPanel>
+            </DataTemplate>
+        </local:TileView.ItemTemplate>
+    </local:TileView>
+
+    ImageDetailView视图使用包含两列的网格。在左边放置小版本的图像，在右边放置更详细的信息。第二列放在共享尺寸组中，从而所有项都具有相同的
+    宽度(由最大的文本值决定)
+    <local:TileView x:Key="ImageDetailView">
+        <local:TileView.ItemTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Col2"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Image Margin="5" Width="100" Source="{Binding Path=ProductImagePath, Converter={StaticResource ImagePathConverter}}"></Image>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock FontWeight="Bold" Text="{Binding Path=ModelName}"></TextBlock>
+                        <TextBlock Text="{Binding Path=ModelNumber}"/>
+                        <TextBlock Text="{Binding Path=UnitCost, StringFormat={}{0:C}}"/>
+                    </StackPanel>
+                </Grid>
+            </DataTemplate>
+        </local:TileView.ItemTemplate>
+    </local:TileView>
+
+    毫无疑问，为生成具有多个视图选项的ListView控件，需要的代码比想象得多。然而，现在已经完成了该例，并且可以很容易地(以TileView类为基础)创建其他提供不同数据项
+    模板的视图，从而提供更多的视图选项
+        
+
+    
+    4.为视图传递信息
+    
+    通过添加当使用视图时使用者可设置的属性，可增加视图类的灵活性。然后样式可以使用数据绑定检索这些数值，并使用他们配置Setter对象。
+    
+    例如，现在TileView类使用不是很吸引人的蓝色来突出显示被选中的项。这个效果更加令人惊奇，因为他使显示产品细节的黑色文本更难以阅读。之前介绍过，通过使用
+    自定义的具有适当触发器的自定义控件模板可以纠正这个问题
+
+    但并非硬编码一套更好的颜色，让视图使用者指定这个细节更合理。为让TileView类实现这个目标，需要添加与下面类似的一组属性：
+    private Brush selectedBackground = Brushes.Transparent;
+    public Brush SelectedBackground
+    {
+        get{return selectedBackground;}
+        set{selectedBackground = value;}
+    }
+
+    private Brush selectedBorderBrush = Brushes.Black;
+    public Brush SelectedBorderBrush
+    {
+        get{return selectedBorderBrush;}
+        set{selectedBorderBrush = value;}
+    }
+    现在当实例化视图对象时，可以设置这些细节了：
+    <local:TileView x:Key="ImageDetailView" SelectedBackground="LightSteelBlue">
+        ...
+    </local:TileView>
+    最后一步是在ListViewItem样式中使用这些颜色。为此，需要添加替换ControlTemplate的Setter对象。在这个示例中，结合使用ContentPresenter元素和简单的圆角边框。
+    当项被选中时，会引发触发器并应用新的边框和背景色：
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type local:TileView}, ResourceId=TileViewItem}" TargetType="{x:Type ListViewItem}"
+        BasedOn="{StaticResource {x:Type ListBoxItem}}">
+        ...
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border Name="Border" BorderThickness="1" CornerRadius="3">
+                        <ContentPresenter/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{Binding Path=View.SelectedBorderBrush,
+                                RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}}"></Setter>
+                            <Setter TargetName="Border" Property="Background" Value="{Binding Path=View.SelectedBackground,
+                                RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}}"></Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    注意：但这种向视图传递信息的技术仍然不能帮助用户实现真正通用的视图，这是因为无法根据这一信息修改数据模板
+    
+    
+    
+    
+        -->

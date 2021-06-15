@@ -33,6 +33,38 @@
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" ResizeBehavior="PreviousAndNext" Height="5"/>
 
         <Border Grid.Row="2" Padding="7" Margin="7" Background="LightSteelBlue">
+        <!--
+            在列表下面的网格中显示当前所选项的细节。可通过响应SelectionChanged事件并手工改变网格的
+            数据上下文来化解这一挑战，但还有更快的不需要编写任何代码的方法。这种方法只需要为
+            Grid.DataContext属性设置绑定表达式，从列表中提取选择的Product对象
+
+            <Grid DataContext="{Binding ElementName=lstProducts, Path=SelectedItem}">
+            </Grid>
+
+            当窗口首次显示时，在列表中没有选择任何内容。ListBox.SelectedItem属性为null，所以Grid.DataContext
+            属性也为null，从而不显示任何信息。一旦选择某个项，就会将数据上下文设置为相应的对象，从而显示所有信息
+
+            
+            如果测试本例，您会惊奇地发现他已经具有了全部功能。如果修改型号名称并使用Tab键将焦点转到其他控件，
+            就会自动刷新列表中相应的项(富有经验的开发人员会发现这个功能是Windows窗体应用程序所不具备的)
+
+            提示：为了阻止文本框被编辑，可将文本框的IsLocked属性设置为true，更好的方法是使用只读的控件，如TextBlock
+
+
+            
+            
+            
+            
+            "主——详细信息"显示
+            正如已经看到的，可将其他元素绑定到列表的SelectedItem属性，进而显示与当前选择项相关的更多细节。有趣的是，
+            可使用类似的技术构建数据的“主——详细信息”显示。例如，可创建显示一系列目录和一系列产品的窗口。当用户在
+            第一个列表中选择目录时，可在第二个列表中显示只属于当前目录的产品
+            为实现这种效果，需要父数据对象，父数据对象通过属性提供相关子数据对象的集合。例如，可构建Category产品类，
+            该产品类具有名为Category.Products的属性，该属性包含属于该目录的产品。然后可构建具有两个列表的“主-详细信息”显示。
+            用Category对象填充第一个列表。为显示相关产品，将第二个列表——该列表显示产品——绑定到第一个列表的SelectedItem.Products属性，
+            这会告诉第二个列表获取当前Category对象，提取链接的Product对象的集合，并显示链接的Product对象
+
+            -->
             <Grid DataContext="{Binding ElementName=lstProducts, Path=SelectedItem}" TextBox.TextChanged="txt_TextChanged">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>

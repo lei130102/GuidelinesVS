@@ -6,6 +6,46 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="DataTemplateControls" Height="341" Width="288">
+        <!--
+    
+    另一种有用的技术是直接在模板中放置控件，例如显示一个类型列表。每个类别旁边有一个View按钮，可使用该按钮启动另一个窗口，
+    在启动的窗口中只显示和这个类型相对应的产品
+
+    在这个示例中的技巧是对按钮单击的处理。显然，所有按钮都被连接到同一个事件处理程序，这个事件处理程序在模板中定义。然而，需要
+    确定在列表中单击的是哪个项。解决方法是在按钮的Tag属性中存储一些额外的标识信息，如下所示：
+    <DataTemplate>
+        <Grid Margin="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Path=CategoryName}"></TextBlock>
+            <Button Grid.Column="2" HorizontalAlignment="Right" Padding="2" Click="cmdView_Clicked" Tag="{Binding Path=CategoryID}">View...</Button>
+        </Grid>
+    </DataTemplate>
+    然后可在cmdView_Clicked事件处理程序中检索Tag属性：
+    private void cmdView_Clicked(object sender, RoutedEventArgs e)
+    {
+        Buttton cmd = (Button)sender;
+        int categoryID = (int)cmd.Tag;
+        ...
+    }
+    可使用该信息执行另一个动作。例如，可启动另一个显示产品的窗口，并为该窗口传递CatagoryID值，然后可使用CatagoryID值进行过滤，从而只显示指定类别的产品
+    (实现过滤的一种简单方法是是使用数据视图)
+
+    如果希望使用选中的数据项的所有信息，当定义绑定时可通过删除Path属性来获取整个数据对象：
+    <Button HorizontalAlignment="Right" Padding="1" Click="cmdView_Clicked" Tag="{Binding}">View...</Button>
+    现在，事件处理程序将接收Product对象(如果绑定了一个Product对象的集合)。如果绑定到DataTable对象，将收到一个DataRowView对象，可使用该对象检索所有字段
+    的值，就像从DataRow对象检索字段值一样。
+
+    传递整个对象还有一个优点：使更新列表选择变得更加容易。在当前示例中，可在任何项中单击按钮，不管项当时是否被选中。这可能令人感到困惑，因为用户可选择一项
+    而单击另一项中的View按钮。当用户返回到列表窗口时，第一项仍保持选中状态，尽管第二个项被用于前面的操作。为消除这种困惑，当单击View按钮时，将选择移动到
+    新的列表项是个好主意，如下所示：
+    Button cmd = (Button)sender;
+    Product product = (Product)cmd.Tag;
+    lstCategories.SelectedItem = product;
+    另一种选择是只在选中的项中显示View按钮，这种技术涉及修改和替换在列表中使用的模板，之后会介绍这种技术
+    -->
     <Grid>
         <ListBox Grid.Row="1" Margin="10" Name="lstCategories" HorizontalContentAlignment="Stretch">
             <ListBox.ItemTemplate>

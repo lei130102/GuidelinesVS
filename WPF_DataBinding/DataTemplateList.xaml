@@ -6,6 +6,46 @@
         xmlns:local="clr-namespace:WPF_DataBinding"
         mc:Ignorable="d"
         Title="DataTemplateList" Height="420" Width="675">
+        <!--
+    数据模板
+    
+    样式提供了基本的格式化能力，但他们不能消除到目前为止看到的列表的最重要局限性：不管如何修改ListBoxItem，
+    他都只是ListBoxItem，而不是功能更强大的元素组合。并且因为每个ListBoxItem只支持单个绑定字段(因为是通过DisplayMemberPath
+    属性进行设置)，所以不可能实现包含多个字段或图像的富列表
+
+    然而，WPF另有一个工具可突破这个相当大的限制，允许组合使用来自绑定对象的多个属性，并以特定的方式排列他们或显示比简单字符串
+    更高级的可视化表示。这个工具就是数据模板
+
+    数据模板是一块定义如何显示绑定的数据对象的XAML标记。有两种类型的控件支持数据模板：
+    1.内容控件通过ContentTemplate属性支持数据模板。内容模板用于显示任何放置在Content属性中的内容
+    2.列表控件(继承自ItemsControl类的控件)通过ItemTemplate属性支持数据模板。这个模板用于显示作为ItemsSource提供的集合中的
+    每个项(或来自DataTable的每一行)
+
+    基于列表的模板特性实际上以内容控件模板为基础。这是因为列表中的每个项均由内容控件封装，例如用于ListBox控件的ListBoxItem元素、
+    用于ComboBox控件的ComboBoxItem元素，等等。不管为列表的ItemTemplate属性指定什么样的模板，模板都被用作列表中每项的ContentTemplate模板
+    
+    那么，可在数据模板中放置什么内容呢？实际上非常简单。数据模板是一块普通的XAML标记。与其他XAML标记一样，数据模板可包含任意元素的组合，
+    还应当包含一个或多个数据绑定表达式，从而提取希望显示的信息(毕竟，如果不包含任何数据绑定表达式，列表中的每一项会显示相同的内容，
+    这没有什么实际用处)
+
+    查看数据绑定工作原理的最佳方式是首先分析不使用数据模板的基本列表。例如，考虑下面的列表框，实际上我们在前面看到过这个列表框：
+    <ListBox Name="lstProducts" DisplayMemberPath="ModelName"></ListBox>
+
+    可以使用数据模板得到相同的列表框：
+    <ListBox Name="lstProducts">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <TextBlock Text="{Binding Path=ModelName}"></TextBlock>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+    </ListBox>
+    当通过设置ItemsSource属性将列表绑定到产品集合时，为每个Product对象创建一个ListBoxItem对象。ListBoxItem.Content属性被设置为恰当的
+    Product对象，并且ListBoxItem.ContentTemplate属性被设置为在上面显示的数据模板，该模板从Product.ModelName属性提取数值，并在
+    TextBlock元素中显示提取到的数值
+    
+
+    
+    -->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
@@ -33,6 +73,10 @@
                         </Style.Triggers>
                     </Style>
                 </ListBox.ItemContainerStyle>
+                <!--
+    到目前为止获得的结果并不能给人留下深刻印象。但现在已经转而使用数据模板了，已经没有什么能够限制您创造性地呈现数据了。下面列举一个示例，
+    该例在圆角矩形中包含每个产品项，显示两部分信息，并使用粗体突出显示产品的型号：
+                -->
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="0" Background="White">
@@ -56,6 +100,13 @@
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+                <!--
+    当绑定列表时，会为每个产品创建单独的Border对象。Border元素中是包含两部分信息的Grid控件
+                
+    提示：
+    当在列表中使用Grid对象布局单个项时，可能希望使用第3章中介绍的SharedSizeGroup属性，可为单行或单例应用(具有描述性组名的)SharedSizeGroup属性，
+    以确保这些行和列为所有的项使用相同的尺寸，后面提供了一个示例，该例通过这种方法为ListView控件构建了一个富视图，在该视图中结合了文本和图像内容
+                -->
             </ListBox>
         </Grid>
 
