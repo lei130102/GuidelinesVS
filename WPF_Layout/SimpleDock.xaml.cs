@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace WPF_Layout
 {
     /// <summary>
-    /// LayoutDockPanel.xaml 的交互逻辑
+    /// SimpleDock.xaml 的交互逻辑
     /// </summary>
-    public partial class LayoutDockPanel : Window
+    public partial class SimpleDock : Window
     {
-        public LayoutDockPanel()
+        public SimpleDock()
         {
             InitializeComponent();
         }

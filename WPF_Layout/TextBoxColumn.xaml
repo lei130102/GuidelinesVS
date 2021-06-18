@@ -1,0 +1,60 @@
+﻿<Window x:Class="WPF_Layout.TextBoxColumn"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="TextBoxColumn" Height="300" Width="300" MinWidth="250">
+    <Grid Margin="3,3,10,3">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <!--行定义足够简单——只需要将每行的尺寸设置为所含内容的高度。这意味着所有行都将使用最大元素的高度。在本例中，最大元素是第三列中的Browse按钮-->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*" MinWidth="50" MaxWidth="800"/>
+            <ColumnDefinition Width="Auto"/>
+            <!--接下来需要创建列。第一列和最后一列的尺寸要适合其内容(分别是标签文本和Browse按钮)。中间列占用所有剩余空间，这意味着当
+            窗口变大时，该列的尺寸会增加，这样可有更大的空间显示选择的文件夹(如果希望拉伸不超过一定的最大宽度，在定义列时可使用MaxWidth属性，
+            就像对单个元素使用MaxWidth属性一样)-->
+        </Grid.ColumnDefinitions>
+
+        <!--
+        提示：
+        Grid面板需要一定的最小空间——要足以容纳整个标签文本、浏览按钮以及在中间列中有一定的像素以显示文本框。如果缩小包含窗口使其小于这一
+        最小空间，就会将一些内容剪裁掉。与通常的情形一样，使用窗口的MinWidth和MinHeight属性防止种种情况的发生是有意义的
+        -->
+
+        <!--
+        接下来只需要在恰当的单元格中放置元素。然而，还需要仔细考虑边距和对齐方式。每个元素需要基本的边距(3个单位较恰当)以在其周围添加一些空间。
+        此外，标签和文本框在垂直方向上需要居中，因为他们没有Browse按钮高。最后，文本框需要使用自动设置尺寸模式，这样他会被拉伸以充满整列
+        -->
+
+        <Label Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Home:"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Margin="3" Height="Auto" VerticalAlignment="Center"/>
+        <Button Grid.Row="0" Grid.Column="2" Margin="3" Padding="2" Content="Browse"/>
+
+        <Label Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Network:"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Margin="3" Height="Auto" VerticalAlignment="Center"/>
+        <Button Grid.Row="1" Grid.Column="2" Margin="3" Padding="2" Content="Browse"/>
+
+        <Label Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Web:"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="3" Height="Auto" VerticalAlignment="Center"/>
+        <Button Grid.Row="2" Grid.Column="2" Margin="3" Padding="2" Content="Browse"/>
+
+        <Label Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Secondary:"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="3" Height="Auto" VerticalAlignment="Center"/>
+        <Button Grid.Row="3" Grid.Column="2" Margin="3" Padding="2" Content="Browse"/>
+    </Grid>
+</Window>
+<!--
+    一个不是非常明显的事实是，因为使用了Grid控件，所以该窗口是非常灵活的。没有任何一个元素——标签、文本框以及按钮——是通过硬编码来定位和设置尺寸的。
+    因此，可通过简单地修改ColumnDefinition元素来快速改变整个网格。甚至，如果添加了包含更长标签文本的行(迫使第一列更宽)，就会调整整个网格使其
+    保持一致，包括已经添加的行。如果希望在两行之间添加元素——例如，添加分割线以区分窗口的不同部分——可保持网格的列定义不变，但使用ColumnSpan属性拉伸
+    某个元素，使其覆盖更大的区域
+
+    -->

@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace WPF_Layout
 {
     /// <summary>
-    /// LayoutDockPanelLastChildNotFill.xaml 的交互逻辑
+    /// SplitWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class LayoutDockPanelLastChildNotFill : Window
+    public partial class SplitWindow : Window
     {
-        public LayoutDockPanelLastChildNotFill()
+        public SplitWindow()
         {
             InitializeComponent();
         }

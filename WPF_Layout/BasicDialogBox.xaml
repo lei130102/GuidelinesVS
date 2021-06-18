@@ -1,0 +1,41 @@
+﻿<Window x:Class="WPF_Layout.BasicDialogBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="BasicDialogBox" Height="300" Width="300" MinHeight="150" MinWidth="200">
+        <!--
+        很少单独使用StackPanel、WrapPanel和DockPanel面板。相反，他们通常用来设置一部分用户
+    界面的布局
+    
+    例如，假设希望创建一个标准对话框，在其右下角具有OK按钮和Cancel按钮，并且在窗口的剩余部分
+    是一块较大的内容区域。在WPF中可采用几种方法完成这一布局，但最简单的方法如下，该方法使用前面介绍过
+    的各种面板：
+    1.创建水平StackPanel面板，用于将OK按钮和Cancel按钮放置在一起
+    2.在DockPanel面板中放置StackPanel面板，将其停靠到窗口底部
+    3.将DockPanel.LastChildFill属性设置为true，以使用窗口剩余的部分填充其他内容。在此可以添加另一个
+    布局控件，或者只添加一个普通的TextBox控件
+    4.设置边距属性，提供一定的空白空间
+    -->
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Margin="10,10,2,10" Padding="3,3,3,3" Content="OK"/>
+            <Button Margin="2,10,10,10" Padding="3,3,3,3" Content="Cancel"/>
+        </StackPanel>
+        <TextBox DockPanel.Dock="Top" Margin="10" Text="This is a test."/>
+    </DockPanel>
+    <!--
+    与诸如Windows窗体的旧式用户界面框架相比，这里使用的标记更整洁、更简单也更紧凑。如果为这个窗口添加一些样式，还可对该窗口进行进一步的改进，
+    并移除其他不必要的细节(如边框设置)，从而创建真正的自适应用户界面
+    -->
+</Window>
+
+    
+    <!--
+    提示：如果有一颗茂密的嵌套元素树，很可能看不到整个结构。Visual Studio提供了一个方便的功能，用于显示一棵表示各个元素的树，并允许您通过
+    逐步单击进入希望查看(或修改)的元素。这一功能是指Document Outline窗口，可通过选择View | Other Windows | Document Outline 菜单项来
+    显示该窗口
+    
+    -->

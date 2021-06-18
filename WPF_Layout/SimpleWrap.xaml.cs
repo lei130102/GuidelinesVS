@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace WPF_Layout
 {
     /// <summary>
-    /// LayoutCanvas.xaml 的交互逻辑
+    /// SimpleWrap.xaml 的交互逻辑
     /// </summary>
-    public partial class LayoutCanvas : Window
+    public partial class SimpleWrap : Window
     {
-        public LayoutCanvas()
+        public SimpleWrap()
         {
             InitializeComponent();
         }

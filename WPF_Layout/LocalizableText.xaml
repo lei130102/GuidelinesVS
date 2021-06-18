@@ -1,0 +1,44 @@
+﻿<Window x:Class="WPF_Layout.LocalizableText"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="LocalizableText" Height="365" Width="380" MinWidth="350" MinHeight="150">
+        <!--
+        本地化文本——对于不同的地域，在用户界面中显示的文本需要翻译成不同的语言。在老式的基于坐标的应用程序中，改变窗口中的
+    文本会造成混乱，部分原因是少量英语文本翻译成许多语言后会变得特别大。尽管允许改变元素的尺寸以适应更大的文本，但这样做经常
+    使整个窗口失去平衡
+
+    在本例中，用户界面可选择短文本和长文本。当使用长文本时，包含文本的按钮会自动改变其尺寸，而其他内容也会相应地调整位置。
+    并且因为改变了尺寸的按钮共享同一布局容器(在该例中是一个表格列)，所以整个用户界面都会改变尺寸。最终结果是所有按钮保持一致的
+    尺寸——最大按钮的尺寸
+    
+    -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <Button Name="cmdPrev" Margin="10,10,10,3" Content="Prev"/>
+            <Button Name="cmdNext" Margin="10,3,10,3" Content="Next"/>
+            <CheckBox Name="chkLongText" Margin="10,10,10,10" Checked="chkLongText_Checked" 
+                      Unchecked="chkLongText_Unchecked"
+                      Content="Show Long Text"/>
+        </StackPanel>
+        <TextBox Grid.Row="0" Grid.Column="1" Margin="0,10,10,10" TextWrapping="WrapWithOverflow"
+                 Grid.RowSpan="2">
+                 This is a test that demonstrates how buttons adapt themselves to fit the content they contain when they
+            aren't explicity sized. This behavior makes localization much easier.
+        </TextBox>
+        <Button Grid.Row="1" Grid.Column="0" Name="cmdClose" Margin="10,3,10,10" Content="Close"/>
+
+    </Grid>
+</Window>

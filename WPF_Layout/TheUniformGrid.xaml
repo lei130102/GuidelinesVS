@@ -1,0 +1,25 @@
+﻿<Window x:Class="WPF_Layout.TheUniformGrid"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="TheUniformGrid" Height="300" Width="300">
+        <!--
+        有一种网格不遵循前面讨论的所有原则——UniformGrid面板。与Grid面板不同，UniformGrid面板不需要(甚至不支持)预先定义的
+    列和行。相反，通过简单地设置Rows和Columns属性来设置其尺寸。每个单元格始终具有相同的大小，因为可用的空间被均分。最后，元素
+    根据定义的顺序被放置到适当的单元格中。UniformGrid面板中没有Row和Column附加属性，也没有空白单元格
+    -->
+    <UniformGrid Rows="2" Columns="2">
+        <Button Content="Top Left"/>
+        <Button Content="Top Right"/>
+        <Button Content="Bottom Left"/>
+        <Button Content="Bottom Right"/>
+    </UniformGrid>
+
+    <!--
+    与Grid面板相比，UniformGrid面板很少使用。Grid面板是用于创建简单乃至复杂窗口布局的通用工具。UniformGrid面板是一种更特殊的
+    布局容器，主要用于在刻板的网格中快速地布局元素(例如，为特定游戏构建播放面板)。许多WPF开发人员可能永远不会使用UniformGrid面板
+    -->
+</Window>

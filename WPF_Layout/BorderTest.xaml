@@ -1,0 +1,45 @@
+﻿<Window x:Class="WPF_Layout.BorderTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="BorderTest" Height="250" Width="300">
+        <!--
+    Border控件
+    
+    Border控件不是布局面板，而是非常便于使用的元素，经常与布局面板一起使用
+    
+    Border类非常简单。他只能包含一段嵌套内容(通常是布局面板)，并为其添加背景或在其周围添加边框
+
+
+    
+    Border类的属性
+
+    Background                使用Brush对象设置边框中所有内容后面的背景。可使用固定颜色背景，也可使用其他更特殊的背景
+    
+    BorderBrush和             使用Brush对象设置位于Border对象边缘的边框的颜色，并设置边框的宽度。为显示边框，必须设置这两个属性
+    BorderThickness
+
+    CornerRadius              该属性可使边框具有雅致的圆角。CornerRadius的值越大，圆角效果就越明显
+
+    Padding                   该属性在边框和内部的内容之间添加空间(与此相对，Margin属性在边框之外添加空间)
+    -->
+    <Border Margin="5" Padding="5" Background="LightYellow" BorderBrush="SteelBlue" BorderThickness="3,5,3,5"
+            CornerRadius="3" VerticalAlignment="Top">
+        <StackPanel>
+            <Button Margin="3" Content="One"/>
+            <Button Margin="3" Content="Two"/>
+            <Button Margin="3" Content="Three"/>
+        </StackPanel>
+    </Border>
+</Window>
+<!--
+从技术角度看，Border是装饰元素(decorator)，装饰元素是特定类型的元素，通常用于在对象周围添加某些种类的图形装饰。
+
+    所有装饰元素都继承自System.Windows.Controls.Decorator类。大多数装饰元素设计用于特定控件。例如，Button控件
+    使用ButtonChrome装饰元素，以获取其特有的圆角和阴影背景效果；而ListBox控件使用ListBoxChrome装饰元素。还有两个
+    更通用的装饰元素，当构造用户界面时他们非常有用
+    -->
+

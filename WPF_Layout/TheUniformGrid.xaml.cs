@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace WPF_Layout
 {
     /// <summary>
-    /// LayoutGrid.xaml 的交互逻辑
+    /// TheUniformGrid.xaml 的交互逻辑
     /// </summary>
-    public partial class LayoutGrid : Window
+    public partial class TheUniformGrid : Window
     {
-        public LayoutGrid()
+        public TheUniformGrid()
         {
             InitializeComponent();
         }

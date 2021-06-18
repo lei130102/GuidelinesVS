@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace WPF_Layout
 {
     /// <summary>
-    /// LayoutWrapPanelVertical.xaml 的交互逻辑
+    /// LayoutRoundingTest.xaml 的交互逻辑
     /// </summary>
-    public partial class LayoutWrapPanelVertical : Window
+    public partial class LayoutRoundingTest : Window
     {
-        public LayoutWrapPanelVertical()
+        public LayoutRoundingTest()
         {
             InitializeComponent();
         }

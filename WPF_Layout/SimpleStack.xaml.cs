@@ -15,13 +15,23 @@ using System.Windows.Shapes;
 namespace WPF_Layout
 {
     /// <summary>
-    /// LayoutCanvasClipToBounds.xaml 的交互逻辑
+    /// SimpleStack.xaml 的交互逻辑
     /// </summary>
-    public partial class LayoutCanvasClipToBounds : Window
+    public partial class SimpleStack : Window
     {
-        public LayoutCanvasClipToBounds()
+        public SimpleStack()
         {
             InitializeComponent();
+        }
+
+        private void chkVertical_Checked(object sender, RoutedEventArgs e)
+        {
+            stackPanel1.Orientation = Orientation.Horizontal;
+        }
+
+        private void chkVertical_Unchecked(object sender, RoutedEventArgs e)
+        {
+            stackPanel1.Orientation = Orientation.Vertical;
         }
     }
 }

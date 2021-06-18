@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace WPF_Layout
 {
     /// <summary>
-    /// LayoutWrapPanel.xaml 的交互逻辑
+    /// SimpleGrid.xaml 的交互逻辑
     /// </summary>
-    public partial class LayoutWrapPanel : Window
+    public partial class SimpleGrid : Window
     {
-        public LayoutWrapPanel()
+        public SimpleGrid()
         {
             InitializeComponent();
         }

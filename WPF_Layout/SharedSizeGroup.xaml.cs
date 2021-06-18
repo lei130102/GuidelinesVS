@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace WPF_Layout
 {
     /// <summary>
-    /// LayoutStackPanelHorizontal.xaml 的交互逻辑
+    /// SharedSizeGroup.xaml 的交互逻辑
     /// </summary>
-    public partial class LayoutStackPanelHorizontal : Window
+    public partial class SharedSizeGroup : Window
     {
-        public LayoutStackPanelHorizontal()
+        public SharedSizeGroup()
         {
             InitializeComponent();
         }

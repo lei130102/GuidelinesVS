@@ -1,0 +1,79 @@
+﻿<Window x:Class="WPF_Layout.SimpleGrid"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="SimpleGrid" Height="300" Width="300">
+
+    <!--
+    提示：尽管Grid面板被设计成不可见的，但可将Grid.ShowGridLines属性设置为true，从而更清晰地观察Grid面板。
+    这一特性并不是真正试图美化窗口，反而是为了方便调试，设计该特性旨在帮组理解Grid面板如何将其自身分割成多个
+    较小的区域。这一特性十分重要，因为通过该特性可准确控制Grid面板如何选择列宽和行高
+    -->
+    <Grid ShowGridLines="True">
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <!--
+        如果不指定Grid.Row属性，Grid面板会假定该属性的值为0。对于Grid.Column属性也是如此。
+        因此，在Grid面板的第一个单元格中放置元素时可不指定这两个属性
+        -->
+        <Button Grid.Row="0" Grid.Column="0" Content="Top Left"/>
+        <Button Grid.Row="0" Grid.Column="1" Content="Middle Left"/>
+        <Button Grid.Row="1" Grid.Column="2" Content="Bottom Right"/>
+        <Button Grid.Row="1" Grid.Column="1" Content="Bottom Middle"/>
+    </Grid>
+</Window>
+
+    <!--
+    调整行和列
+
+    Grid面板支持以下三种设置尺寸的方式：
+
+    1.绝对设置尺寸方式
+    使用设备无关单位准确地设置尺寸。这是最无用的策略，因为这种策略不够灵活，难以适应内容大小和容器大小的改变，
+    而且难以处理本地化
+    <ColumnDefinition Width="100"/>  设置100设备无关单位的绝对宽度
+
+    2.自动设置尺寸方式
+    每行和每列的尺寸刚好满足需要。这是最有用的尺寸设置方式
+    <ColumnDefinition Width="AUto"/>
+
+    3.按比例设置尺寸方式
+    按比例将空间分割到一组行和列中，这是对所有行和列的标准设置
+    <ColumnDefinition Width="*"/>
+    如果希望不均匀地分割剩余空间，可指定权重，权重必须放在星号之前。例如，如果有两行是按比例设置尺寸，并希望
+    第一行的高度是第二行高度的一半，那么可以使用如下设置来分配剩余空间：
+    <RowDefinition Height="*"/>
+    <RowDefinition Height="2*"/>
+    上面的代码告诉Grid面板，第二行的高度应是第一行高度的两倍。可使用您喜欢的任何数字来划分剩余空间
+
+    
+    
+    
+    为了获得最大的灵活性，可混合使用这三种尺寸设置方式。例如，创建几个自动设置尺寸的行，然后通过按比例设置尺寸的
+    方式让最后的一行或两行充满剩余的空间，这通常是很有用的
+    -->
+
+    
+    
+    
+    
+    
+    
+    <!--
+注意：
+    通过代码可以很方便地与ColumnDefinition和RowDefinition对象进行交互。只需要直到Width和Height属性是
+    GridLength类型的对象即可。为创建表示特定尺寸的GridLength对象，只需要为GridLength类的构造函数传递一个
+    合适的数值即可。为了创建一个表示按比例设置尺寸(*)的GridLength对象，可为GridLength类的构造函数传递数值
+    作为第一个参数，并传递GridUnitType.Start作为第二个参数。要指定使用自动设置尺寸方式，可使用静态属性
+    GridLength.Auto
+    -->

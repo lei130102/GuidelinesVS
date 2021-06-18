@@ -1,0 +1,52 @@
+﻿<Window x:Class="WPF_Layout.SimpleWrap"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="SimpleWrap" Height="284" Width="431">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!--
+    WrapPanel面板
+
+    WrapPanel面板在可能的空间中，以一次一行或一列的方式布置控件。默认情况下，WrapPanel.Orientation属性设置为
+    Horizontal；控件从左向右进行排列，再在下一行中排列。但可将WrapPanel.Orientation属性设置为Vertical，从而
+    在多个列中放置元素。
+
+    提示：
+    与StackPanel面板类似，WrapPanel面板实际上主要用来控制用户界面中一小部分的布局细节，并非用于控制整个窗口布局。
+    例如，可能使用WrapPanel面板以类似工具栏控件的方式将所有按钮保持在一起
+    
+    -->
+    <WrapPanel Margin="3">
+        <Button VerticalAlignment="Top">Top Button</Button>
+        <Button MinHeight="60">Tall Button 2</Button>
+        <Button VerticalAlignment="Bottom">Bottom Button</Button>
+        <Button>Stretch Button</Button>
+        <Button VerticalAlignment="Center">Centered Button</Button>
+    </WrapPanel>
+    <!--
+    观察Window的Width="431"或Width="231"两种显示
+
+    WrapPanel面板水平地创建了一系列假想的行，每一行的高度都被设置为所包含元素中最高元素的高度，其他控件可能被拉伸以适应这一高度，
+    或根据VerticalAlignment属性的设置进行对齐，当Window的Width为431时，所有按钮都在位于较高的行中，并被拉伸或对齐以适应该行的高度。
+    当Window的Width为231时，有几个按钮被挤到第二行中。因为第二行没有包含特别高的按钮，所以第二行的高度保持为最小按钮的高度。因此，
+    在该行中不必关心各按钮的VerticalAlignment属性的设置
+
+    注意：WrapPanel面板是唯一一个不能通过灵活使用Grid面板代替的面板
+    -->
+
+    <WrapPanel Grid.Row="1" Orientation="Vertical" Margin="3">
+        <Button VerticalAlignment="Top">Top Button</Button>
+        <Button MinHeight="60">Tall Button 2</Button>
+        <Button VerticalAlignment="Bottom">Bottom Button</Button>
+        <Button>Stretch Button</Button>
+        <Button VerticalAlignment="Center">Centered Button</Button>
+    </WrapPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,83 @@
+﻿<Window x:Class="WPF_Layout.SimpleStack"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="SimpleStack" Height="423" Width="354" MinWidth="50">
+        <!--
+        默认情况下，StackPanel面板按自上而下的顺序排列元素，使每个元素的高度(注意是高度)适合他的内容，使每个元素
+    的宽度拉伸为与StackPanel一致
+    -->
+    <StackPanel Margin="3" Name="stackPanel1">
+        <!--
+        在垂直方向的StackPanel中，子元素的VerticalAlignment属性不起作用，因为所有元素的高度都自动地调整为刚好满足各自需要，
+        但HorizontalAlignment属性非常重要，他决定了各个元素在行的什么位置
+
+        通常，对于Label控件，HorizontalAlignment属性的值默认为Left；对于Button控件，HorizontalAlignment属性的值默认为Stretch。
+        这也是为什么每个按钮的宽度被调整为整列的宽度的原因所在
+
+        StackPanel面板也有自己的HorizontalAlignment和VerticalAligment属性，这两个属性默认都被设置为Stretch，所以
+        StackPanel面板完全充满他的容器。在本例中，这意味着StackPanel面板充满整个窗口。如果使用不同设置，StackPanel
+        面板的尺寸将足够宽以容纳最宽的控件
+        -->
+        <Label Margin="3" Content="A Button Stack"/>
+        <!--
+        Margin="3"                        为控件的每个边设置相同的边距
+        Margin="3,3,3,3"                  为控件的每个边以左上右下的顺序设置不同的边距
+        cmd.Margin = new Thickness(5);    在代码中，使用Thickness结构来设置边距
+        -->
+        <Label Margin="3" HorizontalAlignment="Center" Content="A Button Stack"/>
+        <Button Margin="3">Button</Button>
+        <Button Margin="3" HorizontalAlignment="Center">Button Center</Button>
+        <Button Margin="3" HorizontalAlignment="Left">Button Left</Button>
+        <Button Margin="3" HorizontalAlignment="Right">Button Right</Button>
+        <!--
+        每个元素都提供了Height和Width属性，用于显式地指定元素大小。但这种设置一般不是一个好主意。相反，如有必要，
+        应当使用最大尺寸和最小尺寸属性，将控件限制在正确范围内
+
+        (提示：在WPF中显式地设置尺寸之前一定要三思。在良好的布局设计中，不必显式地设置尺寸。如果确实添加了尺寸信息，
+        那就冒险创建了一种更不稳定的布局，这种布局不能适应变化(例如，不能适应不同的语言和不同的窗口尺寸)，而且可能
+        剪裁您的内容)
+
+        当StackPanel调整按钮的尺寸时，需要考虑以下几部分信息：
+        1.最小尺寸
+        每个按钮的尺寸始终不能小于最小尺寸
+        2.最大尺寸
+        每个按钮的尺寸始终不能超过最大尺寸(除非执行错误操作，使最大尺寸比最小尺寸还小)
+        3.内容
+        如果按钮中的内容需要更大的宽度，StackPanel容器会尝试扩展按钮(可以通过检查DesiredSized属性确定所需的按钮大小，
+        该属性返回最小宽度或内容的宽度，返回两者中较大的那个)
+        4.容器尺寸
+        如果最小宽度大于StackPanel面板的宽度，按钮的一部分将被剪裁掉。否则，不允许按钮比StackPanel面板更宽，即使不能
+        适合按钮表面的所有文本也同样如此
+        5.水平对齐方式
+        因为默认情况下按钮的HorizontalAlignment属性值设置为Stretch，所以StackPanel面板将尝试放大按钮以占满StackPanel
+        面板的整个宽度
+
+        理解这个过程的关键在于，要认识到最小尺寸和最大尺寸设置了绝对界限。在这些界限内，StackPanel面板尝试反映按钮所
+        期望的尺寸(以适合其内容)以及对齐方式的设置
+        -->
+        <Button Margin="3" MaxWidth="200" MinWidth="100">Button MaxWidth MinWidth</Button>
+        <!--
+        注意：某些情况下，可能希望使用代码检查窗口中某个元素的尺寸。这时使用Height和Width属性是没有用的，
+        因为这两个属性指示的是您所期望的尺寸设置，可能和实际的渲染尺寸不同。在理想情况下，应让元素的尺寸
+        适应他们的内容，根本不用设置Height和Width属性。但是，可以通过读取ActualHeight和ActualWidth属性
+        得到用于渲染元素的实际尺寸。需要记住的是，当窗口大小发生变化或其中的内容改变时，这些值可能会改变
+        -->
+
+        <CheckBox Name="chkVertical" Margin="10" HorizontalAlignment="Center"
+                  Checked="chkVertical_Checked" Unchecked="chkVertical_Unchecked">
+            Use Vertical Orientation
+        </CheckBox>
+    </StackPanel>
+</Window>
+    <!--
+    自动改变大小的窗口
+
+    在本例中，还有一个元素具有硬编码的尺寸：包含StackPanel面板(以及该面板中的所有内容)的顶级窗口
+    但可以自动改变窗口大小，如果使用动态内容构造简单窗口，这还是有意义的。为使窗口能自动改变大小，需要删除Height和Width属性，
+    并将Window.SizeToContent属性设置为WidthAndHeight。这时窗口就会扩大自身的尺寸，从而足以容纳包含的所有内容。通过将
+    SizeToContent属性设置为Width或Height，还可使窗口只能在一个方向上改变自身的尺寸
+    -->

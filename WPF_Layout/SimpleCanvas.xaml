@@ -1,0 +1,83 @@
+﻿<Window x:Class="WPF_Layout.SimpleCanvas"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="SimpleCanvas" Height="500" Width="240">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!--
+
+    
+为在Canvas面板中定位元素，需要设置Canvas.Left和Canvas.Top附加属性。
+Canvas.Left属性设置元素左边和Canvas面板左边之间的单位数，
+Canvas.Top属性设置子元素顶边和Canvas面板顶边之间的单位数
+    (注意，另外，可使用Canvas.Right属性而不是Canvas.Left属性来确定元素和Canvas面板右边缘间的距离；可使用Canvas.Bottom属性而不是
+    Canvas.Top属性来确定元素和Canvas面板底部边缘的距离。不能同时使用Canvas.Right和Canvas.Left属性，也不能同时使用Canvas.Top和
+    Canvas.Bottom属性)
+
+    
+
+    同样，这些数值也是以设备无关单位设置的，当将系统DPI设置为96dpi时，设备无关单位恰好等于通常的像素
+
+
+    
+    
+    
+    可使用Width和Height属性明确设置子元素的尺寸。与使用其他面板相比，使用Canvas面板时这种设置更普遍，因为Canvas面板没有自己的布局
+    逻辑(并且当需要精确控制组合元素如何排列时，经常会使用Canvas面板)。如果没有设置Width和Height属性，元素会获取他所期望的尺寸——换句话说，
+    他将变得足够大以适应其内容
+    
+    -->
+    <Canvas Margin="20" Background="LightYellow">
+        <Button Canvas.Left="10" Canvas.Top="10" Content="(10,10)"/>
+        <Button Canvas.Left="120" Canvas.Top="30" Content="(120,30)"/>
+        <Button Canvas.Left="60" Canvas.Top="80" Width="50" Height="50" Content="(60,80)"/>
+        <Button Canvas.Left="70" Canvas.Top="120" Width="100" Height="50" Content="(70,120)"/>
+        <Button Canvas.Left="150" Canvas.Top="120" Width="100" Height="20" Content="(150,120)"/>
+    </Canvas>
+
+    <!--
+    如果改变窗口的大小，Canvas面板就会拉伸以填满可用空间，但Canvas面板上的控件不会改变其尺寸和位置。Canvas面板不包含任何
+    锚定和停靠功能，这两个功能是在Windows窗体中使用坐标布局提供的。造成该问题的部分原因是为了保持Canvas面板的轻量级，另一个
+    原因是为了防止以不当目的使用Canvas面板(例如，确定标准用户界面的布局)
+
+    与其他所有布局容器一样，可在用户界面中嵌套Canvas面板。这意味着可使用Canvas面板在窗口的一部分绘制一些细节内容，而在窗口的
+    其余部分使用更合乎标准的WPF面板
+
+    如果与其他元素一起使用Canvas面板，可能希望将它的ClipToBounds属性设置为true。这样，如果Canvas面板中的元素被拉伸超出Canvas
+    面板的边界，将在Canvas面板的边缘处剪裁这些子元素(这样可以阻止他们与窗口中的其他元素重叠)。其他所有布局容器总是剪裁他们的
+    子元素以适应其尺寸，而不考虑ClipToBounds的设置
+    -->
+
+    <Canvas Grid.Row="1" Margin="20" Background="LightYellow" ClipToBounds="True">
+        <Button Canvas.Left="150" Canvas.Top="120" Width="100" Height="20" Content="(150,120)"/>
+    </Canvas>
+
+    <!--
+
+    Z顺序
+
+    如果Canvas面板中有多个互相重叠的元素，可通过设置Canvas.ZIndex附加属性来控制他们的层叠方式。
+
+    添加的所有元素通常都具有相同的ZIndex值——0。如果元素具有相同的ZIndex值，就按他们在Canvas.Children集合中的顺序进行显示，这个顺序
+    依赖于元素在XAML标记中定义的顺序。在标记中靠后位置声明的元素(如按钮(70,120))会显示在前面声明的元素(如按钮(120,30))的上面
+
+    然而，可通过增加任何子元素的ZIndex值来提高层次级别。因为具有更高ZIndex值的元素始终显示在较低ZIndex值的元素的上面。使用这一技术，
+    可改变前一示例中的分层情况：
+    <Button Canvas.Left="60" Canvas.Top="80" Canvas.ZIndex="1" Width="50" Height="50">(60,80)</Button>
+    <Button Canvas.Left="70" Canvas.Top="120" Width="100" Height="50">(70,120)</Button>
+    注意：应用于Canvas.ZIndex属性的实际值并无意义，重要细节的是一个元素的ZIndex值和另一个元素的ZIndex值相比较如何。可将ZIndex属性
+    设置为任何正整数或负整数
+    
+    如果需要通过代码来改变元素的位置，ZIndex属性是非常有用的。只需要调用Canvas.SetZIndex()方法，并传递希望修改的元素和希望使用的
+    新ZIndex值即可。遗憾的是，并不存在BringToFront()或SendToBack()方法——要实现这一行为，需要跟踪最高和最低的ZIndex值
+    
+    -->
+    </Grid>
+</Window>

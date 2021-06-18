@@ -1,0 +1,94 @@
+﻿<Window x:Class="WPF_Layout.ModularContent"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="ModularContent" Height="362" Width="516">
+        <!--
+    组合式用户界面
+
+    许多布局容器(如StackPanel面板、DockPanel面板以及WrapPanel面板)可以采用灵活多变的柔性方式非常得体地将内容安排到
+    可用窗口空间中。该方法的优点是，他允许创建真正的组合式界面。换句话说，可在用户界面中希望显示的恰当部分输入不同的面板，
+    而保留用户界面的其他部分。整个应用程序本身可以相应地改变界面，这与Web门户站点有类似之处
+    
+    下面演示了一个组合式用户界面。在一个WrapPanel面板中放置几个独立的面板。用户可以通过窗口顶部的复选框，选择显示这些面板中的哪些面板
+    
+    注意：尽管可以设置布局面板的背景色，但不能在其周围设置边框，该例通过使用Border元素包含每个面板来突破这一限制，Border元素恰好描述了
+    面板的范围
+
+    隐藏不同的面板后，剩余面板会重新改变自身以适应可用空间(以及声明他们的顺序)
+    
+
+    为了隐藏和显示单个面板，需要使用一些代码处理复选框的单击事件。尽管尚未考虑WPF事件处理模型的任何细节，技巧是设置Visibility属性：
+    panel.Visibility = Visibility.Collapsed;
+    Visibility属性是UIElement基类的一部分，因此放置与WPF窗口中的任何内容都支持该属性。该属性可使用三个值，他们来自System.Windows.Visibility枚举
+
+    Visible                 元素在窗口中正常显示
+
+    Collapsed               元素不显示，也不占用任何空间
+
+    Hidden                  元素不显示，但仍为其保留空间(换句话说，会在元素可能显示的地方保留空白空间)。如果需要隐藏和显示元素，又不希望改变
+                            窗口布局和窗口中剩余元素的相对位置，使用该设置是非常方便的
+
+    提示：
+    可使用Visibility属性动态调整各种界面。例如，可制作在窗口一边显示的可折叠窗格。需要完成的全部工作就是在几种布局容器中包含窗格的所有内容，并恰当地
+    设置其Visibility属性。剩余的内容会重新排列以适应余下的空间
+    -->
+    <ScrollViewer>
+        <StackPanel>
+            <WrapPanel Background="LightSteelBlue" Name="pnlList">
+                <CheckBox Margin="5" IsChecked="True" Content="Panel1"/>
+                <CheckBox Margin="5" IsChecked="True" Content="Panel2"/>
+                <CheckBox Margin="5" IsChecked="True" Content="Panel3"/>
+                <CheckBox Margin="5" IsChecked="True" Content="Panel4"/>
+            </WrapPanel>
+            <WrapPanel>
+                <StackPanel Name="Panel1">
+                    <Border Padding="5" BorderBrush="Yellow" BorderThickness="2">
+                        <UniformGrid Rows="2" Columns="2">
+                            <Button Margin="10" Padding="10" Content="1"/>
+                            <Button Margin="10" Padding="10" Content="2"/>
+                            <Button Margin="10" Padding="10" Content="3"/>
+                            <Button Margin="10" Padding="10" Content="4"/>
+                        </UniformGrid>
+                    </Border>
+                </StackPanel>
+                <StackPanel Name="Panel2">
+                    <Border Padding="15" BorderBrush="Yellow" BorderThickness="2">
+                        <TabControl>
+                            <TabItem Header="Page1">
+                                <Button Padding="100,50,100,50" Content="Tabs"/>
+                            </TabItem>
+                            <TabItem Header="Page2">
+                            </TabItem>
+                        </TabControl>
+                    </Border>
+                </StackPanel>
+                <StackPanel Name="Panel3">
+                    <Border Padding="15" BorderBrush="Yellow" BorderThickness="2">
+                        <StackPanel>
+                            <TextBox MinLines="5" MaxWidth="150" TextWrapping="Wrap" 
+                                     Text="This is a test of a text box that contains wrapped text."/>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="OK"/>
+                                <Button Content="Cancel"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+                <StackPanel Name="Panel4">
+                    <Border Padding="15" BorderBrush="Yellow" BorderThickness="2">
+                        <UniformGrid Rows="2" Columns="2">
+                            <Button Margin="10" Padding="10" Content="1"/>
+                            <Button Margin="10" Padding="10" Content="2"/>
+                            <Button Margin="10" Padding="10" Content="3"/>
+                            <Button Margin="10" Padding="10" Content="4"/>
+                        </UniformGrid>
+                    </Border>
+                </StackPanel>
+            </WrapPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

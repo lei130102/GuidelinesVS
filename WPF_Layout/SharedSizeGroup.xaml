@@ -1,0 +1,80 @@
+﻿<Window x:Class="WPF_Layout.SharedSizeGroup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="SharedSizeGroup" Height="321.6" Width="380.8">
+        <!--
+
+    Grid面板还有另一种确定一行或一列尺寸的方法——与其他行或列的尺寸相匹配。这是通过称为
+    “共享尺寸组”(shared size groups)的特性实现的
+
+    共享尺寸组的目标是保持用户界面独立部分的一致性。
+    例如，可能希望改变一列的尺寸以适应其内容，并改变另一列的尺寸使其与前面一列改变后的尺寸相匹配。然而，
+    共享尺寸组的真正优点是使独立的Grid控件具有相同的比例
+    
+    -->
+
+    <!--
+    窗口具有两个Grid对象——一个位于窗口顶部(有三列)，另一个位于窗口底部(有两列)。第一个Grid面板的最左边
+    一列按比例地改变其尺寸，以适应其包含的内容(一个较长的文本字符串)。第二个Grid面板的最左边一列和第一个
+    Grid面板的最左边一列的宽度完全相同，但包含的内容较少。这是因为他们共享相同的尺寸分组。不管在第一个Grid
+    面板的第一列中放置了多少内容，第二个Grid面板中的第一列总是和第一个Grid面板中的第一列保持同步
+    -->
+
+    <!--
+    共享的列可用于不同的网格中。在本例中，顶部的Grid面板有一个特别的列，从而剩余的控件以不同方式进行分割。同样，共享的列可占据
+    不同的位置，从而可以在一个Grid面板中的第一列和另一个Grid面板中的第二列之间创建一种联系。显然，这些列可包含完全不同的内容
+
+    当使用共享尺寸组时，就像创建了一列(或一行)的定义，列定义(或行定义)在多个地方被重复使用。这不是简单地将一列(或一行)复制到另外
+    一个地方。可以使用前面的示例，通过改变第二个Grid面板中共享列的内容来对此进行测试。现在，第一个Grid面板中的列会被拉长以进行
+    匹配
+
+    甚至可为其中一个Grid对象添加GridSplitter。当用户改变一个Grid面板中列的尺寸时，另一个Grid面板中的共享列会同时相应地改变尺寸
+
+    可轻而易举地创建共享组。只需要使用对应的字符串设置两列的SharedSizeGroup属性即可。
+    在本例中，两列都使用了名为TextLabel的分组
+
+    还有一个细节，对于整个应用程序来说，共享尺寸组并不是全局的，因为多个窗口可能在无意间使用相同名称。可以假定共享尺寸组被限制在
+    当前窗口，但是WPF甚至更加严格。为了共享一个组，需要在包含具有共享列的Grid对象的容器中，在包含Grid对象之前明确地将Grid.IsSharedSizeScope
+    附加属性设置为true。为了实现该目标，在当前这个示例中，将顶部和底部的Grid面板包含在另一个Grid面板中。当然，也可以很方便地使用不同
+    的容器，如DockPanel或StackPanel
+    -->
+    <Grid Grid.IsSharedSizeScope="True" Margin="3">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="3" Background="LightYellow" ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="TextLabel"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Label Margin="5" Content="A very long bit of text"/>
+            <Label Grid.Column="1" Margin="5" Content="More text"/>
+            <TextBox Grid.Column="2" Margin="5" Text="A text box"/>
+        </Grid>
+
+        <Label Grid.Row="1" Content="Some text in between the two grids..."/>
+
+        <Grid Grid.Row="2" Margin="3" Background="LightYellow" ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="TextLabel"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Margin="5" Content="Short"/>
+            <TextBox Grid.Column="1" Margin="5" Text="A text box"/>
+        </Grid>
+    </Grid>
+</Window>
+
+    <!--
+    提示：可使用共享尺寸组来同步具有列标题的不同网格。每列的宽度可由列中的内容决定，列标题将共享这一宽度。甚至可在列标题中放置一个
+    GridSplitter对象，用户可通过拖动该GridSplitter对象来改变列标题以及列标题下的整个列
+        -->

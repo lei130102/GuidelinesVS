@@ -1,0 +1,86 @@
+﻿<Window x:Class="WPF_Layout.SimpleInkCanvas"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="SimpleInkCanvas" Height="300" Width="300">
+
+    <!--
+    InkCanvas元素
+
+    WPF还提供了InkCanvas元素，他与Canvas面板在某些方面是类似的(而在其他方面却完全不同)。和Canvas面板一样，
+    InkCanvas元素定义了4个附加属性(Top、Left、Bottom和Right)，可将这4个附加属性引用于子元素，以根据坐标进行定位。
+    然而，基本的内容区别很大——实际上，InkCanvas类不是派生自Canvas类，甚至也不是派生自Panel基类，而是直接派生自
+    FrameworkElement类
+
+    InkCanvas元素的主要目的是用于接收手写笔输入。手写笔是一种在平板PC中使用的类似于钢笔的输入设备，然而，InkCanvas
+    元素同时也可使用鼠标进行工作，就像使用手写笔一样。因此，用户可使用鼠标在InkCanvas元素上绘制线条，或者选择以及
+    操作InkCanvas中的元素
+
+    InkCanvas元素实际上包含两个子内容集合。
+    一个是为人熟知的Children集合，他保存任意元素，就像Canvas面板一样。每个子元素可根据Top、Left、Botttom和Right
+    属性进行定位
+    另一个是Strokes集合，他保存System.Windows.Ink.Stroke对象，该对象表示用户在InkCanvas元素上绘制的图形输入。
+    用户绘制的每条直线或曲线都变成独立的Stroke对象。
+    得益于这两个集合，可使用InkCanvas让用户使用存储在Strokes集合中的笔画(stroke)为保存在Children集合中的内容
+    添加注释
+
+
+    
+    -->
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Margin="5" Orientation="Horizontal">
+            <TextBlock Margin="5" Text="EditingMode:"/>
+            <ComboBox Name="lstEditingMode" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <InkCanvas Name="inkCanvas" Grid.Row="1" Background="LightYellow" EditingMode="{Binding ElementName=lstEditingMode, Path=SelectedItem}">
+            <Button InkCanvas.Top="10" InkCanvas.Left="10" Content="Hello"/>
+        </InkCanvas>
+
+        <!--
+        笔画是用户在运行时绘制的
+
+        根据为InkCanvas.EditingMode属性设置的值，可以采用截然不同的方式使用InkCanvas元素
+
+
+        
+        
+        InkCanvasEditingMode枚举值
+
+        Ink                     InkCanvas元素允许用户绘制批注，这是默认模式。当用户用鼠标或手写笔绘图时，会绘制笔画
+
+        GestureOnly             InkCanvas元素不允许用户绘制笔画批注，但会关注预先定义的特定姿势(例如在某个方向拖动手写笔或涂画内容)。
+                                能识别的姿势的完整列表由System.Windows.Ink.ApplicationGesture枚举给出
+
+        InkAndGesture           InkCanvas元素允许用户绘制笔画批注，也可以识别预先定义的姿势
+
+        EraseByStroke           当单击笔画时，InkCanvas元素会擦除笔画。如果用户使用手写笔，可使用手写笔的底端切换到该模式(可使用只读的ActiveEditingMode
+                                属性确定当前编辑模式，也可通过改变EditingModelInverted属性来改变手写笔的底端使用的工作模式)
+
+        EraseByPoint            当单击笔画时，InkCanvas元素会擦除笔画中被单击的部分(笔画上的一个点)
+
+        Select                  InkCanvas面板允许用户选择保存在Children集合中的元素。要选择一个元素，用户必须单击该元素或拖动“套索”选择该元素。一旦
+                                选择一个元素，就可以移动该元素、改变其尺寸或将其删除
+
+        None                    InkCanvas元素忽略鼠标和手写笔输入
+
+        
+        
+        
+        InkCanvas元素会引发多种事件，当编辑模式改变时会引发ActiveEditingModeChanged事件，在GestureOnly或InkAndGesture模式下删除姿势时会引发
+        Gesture事件，绘制完笔画时会引发StrokeCollected事件，擦除笔画时会引发StrokeErasing事件和StrokeErased事件，在Select模式下选择元素或改变
+        元素时会引发SelectionChanging事件、SelectionChanged事件、SelectionMoving事件、SelectionMoved事件、SelectionResizing事件和SelectionResized事件
+        其中，名称以"ing"结尾的事件表示动作将要发生，但可以通过设置EventArgs对象的Cancel属性取消事件
+
+        在Select模式下，InkCanvas元素可为拖动以及操作内容提供功能强大的设计界面。虽然Select模式十分有趣，但并不适合用于构建绘图工具
+        -->
+    </Grid>
+</Window>

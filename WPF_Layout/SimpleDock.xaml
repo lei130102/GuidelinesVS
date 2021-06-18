@@ -1,0 +1,50 @@
+﻿<Window x:Class="WPF_Layout.SimpleDock"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Layout"
+        mc:Ignorable="d"
+        Title="SimpleDock" Height="600" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--
+        如果将一个按钮停靠在DockPanel面板的顶部，该按钮会被拉伸至DockPanel面板的整个宽度，但根据内容和
+    MinHeight属性为其设置所需的高度。而如果将一个按钮停靠到容器左边，该按钮的高度将被拉伸以适应容器的高度，
+    而其宽度可以根据需要自由增加
+    
+    -->
+    <DockPanel LastChildFill="True">
+        <Button DockPanel.Dock="Top">A Stretched Top Button</Button>
+        <Button DockPanel.Dock="Top" HorizontalAlignment="Center">A Centered Top Button</Button>
+        <Button DockPanel.Dock="Top" HorizontalAlignment="Left">A Left-Aligned Top Button</Button>
+        <Button DockPanel.Dock="Bottom">Bottom Button</Button>
+        <Button DockPanel.Dock="Left">Left Button</Button>
+        <Button DockPanel.Dock="Right">Right Button</Button>
+        <Button>Remaining Space</Button>
+    </DockPanel>
+    <!--
+    当停靠控件时，停靠顺序很重要。在本例中，顶部和底部按钮充满了DockPanel面板的整个边缘，这是因为这两个按钮首先被停靠。
+    接着停靠左边和右边的按钮时，这个两个按钮将位于顶部按钮和底部按钮之间。如果改变这一顺序，那么左边和右边的按钮将充满
+    整个面板的边缘，而顶部和底部的按钮则变窄一些，因为他们将在左边和右边的两个按钮之间进行停靠
+    -->
+
+    <DockPanel Grid.Row="1" LastChildFill="True">
+        <Button DockPanel.Dock="Left">Left Button</Button>
+        <Button DockPanel.Dock="Right">Right Button</Button>
+        <Button DockPanel.Dock="Top">A Stretched Top Button</Button>
+        <Button DockPanel.Dock="Top" HorizontalAlignment="Center">A Centered Top Button</Button>
+        <Button DockPanel.Dock="Top" HorizontalAlignment="Left">A Left-Aligned Top Button</Button>
+        <Button DockPanel.Dock="Bottom">Bottom Button</Button>
+        <Button>Remaining Space</Button>
+    </DockPanel>
+    <!--
+    可将多个元素停靠到同一边缘。这种情况下，元素按标记中声明的顺序停靠到边缘。而且，如果不喜欢空间分割或拉伸行为，
+    可修改Margin属性、HorizontalAlignment属性以及VerticalAlignment属性，就像使用StackPanel面板进行布局时所介绍的那样
+    -->
+    </Grid>
+</Window>

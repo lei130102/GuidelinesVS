@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace WPF_Layout
 {
     /// <summary>
-    /// LayoutStackPanel.xaml 的交互逻辑
+    /// SimpleCanvas.xaml 的交互逻辑
     /// </summary>
-    public partial class LayoutStackPanel : Window
+    public partial class SimpleCanvas : Window
     {
-        public LayoutStackPanel()
+        public SimpleCanvas()
         {
             InitializeComponent();
         }
