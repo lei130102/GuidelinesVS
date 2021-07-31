@@ -5,24 +5,25 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+/*
+修改App.xaml中为 Startup="Application_Startup" 
 
-//修改App.xaml中为 Startup="Application_Startup" 
+那么在自动生成的obj/debug中的App.g.cs中：
+/// <summary>
+/// InitializeComponent
+/// </summary>
+[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+[System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "4.0.0.0")]
+public void InitializeComponent()
+{
 
-//自动生成的obj/debug中的App.g.cs中：
-///// <summary>
-///// InitializeComponent
-///// </summary>
-//[System.Diagnostics.DebuggerNonUserCodeAttribute()]
-//[System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "4.0.0.0")]
-//public void InitializeComponent()
-//{
+#line 5 "..\..\App.xaml"
+    this.Startup += new System.Windows.StartupEventHandler(this.Application_Startup);
 
-//#line 5 "..\..\App.xaml"
-//    this.Startup += new System.Windows.StartupEventHandler(this.Application_Startup);
-
-//#line default
-//#line hidden
-//}
+#line default
+#line hidden
+}
+*/
 
 namespace WPF_Start_Startup
 {

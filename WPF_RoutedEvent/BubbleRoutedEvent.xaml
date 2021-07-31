@@ -22,11 +22,16 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Label Margin="5" Grid.Row="0" HorizontalAlignment="Left" Background="AliceBlue" BorderBrush="Black" BorderThickness="1" MouseUp="Someone_MouseUp">
-            <StackPanel MouseUp="Someone_MouseUp">
-                <TextBlock Margin="3" MouseUp="Someone_MouseUp" Text="Image and text label"/>
-                <Image Source="/Image/happyface.jpg" Stretch="None" MouseUp="Someone_MouseUp"/>
-                <TextBlock Margin="3" MouseUp="Someone_MouseUp" Text="Courtesy of the StackPanel"/>
+        <Label Margin="5" Grid.Row="0" HorizontalAlignment="Left" Background="AliceBlue" BorderBrush="Black" BorderThickness="1"
+               MouseUp="Someone_MouseUp">
+            <StackPanel
+                MouseUp="Someone_MouseUp">
+                <TextBlock Margin="3" Text="Image and text label"
+                           MouseUp="Someone_MouseUp"/>
+                <Image Source="/Image/happyface.jpg" Stretch="None"
+                       MouseUp="Someone_MouseUp"/>
+                <TextBlock Margin="3" Text="Courtesy of the StackPanel" 
+                           MouseUp="Someone_MouseUp"/>
             </StackPanel>
         </Label>
 

@@ -5,10 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              d1p1:Ignorable="d" 
              xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             StartupUri="View/RadioButtonView.xaml">
+             StartupUri="IsCheckedBinding.xaml">
+    <!--
+    RadioButton类继承自ToggleButton类，并使用相同的IsChecked属性和相同的Checked、Unchecked以及Indeterminate事件
+
+    此外，RadioButton类还增加了GroupName属性，该属性用于控制如何对单选按钮进行分组
+
+    单选按钮通常由他们的容器进行分组，可以使用GroupName属性覆盖这一默认行为
+    
+    并非一定使用GroupBox容器封装单选按钮，但通常约定这么做。GroupBox控件显示一条边框和一个可应用于按钮组的标题
+    -->
     <Application.Resources>
-        <ResourceDictionary>
-            <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:WPF_RadioButton.ViewModel" />
-        </ResourceDictionary>
+
     </Application.Resources>
 </Application>

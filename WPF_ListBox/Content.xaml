@@ -7,47 +7,12 @@
         mc:Ignorable="d"
         Title="Content" Height="220" Width="200">
     <!--
-    WPF提供了许多封装项的集合的控件，所有这些控件都继承自ItemsControl类(ItemsControl类本身又继承自Control类)
-
-    ItemsControl类添加了所有基于列表的控件都使用的基本功能。最显著的是，他提供了填充列表项的两种方式：
-    1.使用代码或者XAML将列表项直接添加到Items集合中
-    2.使用数据绑定(需要将ItemsSource属性设置为希望显示的具有数据项集合的对象)
-
-    ItemsControl类之后的继承层次：
-    1.选择器(selector)，比如ListBox、ComboBox以及TabControl，这些控件都继承自Selector类，并且都具有跟踪当前选择项(SelectedItem)或其位置(SelectedIndex)的属性
-    2.非选择器，比如菜单、工具栏以及树的类
-
-    为了充分发挥所有ItemsControl控件的功能，需要使用数据绑定。即使不从数据库甚至外部数据源获取数据，也同样如此。WPF数据绑定非常普遍
-    -->
-
-    <!--
 
     ListBox控件在他的Items集合中存储每个嵌套的对象
 
     ListBoxItem类继承自ContentControl类，从而ListBoxItem能够包含一段嵌套的内容。如果该内容继承自UIElement类，他将在ListBox控件中呈现出来，
     如果是其他类型的对象，ListBoxItem对象会调用ToString()方法并显示最终的文本
-
-    实际上ListBox控件足够智能，他能隐式地创建所需的ListBoxItem对象，这意味着可直接在ListBox元素中放置对象
-
-    当在列表内部使用不同元素时需要注意一点，当读取SelectedItem值时(以及SelectedItems和Items集合)，看不到ListBoxItem对象——反而将看到放入
-    到列表中的对象
-
-    (
-    如果希望查找当前选择的项，可直接从SelectedItem或SelectedItems属性中读取
-    如果希望确定哪些项(如果存在的话)被取消选中，可使用SelectionChangedEventArgs对象的RemovedItems属性
-    可通过AddedItems属性了解哪些项被添加到了选中的项中。在单项选择模式下，无论何时选项发生变化，总有一项被选中并总有一项被取消选中。在多项选择或扩展选择模式下，情况就未必如此了
-    )
-
-    ListBoxItem定义了可以读取(或设置)的IsSelected属性，以及用于通知何时选中的Selected和Unselected事件。然而，可使用ListBox类的成员得到类似功能，
-    如SelectedItem属性(或SelectedItems属性)以及SelectionChanged事件
-
-    当使用嵌套对象方法时，有一项技术可为特定的对象检索ListBoxItem封装器，即使用ContainerFromElement()方法
-    //检查列表中的第一个条目是否被选中：
-    ListBoxItem item = (ListBoxItem)lst.ContainerFromElement((DependencyObject)lst.SelectedItems[0]);
-    MessageBox.Show("IsSelected: " + item.IsSelected.ToString());
     
-    如果将SelectionMode属性设置为Multiple或Extended，ListBox类还允许选择多项。在Multiple模式下，可通过单击项进行选择或取消选择。在Extended模式下，需要按下
-    Ctrl键选择其他项，或按下Shift键选择某个选项范围。在这两种多选模式下，可用SelectedItems集合替代SelectedItem属性来获取所有选择的项
     -->
    <Grid Margin="10">
         <ListBox>

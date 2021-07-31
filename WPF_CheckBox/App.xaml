@@ -2,7 +2,12 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WPF_CheckBox"
-             StartupUri="MainWindow.xaml">
+             StartupUri="Content.xaml">
+    <!--
+        CheckBox控件继承自ToggleButton类，这意味着用户可切换他们的开关状态
+
+        CheckBox类没有添加任何成员，所以CheckBox类的基本接口是在ToggleButton类中定义的
+    -->
     <Application.Resources>
          
     </Application.Resources>

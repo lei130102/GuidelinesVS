@@ -1,0 +1,32 @@
+﻿<Window x:Class="WPF_ScrollViewer.CustomScrolling"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ScrollViewer"
+        mc:Ignorable="d"
+        Title="CustomScrolling" Height="285" Width="319">
+        <!--
+
+    自定义滚动
+
+    a.在ScrollViewer控件中放置能够滚动的元素，可以是实现了IScrollInfo接口的任意元素
+    b.通过将ScrollViewer.CanContentScroll属性设置为true，告诉ScrollViewer控件其内容知道如何进行滚动
+    c.当和ScrollViewer控件进行交互时(通过使用滚动条、鼠标轮和滚动方法等)，ScrollViewer控件通过IScrollInfo接口来调用元素的恰当方法。元素接着执行他自己的自定义滚动功能
+    (IScrollInfo接口定义了一套方法，这套方法响应不同的滚动动作。例如，他包含了ScrollViewer控件提供的许多滚动方法，如LineUp()、LineDown()、PageUp()以及PageDown()他还
+    定义了一些处理鼠标滚轮的方法)
+
+    实现了IScrollInfo接口的元素极少，其中一个元素是StackPanel面板容器。StackPanel类对IScrollInfo接口的实现使用逻辑滚动，从元素滚动到元素，而不是逐行滚动。
+    如果在ScrollViewer控件中放置StackPanel面板，而且不设置CanContentScroll属性，将得到普通的滚动行为。一次可向上或向下滚动几个像素。但如果将CanContentScroll属性设为true，
+    那么每次单击时会滚动到下一个元素的开头 
+
+    -->
+    <ScrollViewer CanContentScroll="True">
+        <StackPanel>
+            <Button Height="100" Content="1"/>
+            <Button Height="100" Content="2"/>
+            <Button Height="100" Content="3"/>
+            <Button Height="100" Content="4"/>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

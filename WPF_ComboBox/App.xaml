@@ -2,7 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WPF_ComboBox"
-             StartupUri="Content.xaml">
+             StartupUri="IsEditable.xaml">
+             <!--
+    与ListBox控件类似，ComboBox包含ComboBoxItem对象的集合，既可以显式地也可以隐式地创建该集合。
+    与ListBoxItem类似，ComboBoxItem也是可以包含任意嵌套元素的内容控件
+
+    ComboBox类和ListBox类之间的重要区别是他们在窗口中呈现自身的方式。ComboBox控件使用下拉列表，这意味着一次只能选择一项
+    -->
     <Application.Resources>
          
     </Application.Resources>

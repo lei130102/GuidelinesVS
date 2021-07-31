@@ -28,6 +28,7 @@ using System.Windows.Shapes;
 //有时可能设置相互重叠的光标。对于这种情况，会使用最特殊的光标。例如，可为一个按钮和包含该按钮的窗口设置不同的光标。当鼠标移到按钮上时，将显示为按钮设置的
 //光标，而对于窗口中的其他区域则显示为窗口设置的光标。
 //但有一个例外。通过使用ForceCursor属性，父元素可覆盖子元素的光标设置。将该属性设置为true时，会忽略子元素的Cursor属性，父元素的光标会被应用到内部的所有内容
+
 //如果希望为应用程序每个窗口中的每个元素应用光标设置，使用FrameworkElement.Cursor属性将不起作用。相反，需要使用静态的Mouse.OverrideCursor属性，该属性覆盖
 //每个元素的Cursor属性：
 //Mouse.OverrideCursor = Cursors.Wait;

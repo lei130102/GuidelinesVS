@@ -2,7 +2,39 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WPF_Slider"
-             StartupUri="MainWindow.xaml">
+             StartupUri="SlidersCompared.xaml">
+    <!--
+
+    Slider控件是偶尔用到的特殊控件——例如，当数字本身不是特别重要时可使用该控件设置数值。再比如，通过在滑动条上从一边向另一边拖动滑块设置媒体播放器的
+    音量是非常合理的。滑块的大致位置指示相对音量(正常、小音量、大音量)，但对于用户来说背后的数字没有意义
+    
+    
+    Slider控件的重要属性是在RangeBase类中定义的。除这些属性外，还可以使用下面属性
+    
+
+    Slider类的附加属性
+
+    Orientation                          在竖直滑动条和水平滑动条之间切换
+
+    Delay Interval                       当单击并按下滑动条的两侧时，控制滑块沿轨迹移动的速度。这两个属性都是毫秒值。
+                                         Delay是单击后在滑块移动一个单位(小变化)之前的时间
+                                         Interval是当继续按住鼠标键时滑块再次移动之前的时间
+
+    TickPlacement                        决定刻度显示的位置(刻度是在滑动条附近用于帮助观察数值的刻痕记号)。默认情况下，TickPlacement属性被
+                                         设置为None，并且不显示刻度标记。如果是水平滑动条，可在上面放置刻度标记（TopLeft）或在下面放置刻度
+                                         标记（BottomRight）。对于竖直滑动条，可在左边（TopLeft）和右边（BottomRight）放置刻度标记
+
+    TickFrequency                        设置刻度之间的间隔，决定了显示多少刻度。例如，可每隔5个单位放置一个刻度，每隔10个单位放置一个刻度等
+
+    Ticks                                如果希望在特定的不规则位置放置刻度，可使用Ticks集合。简单地为每个刻度标记向该集合添加一个数值（双精度浮点数）
+                                         例如，可通过添加相应的数值，在1、1.5、2和10刻度位置放置刻度记号
+
+    IsSnapToTickEnabled                  如果该属性为true，当移动滑动条时，会自动跳转到合适的位置——最近的刻度标记。默认值为false
+
+    IsSelectionRangeEnabled              如果为true，可使用选择范围使滑动条的一部分显示阴影。使用SelectionStart和SelectionEnd属性设置位置
+                                         选择范围。选择范围没有固定的含义，但可以因为任何有意义的目的而使用
+    
+    -->
     <Application.Resources>
          
     </Application.Resources>

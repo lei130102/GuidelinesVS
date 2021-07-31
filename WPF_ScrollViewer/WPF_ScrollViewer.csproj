@@ -55,11 +55,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="LogicalScrolling.xaml">
+    <Page Include="CustomScrolling.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="CodeScrolling.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -67,11 +67,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LogicalScrolling.xaml.cs">
-      <DependentUpon>LogicalScrolling.xaml</DependentUpon>
+    <Compile Include="CustomScrolling.xaml.cs">
+      <DependentUpon>CustomScrolling.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="CodeScrolling.xaml.cs">
+      <DependentUpon>CodeScrolling.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

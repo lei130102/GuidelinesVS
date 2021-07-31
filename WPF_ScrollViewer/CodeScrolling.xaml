@@ -1,0 +1,86 @@
+﻿<Window x:Class="WPF_ScrollViewer.CodeScrolling"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ScrollViewer"
+        mc:Ignorable="d"
+        Title="CodeScrolling" Height="181" Width="283" MinWidth="250">
+
+    <!--
+
+    通过代码进行滚动
+
+    使用ScrollViewer类提供的方法，通过代码来滚动内容：
+    a.LineUp()和LineDown()，这两个方法向上和向下移动的效果相当于单击一次垂直滚动条两端的箭头按钮
+    b.PageUp()和PageDown()，这两个方法向上或向下滚动一整屏，相当于在滚动滑块的上面或者下面单击滚动条
+    c.用于水平滚动的类似方法，包括LineLeft()、LineRight()、PageLeft()和PageRight()
+    d.最后，还可使用ScrollToXxx()这一类方法，从而滚动到任何特定位置。对于垂直滚动，包括ScrollToEnd()和ScrollToHome()，这两个方法可以滚动到内容的顶部和底部。
+    还有ScrollToVerticalOffset()，该方法可滚动到特定位置。对于水平滚动也有类似的方法，包括ScrollToLeftEnd()、ScrollToRightEnd()和ScrollToHorizontalOffset()
+    
+    -->
+    <DockPanel>
+        <Border DockPanel.Dock="Top" BorderBrush="SteelBlue" BorderThickness="2">
+            <StackPanel Margin="5" Orientation="Horizontal">
+                <Button Padding="3" Name="LineUp" Click="LineUp_Click" Content="Line Up"/>
+                <Button Padding="3" Name="LineDown" Click="LineDown_Click" Content="Line Down"/>
+                <Button Padding="3" Name="PageUp" Click="PageUp_Click" Content="Page up"/>
+                <Button Padding="3" Name="PageDown" Click="PageDown_Click" Content="Page Down"/>
+            </StackPanel>
+        </Border>
+        <!--
+        尽管ScrollViewer控件可以包含任何内容，但通常用来封装布局容器。比如这里是 ScrollViewer + Grid
+        -->
+        <ScrollViewer Name="scroller">
+            <Grid Margin="0,10,0,0" Focusable="False">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*" MinWidth="50" MaxWidth="800"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Home:"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Margin="3" Height="Auto" VerticalAlignment="Center"/>
+                <Button Grid.Row="0" Grid.Column="2" Margin="3" Padding="2" Content="Browse"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Network:"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Margin="3" Height="Auto" VerticalAlignment="Center"/>
+                <Button Grid.Row="1" Grid.Column="2" Margin="3" Padding="2" Content="Browse"/>
+
+                <Label Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Web:"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Margin="3" Height="Auto" VerticalAlignment="Center"/>
+                <Button Grid.Row="2" Grid.Column="2" Margin="3" Padding="2" Content="Browse"/>
+
+                <Label Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Secondary:"/>
+                <TextBox Grid.Row="3" Grid.Column="1" Margin="3" Height="Auto" VerticalAlignment="Center"/>
+                <Button Grid.Row="3" Grid.Column="2" Margin="3" Padding="2" Content="Browse"/>
+
+                <Label Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Home:"/>
+                <TextBox Grid.Row="4" Grid.Column="1" Margin="3" Height="Auto" VerticalAlignment="Center"/>
+                <Button Grid.Row="4" Grid.Column="2" Margin="3" Padding="2" Content="Browse"/>
+
+                <Label Grid.Row="5" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Network:"/>
+                <TextBox Grid.Row="5" Grid.Column="1" Margin="3" Height="Auto" VerticalAlignment="Center"/>
+                <Button Grid.Row="5" Grid.Column="2" Margin="3" Padding="2" Content="Browse"/>
+
+                <Label Grid.Row="6" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Web:"/>
+                <TextBox Grid.Row="6" Grid.Column="1" Margin="3" Height="Auto" VerticalAlignment="Center"/>
+                <Button Grid.Row="6" Grid.Column="2" Margin="3" Padding="2" Content="Browse"/>
+
+                <Label Grid.Row="7" Grid.Column="0" Margin="3" VerticalAlignment="Center" Content="Secondary:"/>
+                <TextBox Grid.Row="7" Grid.Column="1" Margin="3" Height="Auto" VerticalAlignment="Center"/>
+                <Button Grid.Row="7" Grid.Column="2" Margin="3" Padding="2" Content="Browse"/>
+            </Grid>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

@@ -45,8 +45,10 @@ namespace CommonLib
 
 
 
-            MainWindow window = new MainWindow();
-            window.Show();
+            //MainWindow window = new MainWindow();
+            //window.Show();
+
+            Test_FolderBrowserDialog.Test.run();
         }
     }
 }

@@ -6,21 +6,6 @@
         xmlns:local="clr-namespace:WPF_TextBox"
         mc:Ignorable="d"
         Title="TextBoxTest" Height="450" Width="200">
-    <!--
-    WPF提供了三个用于输入文本的控件：TextBox、RichTextBox和PasswordBox
-
-    PasswordBox控件直接集成自Control类
-    TextBox和RichTextBox控件间接继承自TextBoxBase类
-
-    与其他内容控件不同，文本框能够包含的内容类型是有限的：
-    TextBox总是存储字符串(由Text属性提供)
-    PasswordBox控件也处理字符串内容(由Password属性提供)，尽管为了减轻特定类型的攻击，他在内部使用SecureString属性
-    只有RichTextBox控件可存储更复杂的内容：可包含复杂元素组合的FlowDocument对象(RichTextBox控件是用于显示FlowDocument对象的高级控件)
-    
-    -->
-
-
-
 
         <StackPanel Margin="10">
         <!--TextBox控件是WPF中最基本的文字输入控件。它允许最终用户在一行、对话输入、或多行编写，就像是个编辑器。-->

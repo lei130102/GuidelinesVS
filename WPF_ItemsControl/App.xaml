@@ -3,6 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WPF_ItemsControl"
              StartupUri="ItemTemplate.xaml">
+    <!--
+    WPF提供了许多封装项的集合的控件，比如：
+    ListBox
+    ComboBox
+    ListView
+    TreeView
+    ToolBar
+    
+    所有这些控件都继承自ItemsControl类(ItemsControl类本身又继承自Control类)
+
+    ItemsControl类添加了所有基于列表的控件都使用的基本功能。最显著的是，他提供了填充列表项的两种方式。最直接的方法是使用代码或XAML将列表项直接添加到Items集合中。
+    然而，在WPF中使用数据绑定的方式更普遍。使用数据绑定方法，需将ItemsSource属性设置为希望显示的具有数据项集合的对象
+
+
+    
+    
+    ItemsControl类之后的继承层次有些混乱。
+    一个主要分支是选择器(selector)，包括ListBox、ComboBox以及TabControl。这些控件都继承自Selector类，并且都具有跟踪当前选择项(SelectedItem)或其位置(SelectedIndex)的属性
+    封装列表项的控件是另一个分支，以不同方式选择列表项。该分支包括用于菜单、工具栏以及树的类——所有这些类都属于ItemsControl，但不是选择器
+
+    
+
+    
+    为了充分发挥所有ItemsControl控件的功能，需要使用数据绑定。即使不从数据库甚至外部数据源获取数据，也同样如此。
+    
+    -->
     <Application.Resources>
          
     </Application.Resources>

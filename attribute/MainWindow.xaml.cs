@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,6 +24,30 @@ namespace attribute
         public MainWindow()
         {
             InitializeComponent();
+
+            //错误
+            //Test test = new Test();
+            //test.SocialSecurityNumber = "";
+            //Type type = test.SocialSecurityNumber.GetType();
+            //object[] objs = type.GetCustomAttributes(false);
+            //foreach(var obj in objs)
+            //{
+            //    FieldNameAttribute attribute = obj as FieldNameAttribute;
+            //    if(attribute != null)
+            //    {
+
+            //    }
+            //}
+
+            Test test = new Test();
+            test.SocialSecurityNumber = "";
+            string propertyName = test.SocialSecurityNumber.GetType().Name;
+            PropertyInfo propertyInfo = test.GetType().GetProperty("SocialSecurityNumber");
+            FieldNameAttribute attribute = propertyInfo.GetCustomAttribute<FieldNameAttribute>();
+            if(attribute != null)
+            {
+
+            }
         }
     }
 }

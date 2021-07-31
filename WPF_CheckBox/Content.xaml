@@ -9,9 +9,12 @@
     <StackPanel Margin="10">
         <Label FontWeight="Bold">Application Options
         </Label>
-        <CheckBox>
+        <!--
+        IsChecked属性是可空的Boolean类型，这意味着该属性可以设置为true、false或者null
+        -->
+        <CheckBox IsChecked="{x:Null}">
             <TextBlock>
-            Enable feature <Run Foreground="Green" FontWeight="Bold">ABC</Run>
+                Enable feature <Run Foreground="Green" FontWeight="Bold">ABC</Run>
             </TextBlock>
         </CheckBox>
         <CheckBox IsChecked="True">
@@ -28,14 +31,22 @@
             </TextBlock>
         </CheckBox>
 
-        <!--IsThreeState 属性
-            之前提到，CheckBox 通常对应一个布尔值，也就是说它只有两种状态——真与假，即启用与禁用。然而，布尔值也可以是空值，
-            这就带来了第三种状态（真，假或空）。CheckBox 也支持第三种状态。如果把 IsThreeState 属性设为真，CheckBox 
-            就会拥有第三种状态，被称作“不定态”。
+        <!--
+        IsThreeState 属性
 
-            IsThreeState 的一般用法是创建一个“全部启用”的 CheckBox，让它控制一系列的子 CheckBox，并显示它们作为一个整体的状态。
-            我们下面的例子展示了如何创建几个可开关的功能，并在窗口最上面有一个“全部启用”的 CheckBox：-->
+        IsThreeState属性决定了用户是否能将复选框设置为不确定状态
+        如果IsThreeState属性被设置为false(默认值)，单击复选框时，其状态会在选中和未选中两种状态之间切换，并且这时只能通过代码将复选框设置为不确定状态
+        如果IsThreeState属性被设置为true，单击复选框时，就会在所有可能的三种状态之间循环切换
 
+        IsThreeState 的一般用法是创建一个“全部启用”的 CheckBox，让它控制一系列的子 CheckBox，并显示它们作为一个整体的状态。
+        我们下面的例子展示了如何创建几个可开关的功能，并在窗口最上面有一个“全部启用”的 CheckBox：
+        -->
+
+        <!--
+        ToggleButton类还定义了当复选框进入特定状态时会触发的三个事件：Checked、UnChecked和Indeterminate。大多数情况下，
+        可以很容易地通过处理继承自ButtonBase类的Click事件，将这一逻辑合并为单个事件处理程序。无论何时改变按钮的状态都会
+        触发Click事件
+        -->
 
         <StackPanel Margin="10,5">
             <CheckBox IsThreeState="True" Name="cbAllFeatures" Checked="cbAllFeatures_CheckedChanged" Unchecked="cbAllFeatures_CheckedChanged">Enable all</CheckBox>

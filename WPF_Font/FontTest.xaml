@@ -9,6 +9,7 @@
     <StackPanel>
     <!--
     Control类定义了一小部分与字体相关的属性:
+
         FontFamily  字体家族(必须提供完整的字体家族名称)
         FontSize    字体的设备无关单位尺寸(每单位表示1/96英寸)
         FontWeight  字体的粗细(Bold Heavy Light ExtraBold)
@@ -17,21 +18,6 @@
         -->
         <Button Name="cmd" FontFamily="Times New Roman" FontSize="18" FontWeight="Bold" FontStyle="Italic" Content="A Button"/>
 
-        <!--
-        设置字体时务必要谨慎，确保选择的字体在用户计算机上已经存在。
-
-        可将FontFamily属性设置为由逗号分隔的字体选项列表，WPF将按顺序遍历该列表，尝试查找在列表中指定的一种字体
-        (如果某个字体家族的名称中确实包含一个逗号，那么需要通过在一行中将其包含两次来转义该逗号)
-
-        使用System.Windows.Media.Fonts类的静态SystemFontFamilies集合，可获得在当前计算机上已安装的所有字体的列表
-        foreach(FontFamily fontFamily in Fonts.SystemFontFamilies)
-        {
-            //fontFamily.Source
-        }
-
-        WPF未提供字体选择对话框
-        -->
-        <Button FontFamily="Technical Italic, Comic Sans MS, Arial">A Button</Button>
 
         <!--
         TextDecorations属性
@@ -79,5 +65,24 @@
                 <TextBlock Text="A TextBloc"/>
             </StackPanel>
         </Button>
+
+        <!--
+        字体替换
+
+        设置字体时务必要谨慎，确保选择的字体在用户计算机上已经存在。
+
+        可将FontFamily属性设置为由逗号分隔的字体选项列表，WPF将按顺序遍历该列表，尝试查找在列表中指定的一种字体
+        (如果某个字体家族的名称中确实包含一个逗号，那么需要通过在一行中将其包含两次来转义该逗号)
+
+        使用System.Windows.Media.Fonts类的静态SystemFontFamilies集合，可获得在当前计算机上已安装的所有字体的列表
+        foreach(FontFamily fontFamily in Fonts.SystemFontFamilies)
+        {
+            //fontFamily.Source
+        }
+
+        WPF未提供字体选择对话框
+        -->
+        <Button FontFamily="Technical Italic, Comic Sans MS, Arial">A Button</Button>
+
     </StackPanel>
 </Window>

@@ -1,0 +1,21 @@
+﻿<Application x:Class="WPF_ApplicationTask.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WPF_ApplicationTask">
+             <!--
+    Application类的任务
+    
+    现在您已经理解了在WPF应用程序中使用Application对象的方式，接下来看一下如何使用Application对象来处理一些更普通的情况
+    1.显示初始界面
+    见WPF_SplashScreen示例
+    2.处理命名行参数
+    见WPF_Start_App_InitializeComponent_CommandLineArgument示例
+    3.访问当前Application对象
+    见WPF_WindowTracker示例
+    4.在窗口之间进行交互
+    见WPF_WindowTracker示例
+    -->
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>

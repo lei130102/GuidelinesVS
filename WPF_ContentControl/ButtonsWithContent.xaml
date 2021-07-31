@@ -1,0 +1,28 @@
+﻿<Window x:Class="WPF_ContentControl.ButtonsWithContent"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ContentControl"
+        mc:Ignorable="d"
+        Title="ButtonsWithContent" Height="300" Width="300">
+    <StackPanel Margin="3">
+        <Button Margin="3" Content="Text button"/>
+        <Button Margin="3">
+            <Image Source="/Image/happyface.jpg" Stretch="None"/>
+        </Button>
+        <Button Margin="3">
+            <StackPanel>
+                <TextBlock Margin="3" Text="Image and text button"/>
+                <Image Source="/Image/happyface.jpg" Stretch="None"/>
+                <TextBlock Margin="3" Text="Courtesy of the StackPanel"/>
+            </StackPanel>
+        </Button>
+        <Button Padding="3" Margin="3" HorizontalContentAlignment="Stretch">
+            <StackPanel>
+                <TextBlock Margin="3" Text="Type something here:"/>
+                <TextBox Margin="3" HorizontalAlignment="Stretch" Text="Text box in a button"/>
+            </StackPanel>
+        </Button>
+    </StackPanel>
+</Window>

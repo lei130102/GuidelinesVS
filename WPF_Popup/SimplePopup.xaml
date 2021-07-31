@@ -1,0 +1,29 @@
+﻿<Window x:Class="WPF_Popup.SimplePopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Popup"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="300" Width="300">
+
+    <Grid Margin="10">
+        <TextBlock TextWrapping="Wrap">
+            You can use a Popup to provide a link for a specific
+            <!--Run元素用于格式化TextBlock控件中的特定部分——一块流内容-->
+            <Run TextDecorations="Underline" MouseEnter="Run_MouseEnter">term</Run> of interest.
+        </TextBlock>
+        <!--
+    从技术角度看，在哪里定义Popup标签都无关紧要，因为这不与任何特定控件相关联。相反，为将Popup控件定位到恰当位置，需要由您来设置
+    布局属性
+        -->
+        <Popup Name="popLink" StaysOpen="False" Placement="Mouse" MaxWidth="200" PopupAnimation="Slide" AllowsTransparency="True">
+            <Border BorderBrush="Beige" BorderThickness="2" Background="White">
+                <TextBlock Margin="10" TextWrapping="Wrap">
+                For more information, see
+                <Hyperlink NavigateUri="http://en.wikipedia.org/wiki/Term" Click="Hyperlink_Click">Wikipedia</Hyperlink>
+                </TextBlock>
+            </Border>
+        </Popup>
+    </Grid>
+</Window>

@@ -61,17 +61,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CheckBoxList.xaml.cs">
-      <DependentUpon>CheckBoxList.xaml</DependentUpon>
+    <Compile Include="CheckBoxListBox.xaml.cs">
+      <DependentUpon>CheckBoxListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Content.xaml.cs">
       <DependentUpon>Content.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Control.xaml.cs">
-      <DependentUpon>Control.xaml</DependentUpon>
+    <Compile Include="CodeControl.xaml.cs">
+      <DependentUpon>CodeControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ImageList.xaml.cs">
-      <DependentUpon>ImageList.xaml</DependentUpon>
+    <Compile Include="ContentWithoutListBoxItem.xaml.cs">
+      <DependentUpon>ContentWithoutListBoxItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="ItemTemplate.xaml.cs">
       <DependentUpon>ItemTemplate.xaml</DependentUpon>
@@ -102,7 +102,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="CheckBoxList.xaml">
+    <Page Include="CheckBoxListBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -110,11 +110,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Control.xaml">
+    <Page Include="CodeControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ImageList.xaml">
+    <Page Include="ContentWithoutListBoxItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -7,7 +7,11 @@
         mc:Ignorable="d"
         Title="NoStyle" Height="715.548" Width="658.304">
         <!--
-        GroupBox是这三个继承自HeaderedContentControl类的控件中最简单的一个。他显示为具有圆角和标题的方框
+
+    GroupBox控件、TabItem控件和Expander控件 (都继承自HeaderedContentControl类，HeaderedContentControl类又继承自ContentControl类，HeaderedContentControl类的作用十分简单，他表示
+    包含单一元素内容(存储在Content属性中)和单一元素标题(存储在Header属性中)的容器)
+    
+    GroupBox是这三个继承自HeaderedContentControl类的控件中最简单的一个。他显示为具有圆角和标题的方框
 
     (可通过将RadioButton对象放置到任何面板中对其进行分组，而不需要使用GroupBox控件，除非希望使用具有圆角的标题的边框)
     -->

@@ -1,4 +1,7 @@
-﻿<Application x:Class="WPF_Start_StartupUri.App"
+﻿<!--注意，在XAML中使用Class特性创建派生自元素的类。因此，该类创建派生自Application的类，
+    类名为WPF_Start_StartupUri.App(WPF_Start_StartupUri是项目名称，也是在其中定义的类的命名空间，App是
+    Visual Studio为派生自Application的自定义类使用的名称。如果愿意，可将类名改为任何更有趣的内容)-->
+<Application x:Class="WPF_Start_StartupUri.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WPF_Start_StartupUri"

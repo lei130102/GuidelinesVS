@@ -71,19 +71,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converter\SexToBoolConverter.cs" />
-    <Compile Include="Model\Sex.cs" />
-    <Compile Include="Utility\IPlugin.cs" />
-    <Compile Include="Utility\IPluginMetadata.cs" />
-    <Compile Include="Utility\IPluginView.cs" />
-    <Compile Include="Utility\IPluginViewModel.cs" />
-    <Compile Include="Utility\PluginCatalogService.cs" />
-    <Compile Include="ViewModel\RadioButtonViewModel.cs" />
-    <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="View\RadioButtonView.xaml.cs">
-      <DependentUpon>RadioButtonView.xaml</DependentUpon>
+    <Compile Include="IsCheckedBinding.xaml.cs">
+      <DependentUpon>IsCheckedBinding.xaml</DependentUpon>
     </Compile>
-    <Page Include="MainWindow.xaml">
+    <Page Include="IsCheckedBinding.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Content.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -91,14 +86,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="Content.xaml.cs">
+      <DependentUpon>Content.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\RadioButtonView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

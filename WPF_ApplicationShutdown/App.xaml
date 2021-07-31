@@ -1,17 +1,23 @@
 ﻿<Application x:Class="WPF_ApplicationShutdown.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:WPF_ApplicationShutdown"
-             StartupUri="MainWindow.xaml" ShutdownMode="OnLastWindowClose">
+             xmlns:local="clr-namespace:WPF_ApplicationShutdown" ShutdownMode="OnLastWindowClose">
     <!--
     应用程序的关闭方式
     
+    通常，只要还有窗口尚未关闭，Application类就保持应用程序处于有效状态。如果这不是期望的行为，可调整Application.ShutdownMode属性
+    如果手动实例化Application对象，就需要在调用Run()方法之前设置ShutdownMode属性
+    如果使用App.xaml文件，那么可在XAML文件中简单地设置ShutdownMode属性
+    
     Application.ShutdownMode属性
+
     OnLastWindowClose        （默认）只要至少还有一个窗口存在，应用程序就保持运行状态。如果关闭了主窗口，Application.MainWindow属性仍引用代表
                               已关闭窗口的对象(也可以根据情况，使用代码将MainWindow属性重新指向另一个不同的窗口)
+
     OnMainWindowClose         传统方式，只要主窗口还处于打开状态，应用程序就保持运行状态
+
     OnExplicitShutdown        除非调用Application.Shutdown()方法，否则应用程序不会结束(即使所有窗口都已经关闭)。如果应用程序是长期运行的后台
-                              任务的前端，或者只是希望使用更复杂的逻辑来决定应用程序应当何时关闭，使用这种方法可能会有意义(这是将调用Application.Shutdown()方法)
+                              任务的前端，或者只是希望使用更复杂的逻辑来决定应用程序应当何时关闭，使用这种方法可能会有意义(这时将调用Application.Shutdown()方法)
 
     
     不管选择哪种关闭方法，总是可以使用Application.Shutdown()方法立即终止应用程序(当然，当调用Shutdown()方法时，应用程序未必立刻停止运行。调用Application.Shutdown()方法

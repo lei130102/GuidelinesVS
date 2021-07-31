@@ -1,0 +1,27 @@
+﻿<Window x:Class="WPF_TabControl.SelectedIndexSelectedItem"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_TabControl"
+        mc:Ignorable="d"
+        Title="SelectedIndexSelectedItem" Height="300" Width="350">
+        <!--
+通过TabControl的SelectedIndex控制选择哪个选项卡(TabItem)
+通过TabControl的SelectedItem属性获取选项卡(TabItem)
+    -->
+    <DockPanel>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Margin="2.5">
+            <Button Name="btnPreviousTab" Click="btnPreviousTab_Click" Content="Prev"/>
+            <Button Name="btnNextTab" Click="btnNextTab_Click" Content="Next"/>
+            <Button Name="btnSelectedTab" Click="btnSelectedTab_Click"  Content="Selected"/>
+        </StackPanel>
+        <TabControl Name="tcSample">
+            <TabItem Header="General">
+                <Label Content="Content goes here..."/>
+            </TabItem>
+            <TabItem Header="Security"/>
+            <TabItem Header="Details"/>
+        </TabControl>
+    </DockPanel>
+</Window>

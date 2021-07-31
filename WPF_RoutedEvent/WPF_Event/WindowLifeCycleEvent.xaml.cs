@@ -72,7 +72,7 @@ namespace WPF_RoutedEvent.WPF_Event
 
         /// <summary>
         /// Closing 事件
-        /// 当关闭窗口是发生，不管是用户关闭窗口还是通过代码调用Window.Close()或Application.Shutdown()方法关闭窗口。Closing事件提供了取消操作并保持打开状态的机会，具体通过将
+        /// 当关闭窗口时发生，不管是用户关闭窗口还是通过代码调用Window.Close()或Application.Shutdown()方法关闭窗口。Closing事件提供了取消操作并保持打开状态的机会，具体通过将
         /// CancelEventArgs.Cancel属性设置为true实现该目标。但是，如果是因为用户关闭或注销计算机而导致应用程序被关闭，就不能接收到Closing事件。为应对这种情况，需要处理将在Application.SessionEnding事件
         /// </summary>
         /// <param name="sender"></param>

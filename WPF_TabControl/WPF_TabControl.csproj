@@ -67,11 +67,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Content.xaml.cs">
-      <DependentUpon>Content.xaml</DependentUpon>
+    <Compile Include="TabItemContent.xaml.cs">
+      <DependentUpon>TabItemContent.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Control.xaml.cs">
-      <DependentUpon>Control.xaml</DependentUpon>
+    <Compile Include="SelectedIndexSelectedItem.xaml.cs">
+      <DependentUpon>SelectedIndexSelectedItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -99,11 +99,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Content.xaml">
+    <Page Include="TabItemContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Control.xaml">
+    <Page Include="SelectedIndexSelectedItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -7,11 +7,7 @@
         mc:Ignorable="d"
         Title="ExpandableContent" Height="300" Width="300" SizeToContent="Height">
     <!--
-    Expander控件封装了一块内容，通过单击小箭头按钮可显示或隐藏所包含的内容
-    
     通常，每个Expander控件开始时都是折叠的，但可在标记中(或代码中)通过设置IsExpanded属性来改变这种行为
-    
-    还可选择扩展器的扩展方向
     
     如果要使其他控件与Expander同步，可处理Expanded和Collapsed事件。这些事件的名称并未表明其含义，这些事件正好在显示或隐藏内容前触发。这两个事件为实现
     延迟加载提供一种有用的方式。
@@ -25,10 +21,6 @@
     Width或者Height，以使窗口为了适应所包含的内容在任意方向上扩展或收缩
     3.通过硬编码Expander控件的Height和Width属性来限制其尺寸。但当Expander控件中的内容太长时，可能会剪裁掉部分内容
     4.使用ScrollViewer控件创建可滚动的扩展区域
-    
-    
-    
-    
     
     -->
         <StackPanel>

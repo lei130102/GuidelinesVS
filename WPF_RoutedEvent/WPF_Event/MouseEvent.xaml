@@ -26,8 +26,10 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <TextBox Padding="10" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Drag from this TextBox"/>
-            <Label Grid.Column="1" Padding="20" Background="LightGoldenrodYellow" VerticalAlignment="Center" HorizontalAlignment="Center" MouseDown="Label_MouseDown" Content="Or this Label"/>
-            <Label Grid.Row="1" Grid.ColumnSpan="2" Background="LightGoldenrodYellow" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="20" AllowDrop="True" Drop="Label_Drop" DragEnter="Label_DragEnter" Content="To this Label"/>
+            <Label Grid.Column="1" Padding="20" Background="LightGoldenrodYellow" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Or this Label"
+                   MouseDown="Label_MouseDown" />
+            <Label Grid.Row="1" Grid.ColumnSpan="2" Background="LightGoldenrodYellow" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="20" Content="To this Label"
+                   AllowDrop="True" Drop="Label_Drop" DragEnter="Label_DragEnter"/>
         </Grid>
     </Grid>
 </Window>

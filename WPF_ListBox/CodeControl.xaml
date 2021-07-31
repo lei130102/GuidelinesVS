@@ -1,0 +1,52 @@
+﻿<Window x:Class="WPF_ListBox.CodeControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ListBox"
+        mc:Ignorable="d"
+        Title="CodeControl" Height="250" Width="450">
+        <!--
+
+    ListBoxItem定义了可以读取(或设置)的IsSelected属性，以及用于通知何时选中的Selected和Unselected事件。然而，可使用ListBox类的成员得到类似功能，
+    如SelectedItem属性(或SelectedItems属性)以及SelectionChanged事件
+
+    当使用嵌套对象方法时，有一项技术可为特定的对象检索ListBoxItem封装器，即使用ContainerFromElement()方法
+    检查列表中的第一个条目是否被选中：
+    ListBoxItem item = (ListBoxItem)lst.ContainerFromElement((DependencyObject)lst.SelectedItems[0]);
+    MessageBox.Show("IsSelected: " + item.IsSelected.ToString());
+    
+    如果将SelectionMode属性设置为Multiple或Extended，ListBox类还允许选择多项。在Multiple模式下，可通过单击项进行选择或取消选择。在Extended模式下，需要按下
+    Ctrl键选择其他项，或按下Shift键选择某个选项范围。在这两种多选模式下，可用SelectedItems集合替代SelectedItem属性来获取所有选择的项
+
+    -->
+    <DockPanel Margin="10">
+        <StackPanel DockPanel.Dock="Right" Margin="10,0">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Margin" Value="0,0,0,5"/>
+                </Style>
+            </StackPanel.Resources>
+            <TextBlock FontWeight="Bold" Margin="0,0,0,10">ListBox selection</TextBlock>
+            <Button Name="btnShowSelectedItem" Click="btnShowSelectedItem_Click" Content="Show Selected"/>
+            <Button Name="btnSelectLast" Click="btnShowSelectedItem_Click" Content="Select last"/>
+            <Button Name="btnSelectNext" Click="btnSelectNext_Click" Content="Select next"/>
+            <Button Name="btnSelectCSharp" Click="btnSelectCSharp_Click" Content="Select C#"/>
+            <Button Name="btnSelectAll" Click="btnSelectAll_Click" Content="Select all"/>
+        </StackPanel>
+        <ListBox Name="lbTodoList" HorizontalAlignment="Stretch" SelectionMode="Extended" SelectionChanged="lbTodoList_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Title}"/>
+                        <ProgressBar Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Completion}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</Window>

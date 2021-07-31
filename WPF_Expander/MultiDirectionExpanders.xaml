@@ -6,6 +6,22 @@
         xmlns:local="clr-namespace:WPF_Expander"
         mc:Ignorable="d"
         Title="MultiDirectionExpanders" Height="327" Width="328">
+        <!--
+        
+    还可选择扩展器的扩展方向
+
+    标准值是Down，但也可将ExpandDirection属性设置为Up、Left或者Right。当折叠Expander时，箭头
+    始终指向将要展开的方向
+
+    当使用不同的ExpandDirection值时，情况就比较有趣了，因为对用户界面其他部分的影响取决于容器的类型。
+    有些容器(如WrapPanel面板)只是挤压其他元素使其离开原来的位置。其他容器，如Grid面板，可以选择按比例
+    或自动改变尺寸
+
+    本例有一个具有4个单元格的网格。每个单元格都包含一个具有不同展开方向的扩展器。
+    列按比例改变其尺寸，从而强制Expander控件中的文本进行换行(自动改变尺寸的列会简单地被拉伸以适应文本，使他比窗口还大)
+    行被设置为自动改变尺寸，所以他们会扩展以容纳附加的内容
+    
+    -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

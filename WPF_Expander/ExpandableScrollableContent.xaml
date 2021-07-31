@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="ExpandableScrollableContent" Height="300" Width="300">
         <!--
-        这里进一步说明如何组合使用Expander控件和ScrollViewer控件。为让这个方法奏效，需要硬编码ScrollViewer控件的尺寸。否则，ScrollViewer控件
-        会进行扩展以适应他包含的内容
+    这里进一步说明如何组合使用Expander控件和ScrollViewer控件。为让这个方法奏效，需要硬编码ScrollViewer控件的尺寸。否则，ScrollViewer控件
+    会进行扩展以适应他包含的内容
 
     如果有一个系统，能让Expander控件根据窗口的可用空间，设置内容区域的尺寸，那将是非常好的。但这会明显增加复杂度(例如，当Expander控件展开时，如何在多个区域共享空间)。
     Grid布局容器看起来像是潜在的解决方案，但他不能和Expander控件很好地集成。如果尝试这样做的话，当折叠Expander控件时，可能导致非常奇怪的行为，不能正确地更新网格的行高

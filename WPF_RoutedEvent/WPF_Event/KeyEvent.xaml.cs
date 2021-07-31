@@ -26,7 +26,7 @@ using System.Windows.Shapes;
 //TextBox控件：
 //1.TextBox控件挂起了TextInput事件（仍可以使用隧道路由事件PreviewTextInput），添加了TextChanged的新事件，在按键导致文本框中的文本发生改变之后会立即引发该事件
 //2.对于一些按键(如方向键)，挂起了KeyDown事件（仍可以使用隧道路由事件PreviewKeyDown）
-//3.对于一些按键(如空格键)，不会触发PreviewTextInput事件
+//3.对于一些按键(如空格键)，挂起了PreviewTextInput事件
 
 namespace WPF_RoutedEvent.WPF_Event
 {
@@ -116,7 +116,8 @@ namespace WPF_RoutedEvent.WPF_Event
         }
 
         /// <summary>
-        /// PreviewTextInput事件发生后，接着发生TextInput事件，但TextBox挂起了TextInput事件，所以不会发生TextInput事件，但会在导致文本框中的文本发生改变之后会发生新事件TextChanged
+        /// PreviewTextInput事件发生后，接着发生TextInput事件，但TextBox挂起了TextInput事件，所以不会发生TextInput事件，
+        /// 但会在导致文本框中的文本发生改变之后会发生新事件TextChanged
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

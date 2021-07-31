@@ -1,44 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-//原理：
+/*
+原理：
 
-//删除obj\Debug目录下的App.g.cs中的两个函数：
+删除obj\Debug目录下的App.g.cs中的两个函数：
 
-///// <summary>
-///// InitializeComponent
-///// </summary>
-//[System.Diagnostics.DebuggerNonUserCodeAttribute()]
-//[System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "4.0.0.0")]
-//public void InitializeComponent()
-//{
+/// <summary>
+/// InitializeComponent
+/// </summary>
+[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+[System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "4.0.0.0")]
+public void InitializeComponent()
+{
 
-//#line 5 "..\..\App.xaml"
-//    this.StartupUri = new System.Uri("MainWindow.xaml", System.UriKind.Relative);
+#line 5 "..\..\App.xaml"
+    this.StartupUri = new System.Uri("MainWindow.xaml", System.UriKind.Relative);
 
-//#line default
-//#line hidden
-//}
+#line default
+#line hidden
+}
 
-///// <summary>
-///// Application Entry Point.
-///// </summary>
-//[System.STAThreadAttribute()]
-//[System.Diagnostics.DebuggerNonUserCodeAttribute()]
-//[System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "4.0.0.0")]
-//public static void Main()
-//{
-//    WPF_Start_App_InitializeComponent.App app = new WPF_Start_App_InitializeComponent.App();
-//    app.InitializeComponent();
-//    app.Run();
-//}
+/// <summary>
+/// Application Entry Point.
+/// </summary>
+[System.STAThreadAttribute()]
+[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+[System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "4.0.0.0")]
+public static void Main()
+{
+    WPF_Start_App_InitializeComponent.App app = new WPF_Start_App_InitializeComponent.App();
+    app.InitializeComponent();
+    app.Run();
+}
 
-//然后在这里补充
+然后在这里补充
+*/
 
 namespace WPF_Start_App_InitializeComponent
 {

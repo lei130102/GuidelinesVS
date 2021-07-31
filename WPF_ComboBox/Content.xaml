@@ -8,15 +8,6 @@
         Title="Content" Height="450" Width="800">
         <!--
 
-    ComboBox控件和ListBox控件类似，该控件包含ComboBoxItem对象的集合，既可以显式地也可以隐式地创建该集合。
-
-    与ListBoxItem类似，ComboBoxItem也是可以包含任意嵌套元素的内容控件
-
-    ComboBox类和ListBox类之间的重要区别是他们在窗口中呈现自身的方式。ComboBox控件使用下拉列表，这意味着一次只能选择一项
-
-    如果希望允许用户在组合框中通过输入文本选择一项，就必须将IsEditable属性设置为true，并且必须确保选项集合中存储的是普通的纯文本的ComboBoxItem对象，或是提供了
-    有意义的ToString()表示的对象
-
     ComboBox控件的局限之一在于当使用自动改变尺寸功能时该控件改变自身尺寸的方式。ComboBox控件加宽自身以适应他的内容，这意味着当从一项移到另一项时他会改变自身大小。
     但没有简便的方法告诉ComboBox控件使用所包含项的最大尺寸。相反，需要为Width属性提供硬编码的值，而这并不理想
     

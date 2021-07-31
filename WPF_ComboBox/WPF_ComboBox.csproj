@@ -67,8 +67,8 @@
     <Compile Include="ContentWithoutComboBoxItem.xaml.cs">
       <DependentUpon>ContentWithoutComboBoxItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Control.xaml.cs">
-      <DependentUpon>Control.xaml</DependentUpon>
+    <Compile Include="CodeControl.xaml.cs">
+      <DependentUpon>CodeControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="IsEditable.xaml.cs">
       <DependentUpon>IsEditable.xaml</DependentUpon>
@@ -110,7 +110,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Control.xaml">
+    <Page Include="CodeControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

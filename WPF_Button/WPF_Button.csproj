@@ -64,6 +64,9 @@
     <Compile Include="IsCancelIsDefault.xaml.cs">
       <DependentUpon>IsCancelIsDefault.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IsCancelIsDefaultAboutDialog.xaml.cs">
+      <DependentUpon>IsCancelIsDefaultAboutDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RelayCommand.cs" />
     <Page Include="ButtonsWithContent.xaml">
       <SubType>Designer</SubType>
@@ -93,6 +96,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="IsCancelIsDefault.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="IsCancelIsDefaultAboutDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

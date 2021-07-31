@@ -1,0 +1,31 @@
+﻿<Window x:Class="WPF_ContentControl.ButtonWithShape"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ContentControl"
+        mc:Ignorable="d"
+        Title="ButtonWithShape" Height="150" Width="258">
+    <!--
+    WPF内容原则
+    
+    在ButtonsWithContent例子中，包含一个简单地图像按钮，在Button控件中放置了一个Image元素。这种方法不是非常理想，因为位图不是
+    分辨率无关的。在高DPI显示器上，位图显示可能会变得模糊，因为WPF必须通过插值添加更多的像素，以确保图像保持正确的大小。更完善
+    的WPF界面应避免使用位图，而应当使用矢量图形的组合来创建自定义绘图按钮以及其他图形修饰
+
+    在本示例中使用嵌套的内容模型比为Button类添加额外的属性以支持不同类型的内容要简单。嵌套内容模型不仅更灵活，还允许Button类提供更简单地接口。因为
+    所有内容控件都支持以相同的方式嵌套内容，所以不必为多个类添加不同的内容属性
+
+    实际上，使用嵌套内容模型需要进行折中。他简化了元素的类模型，因为不需要使用额外的继承层次，以便为支持不同类型的内容添加属性。然而，需要使用稍复杂
+    的对象模型——元素可以由其他嵌套的元素组成
+
+    (通过改变控件的内容未必总能获得期望的效果。例如，尽管可在按钮中放置任何内容，但有些细节永远不会改变，如按钮中具有阴影的背景、圆角边框以及当把鼠标指针
+    移到按钮上时的突出显示效果。然而，可使用另一种方法来改变这些内置的细节——应用新的控件模板)
+    -->
+    <Button Margin="10">
+        <Grid>
+            <Polygon Points="100,25 125,0 200,25 125,50" Fill="LightSteelBlue"/>
+            <Polygon Points="100,25 75,0 0,25 75,50" Fill="White"/>
+        </Grid>
+    </Button>
+</Window>

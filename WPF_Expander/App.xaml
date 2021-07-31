@@ -2,7 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WPF_Expander"
-             StartupUri="ExpandableContent.xaml">
+             StartupUri="MultiDirectionExpanders.xaml">
+             <!--
+    GroupBox控件、TabItem控件和Expander控件 (都继承自HeaderedContentControl类，HeaderedContentControl类又继承自ContentControl类，HeaderedContentControl类的作用十分简单，他表示
+    包含单一元素内容(存储在Content属性中)和单一元素标题(存储在Header属性中)的容器)
+    
+    Expander控件封装了一块内容，通过单击小箭头按钮可显示或隐藏所包含的内容
+    -->
     <Application.Resources>
          
     </Application.Resources>

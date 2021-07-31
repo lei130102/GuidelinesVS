@@ -1,0 +1,19 @@
+﻿<Window x:Class="WPF_Button.IsCancelIsDefaultAboutDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Button"
+        mc:Ignorable="d"
+        Title="IsCancelIsDefaultAboutDialog" Height="100" Width="400">
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Content="确定" IsCancel="True" IsDefault="True" Click="Button_Click"/>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Top">
+            <TextBlock TextWrapping="Wrap" Text="某些情况下，将窗口中的同一个按钮既设置为取消按钮，又设置为默认按钮也是有意义的，比如关于对话框中的确定按钮"/>
+            <TextBlock TextWrapping="Wrap" FontWeight="Bold" Text="注意，窗口中只能有一个取消按钮和一个默认按钮。否则行为混乱"/>
+        </StackPanel>
+    </DockPanel>
+</Window>

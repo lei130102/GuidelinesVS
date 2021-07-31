@@ -14,13 +14,20 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Label Margin="5" Background="AliceBlue" BorderBrush="Black" BorderThickness="1" HorizontalContentAlignment="Stretch" PreviewKeyDown="Someone_PreviewKeyDown_KeyDown">
-            <StackPanel PreviewKeyDown="Someone_PreviewKeyDown_KeyDown">
-                <TextBlock Margin="3" HorizontalAlignment="Center" PreviewKeyDown="Someone_PreviewKeyDown_KeyDown" Text="Image and text label"/>
-                <Image Source="/Image/happyface.jpg" Stretch="None" PreviewKeyDown="Someone_PreviewKeyDown_KeyDown"/>
-                <DockPanel Margin="0,5,0,0" PreviewKeyDown="Someone_PreviewKeyDown_KeyDown">
-                    <TextBlock Margin="3" PreviewKeyDown="Someone_PreviewKeyDown_KeyDown" Text="Type here:"/>
-                    <TextBox PreviewKeyDown="Someone_PreviewKeyDown_KeyDown" KeyDown="Someone_PreviewKeyDown_KeyDown"/>
+        <Label Margin="5" Background="AliceBlue" BorderBrush="Black" BorderThickness="1" HorizontalContentAlignment="Stretch" 
+               PreviewKeyDown="Someone_PreviewKeyDown_KeyDown">
+            <StackPanel 
+                PreviewKeyDown="Someone_PreviewKeyDown_KeyDown">
+                <TextBlock Margin="3" HorizontalAlignment="Center" Text="Image and text label"
+                           PreviewKeyDown="Someone_PreviewKeyDown_KeyDown"/>
+                <Image Source="/Image/happyface.jpg" Stretch="None" 
+                       PreviewKeyDown="Someone_PreviewKeyDown_KeyDown"/>
+                <DockPanel Margin="0,5,0,0"
+                           PreviewKeyDown="Someone_PreviewKeyDown_KeyDown">
+                    <TextBlock Margin="3" Text="Type here:" 
+                               PreviewKeyDown="Someone_PreviewKeyDown_KeyDown"/>
+                    <TextBox KeyDown="Someone_PreviewKeyDown_KeyDown" 
+                             PreviewKeyDown="Someone_PreviewKeyDown_KeyDown"/>
                 </DockPanel>
             </StackPanel>
         </Label>

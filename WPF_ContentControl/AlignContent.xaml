@@ -5,8 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPF_ContentControl"
         mc:Ignorable="d"
-        Title="AlignContent" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="AlignContent" Height="300" Width="200">
+        <!--
+对齐内容
+
+a.容器中对齐 不同的控件：
+使用在FrameworkElement基类中定义的HorizontalAlignment和VerticalAlignment属性
+使用Margin属性可在相邻元素之间添加空间
+
+b.内容控件中对齐 内容与边框：(对齐内容)
+使用在Control基类中定义的HorizontalContentAlignment和VerticalContentAlignment属性
+使用Padding属性在控件边缘和内容边缘之间添加空间
+
+可将内容对齐到控件的任意边缘(Top Bottom Left Right)，可以居中(Center)，也可以拉伸内容使其充满可用空间(Stretch)
+
+HorizontalContentAlignment、VerticalContentAlignment以及Padding属性都是在Control类中定义的，而并非是在更特殊的ContentControl
+类中定义的，这是因为可能有些控件不是内容控件，但也需要包含某些类型的内容，比如TextBox控件——通过使用对齐方式和内边距设置来调整他所包含的文本(存储在Text属性中)
+ 
+    -->
+    <StackPanel>
+        <Button>Absolutely No Padding</Button>
+        <Button Padding="30">Well Padded</Button>
+
+        <Button Padding="30" HorizontalContentAlignment="Left" VerticalContentAlignment="Top">Left Top</Button>
+        <Button Height="30" HorizontalContentAlignment="Left" VerticalContentAlignment="Top">Left Top</Button>
+
+    </StackPanel>
 </Window>

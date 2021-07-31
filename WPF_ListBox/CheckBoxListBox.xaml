@@ -1,0 +1,45 @@
+﻿<Window x:Class="WPF_ListBox.CheckBoxListBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ListBox"
+        mc:Ignorable="d"
+        Title="CheckBoxListBox" Height="300" Width="300">
+        <!--
+        利用在列表框中能嵌套任意元素的能力，可创建出各种基于列表的控件，而不必使用其他类
+
+    例如，Windows窗体的工具箱中有CheckedListBox类，该类显示在每个项的旁边都具有复选框的列表。在WPF中不需要这一
+    特殊类，因为完全可使用标准的ListBox控件快速构建相同的效果
+    -->
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListBox Name="lst" SelectionChanged="lst_SelectionChanged" CheckBox.Click="lst_SelectionChanged">
+            <CheckBox Margin="3" Content="Option 1"/>
+            <CheckBox Margin="3" Content="Option 2"/>
+            <CheckBox Margin="3" Content="Option 3"/>
+        </ListBox>
+        <!--
+        当在列表内部使用不同元素时需要注意一点，当读取SelectedItem值时(以及SelectedItems和Items集合)，看不到ListBoxItem对象——反而将看到放入
+        到列表中的对象
+    
+        在本例中，这意味着SelectedItem提供了CheckBox对象
+        -->
+
+        <!--
+        在列表框中手动放置项时，由您决定是希望直接插入项还是在ListBoxItem对象中明确地包含每项。第二种方法通常更
+        清晰，也更繁琐。最重要的考虑事项是一致性。
+        例如，
+        如果在列表中放置StackPanel对象，ListBox.SelectedItem对象将是StackPanel
+        如果在列表中放置由ListBoxItem对象封装的StackPanel对象，ListBox.SelectedItem对象将是ListBoxItem
+        -->
+        <StackPanel Grid.Row="1" Margin="0,10,0,0">
+            <TextBlock Text="Current selection:"/>
+            <TextBlock Name="txtSelection" TextWrapping="Wrap"/>
+            <Button Margin="0,10,0,0" Click="Button_Click" Content="Examine All Items"/>
+        </StackPanel>
+    </Grid>
+</Window>

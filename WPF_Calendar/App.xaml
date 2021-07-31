@@ -1,0 +1,25 @@
+﻿<Application x:Class="WPF_Calendar.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WPF_Calendar"
+             StartupUri="MainWindow.xaml">
+             <!--
+    WPF包含两个日期控件：
+    Calendar
+    DatePicker
+    这两个控件都被设计为允许用户选择日期
+
+    Calendar控件显示日历，与在Windows操作系统中看到的日历(例如，当配置系统日期时看到的日历)相似。该控件每次显示一个月份，允许从一个月份跳到另一个月份
+    (通过单击箭头按钮)，或跳到某个特定的月份(通过单击月份的标题头查看一年中的月份，然后单击月份)
+
+
+    
+    
+    
+    其他详见WPF_DatePicker示例
+
+    -->
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>

@@ -2,7 +2,29 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WPF_ScrollViewer"
-             StartupUri="LogicalScrolling.xaml">
+             StartupUri="CustomScrolling.xaml">
+             <!--
+
+    ScrollViewer
+    
+    如果希望让大量内容适应有限的空间，滚动是重要特性之一。在WPF中为了获得滚动支持，需要在ScrollViewer控件中封装希望滚动的内容
+
+    如果改变窗口的尺寸以使窗口足以容纳所有内容，将会禁用滚动条。但仍会显示滚动条。可通过设置VerticalScrollBarVisibility属性来控制这一行为
+
+    VerticalScrollBarVisibility
+    (ScrollBarVisibility枚举值)
+
+    Visible(默认值)                 总是提供垂直滚动条
+    Auto                           当需要时显示滚动条而当不需要时不显示
+    Disable                        根本就不希望显示滚动条
+    (注意，还可以使用Hidden，他与Disable类似。但有一些区别。首先，具有隐藏滚动条的内容仍是可滚动的(例如，可使用方向键滚动内容)。其次，在ScrollViewer控件中
+    内容的放置是不同的。如果使用Disable，那么ScrollViewer控件中的内容只能占据ScrollViewer控件本身具有的空间。另一方面，如果使用Hidden，那么ScrollViewer控件
+    中的内容可以使用无限的空间。这意味着控件中的内容可溢出并被拉伸到能够滚动的区域中。通常，如果计划使用另外的机制进行滚动(例如，将在后面介绍的自定义滚动按钮)，将
+    仅使用Hidden值。如果希望临时阻止ScrollViewer控件执行任何操作，那么只能使用Disabled)
+
+    ScrollViewer控件也支持水平滚动功能，但默认情况下，HorizontalScrollBarVisibility属性设置为Hidden。为了使用水平滚动功能，需要将该属性值改为Visible或者Auto
+
+    -->
     <Application.Resources>
          
     </Application.Resources>

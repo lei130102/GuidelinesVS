@@ -1,0 +1,31 @@
+﻿<Window x:Class="WPF_ListBox.ContentWithoutListBoxItem"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_ListBox"
+        mc:Ignorable="d"
+        Title="ContentWithoutListBoxItem" Height="300" Width="300">
+        <!--
+       实际上ListBox控件足够智能，他能隐式地创建所需的ListBoxItem对象，这意味着可直接在ListBox元素中放置对象
+
+    本例使用嵌套的StackPanel对象组合文本和图像内容。StackPanel面板变成被ListBoxItem封装的项
+
+    注意，在目前的设计中，一个缺点是当列表项被选中时文本颜色不能随之改变。这确实有些不理想，因为阅读有蓝色背景的黑色
+    文本比较困难。为解决这一问题，需要使用数据模板
+    -->
+    <ListBox Margin="5" SelectionMode="Multiple" Name="lst" SelectionChanged="lst_SelectionChanged">
+        <StackPanel Orientation="Horizontal">
+            <Image Source="/Image/happyface.jpg" Width="30" Height="30"/>
+            <Label VerticalContentAlignment="Center" Content="A happy face"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Image Source="/Image/redx.jpg" Width="30" Height="30"/>
+            <Label VerticalContentAlignment="Center" Content="A warning sign"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Image Source="/Image/happyface.jpg" Width="30" Height="30"/>
+            <Label VerticalContentAlignment="Center" Content="A happy face"/>
+        </StackPanel>
+    </ListBox>
+</Window>
